@@ -1,0 +1,55 @@
+.navbar-toggler {
+    background-color: red;
+}
+
+.top-row {
+    min-height: 3.5rem;
+    background-color: red;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: black;
+}
+
+.navbar-nav {
+    gap: 8rem; 
+}
+
+/* Dla ekranów mniejszych ni¿ 1200px */
+@media (max-width: 1199px) {
+    .navbar-nav {
+        gap: 3rem;
+    }
+}
+
+/* Dla ekranów mniejszych ni¿ 768px */
+@media (max-width: 767px) {
+    .navbar-nav {
+        gap: 1.5rem;
+    }
+}
+
+.nav-item {
+    font-size: 1.5rem;
+    color: black;
+}
+
+    .nav-item .nav-link {
+        color: #d7d7d7;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        font-size: 2rem;
+    }
+
+        .nav-item .nav-link.active {
+            background-color: #d7d7d7;
+            color: black;
+        }
+
+        .nav-item .nav-link:hover {
+            background-color: #d7d7d7;
+            color: black;
+        }
+

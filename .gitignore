@@ -1,0 +1,122 @@
+## ======================================
+## Global / System
+## ======================================
+# Systemowe
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.bak
+*.old
+*.log
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+## ======================================
+## IDE / Editor
+## ======================================
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+## ======================================
+## .NET (dotnet build artifacts)
+## ======================================
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+TestResult*/
+*.coverage
+*.coveragexml
+
+## ======================================
+## NuGet / Paket
+## ======================================
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+packages/
+*.dll
+*.exe
+
+# Paket
+.paket/
+paket-files/
+
+## ======================================
+## Publish / Deployment
+## ======================================
+*.pubxml
+*.pubxml.user
+*.publishproj
+Properties/PublishProfiles/
+*.publishsettings
+*.azurePubxml
+*.azurePubxml.user
+
+## ======================================
+## Config / Secrets
+## ======================================
+# Śledzimy ogólne appsettings.json, ale ignorujemy środowiskowe z hasłami
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+!appsettings.json
+
+# Pliki z tajnymi danymi
+secrets.json
+*.secret.json
+*.secrets.json
+
+## ======================================
+## Blazor (PhotoApp.BlazorClient)
+## ======================================
+# Pliki wynikowe / statyczne
+PhotoApp.BlazorClient/wwwroot/dist/
+PhotoApp.BlazorClient/wwwroot/_framework/
+PhotoApp.BlazorClient/wwwroot/css/
+PhotoApp.BlazorClient/wwwroot/js/
+
+# Node.js
+PhotoApp.BlazorClient/node_modules/
+npm-debug.log
+yarn-error.log
+.eslintcache
+.stylelintcache
+/.angular/cache/
+/dist/
+/out/
+
+## ======================================
+## API (PhotoApp.Api)
+## ======================================
+# Logs / PID files
+*.pid
+*.pid.lock
+*.seed
+
+# Docker
+docker-compose.override.yml
