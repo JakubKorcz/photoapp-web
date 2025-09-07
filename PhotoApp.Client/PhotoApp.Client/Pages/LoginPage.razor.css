@@ -1,0 +1,70 @@
+﻿.login-container {
+    display: flex;
+    height: 100vh; /* na całą wysokość okna */
+}
+
+h1{
+    color : #2e2e2e;
+}
+
+.login-form, .login-image {
+    flex: 1; /* po 50% szerokości */
+}
+
+.login-form {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    background: #d1d0cb; /* jasne tło */
+    display: flex;
+    justify-content: center; /* wyśrodkowanie poziome */
+    align-items: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column; /* układ pionowy */
+    gap: 1.5rem; /* odstęp między elementami */
+    max-width: 400px; /* opcjonalne ograniczenie szerokości formularza */
+    margin: 0 auto; /* wyśrodkowanie formularza */
+}
+
+input[type="text"],
+input[type="password"],
+button[type="submit"] {
+    font-size: 1.5rem; /* większa czcionka */
+    padding: 1rem; /* większe pola */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%; /* zajmuje całą szerokość formularza */
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    background-color: #6E6353;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+    button[type="submit"]:hover {
+        background-color: #8A887E;
+    }
+
+
+.login-image {
+    background-color: #2e2e2e; /* przyciemnienie */
+    position: relative;
+}
+
+@media (max-width: 1199px) {
+    .login-image {
+        display: none;
+    }
+}
+
+
+
+

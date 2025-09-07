@@ -3,10 +3,31 @@
 <PageTitle>Home</PageTitle>
 
 <div style="position: relative; width: 100vw; height: 100vh;">
-    <img src="mainphoto.jpg" alt="Background"
-         style=" padding : 0;width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;" />
+    <div class="video-overlay"></div>
+    <video autoplay muted loop
+           style="padding: 0; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;">
+        <source src="movie-bg.mp4" type="video/mp4">
+        Twoja przeglądarka nie obsługuje wideo.
+    </video>
 
-    <div style="position: relative; z-index: 2;">
+
+    <div class="nav-div">
         <NavMenu />
     </div>
+
+    <div class="container custom-home d-flex justify-content-start align-items-center">
+        <div class="custom-text-section">
+            <h1 class="custom-title">
+                Udostepniaj swoje zdjęcia z chmury
+            </h1>
+            <p class="custom-desc">
+                Dłuższy tekst opisujący naszą konkretną ofertę można tu różne pierdoły opisać, ale generalnie jest do wymyślenia później jak będzie się już tą stronę kończyć pisać
+            </p>
+            <button class="btn btn-light arsenal custom-btn">
+                Dowiedz się więcej
+            </button>
+        </div>
+        <div class="custom-empty"></div>
+    </div>
+
 </div>

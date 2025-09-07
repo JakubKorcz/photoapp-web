@@ -1,12 +1,21 @@
 ﻿<nav class="navbar navbar-expand-lg navbar-light"> <!--- KOLORY PASKA->
     <div class="container d-flex justify-content-center align-items-center">
-        <!-- Logo po lewej -->
+       @*  <!-- Logo po lewej -->
         <div class="d-flex flex-grow-1 justify-content-start">
             <a class="navbar-brand text-light" href="#">LOGO</a>
+        </div> *@
+
+        <div class="nav-first d-flex justify-content-beetwen align-items-center flex-grow-1">
+            <a class="navbar-brand text-light me-3" href="#">LOGO</a>
+            <button class="btn btn-outline-light arsenal login-btn d-md-none">
+                <NavLink class="nav-link text-light" href="login">
+                    <span class="bi bi-list-nested"></span> LOGIN
+                </NavLink>
+            </button>
         </div>
 
         <!-- Menu na środku -->
-        <div class="d-flex justify-content-center flex-grow-1">
+        <div class="nav-second d-flex flex-grow-1">
             <ul class="navbar-nav d-flex flex-row">
                 <li class="nav-item mx-0">
                     <NavLink class="nav-link text-light" href="">
@@ -28,20 +37,12 @@
 
         <!-- Przyciski po prawej -->
         <div class="d-flex flex-grow-1 justify-content-end">
-            <button class="btn btn-outline-light me-2 arsenal">Login</button>
-            <button class="btn btn-outline-light arsenal">Register</button>
+        <button class="btn btn-outline-light arsenal login-btn d-none d-md-block me-2">
+            <NavLink class="nav-link text-light" href="login">
+                <span class="bi bi-list-nested"></span> LOGIN
+            </NavLink>
+        </button>
+            <button class="btn btn-outline-light arsenal register-btn d-none d-md-block">REGISTER</button>
         </div>
     </div>
 </nav>
-
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
