@@ -1,5 +1,5 @@
 ﻿.custom-home {
-    height: 100vh;
+    height: 80vh;
     position: relative;
     z-index: 2;
 }
@@ -7,24 +7,28 @@
 .custom-text-section {
     width: 50%;
     color: white;
+    border : 1px double; /*Ramka do usunięcia*/
 }
 
 .custom-title {
     font-size: 6rem;
     white-space: normal;
     overflow-wrap: break-word;
-    text-align: center;
+    text-align: justify-all;
+    line-height: 5.5rem;
+
 }
 
 .custom-desc {
     font-size: 1.2rem;
     white-space: normal;
     overflow-wrap: break-word;
-    text-align: center;
-    padding: 0 30px;
+    text-align: justify-all;
+    /*padding: 0 30px;*/
 }
 
 .custom-btn {
+    /*margin-left: 30px;*/
     padding: 1rem 3rem;
     font-size: 1.5rem;
 }
@@ -33,15 +37,26 @@
     width: 50%;
 }
 
-.video-overlay {
+.video-overlay-top {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: rgba(46,46,46,0.6); /* 0.6 – poziom zaciemnienia */
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0)); /* gradient od góry do środka */
     z-index: 2;
 }
+
+.video-overlay-down {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0)); /* gradient od góry do środka */
+    z-index: 2;
+}
+
 
 .nav-div {
     position: relative;

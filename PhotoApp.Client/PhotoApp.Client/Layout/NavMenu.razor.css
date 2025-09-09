@@ -9,7 +9,7 @@
 }
 
 .navbar-nav {
-    gap: 10rem; 
+    gap: 12rem; 
 }
 
 .nav-second {
@@ -24,7 +24,7 @@
 /* Dla ekranów mniejszych ni¿ 1200px */
 @media (max-width: 1199px) {
     .navbar-nav {
-        gap: 5rem;
+        gap: 6rem;
     }
 }
 
@@ -48,7 +48,7 @@
     }
 
     .navbar-nav {
-        gap: 2.5rem;
+        gap: 3rem;
     }
 
     .login-btn.d-md-none {
