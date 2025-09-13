@@ -1,18 +1,79 @@
-﻿@page "/login"
+﻿@page "/login-signup"
 
-<div class="login-container">
-    <div class="login-form">
-        <div>
-            <h1>Logowanie</h1>
-            <form>
-                <!-- pola formularza -->
-                <input type="text" placeholder="Login" />
-                <input type="password" placeholder="Hasło" />
-                <button type="submit">Zaloguj się</button>
-            </form>
+<div id="textbox">
+    <div class="toplam">
+        <div class="red-overlay @(isGoingRight ? "move-right" : "") @(isGoingLeft ? "move-left" : "")">
+
+
+        </div>
+        <div class="left">
+            <div id="ic">
+                <h2 class="mov_text  @(isGoingRight ? "move-right delay-1" : "")">Sign Up</h2>
+                <p class="mov_text  @(isGoingRight ? "move-right delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+                <EditForm Model="@userModel" OnValidSubmit="HandleSignUp">
+                    <div class="form-group mov_text @(isGoingRight ? "move-right delay-3" : "")">
+                        <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email"  @bind-Value="userModel.Email" />
+                    </div>
+                    <button type="submit" class="girisbtn mov_text  @(isGoingRight ? "move-right delay-4" : "")">Sign Up</button>
+                </EditForm>
+                <button id="moveright" class="mov_text  @(isGoingRight ? "move-right delay-5" : "")" @onclick="MoveLeft">Login</button>
+            </div>
+        </div>
+        <div class="right">
+            <div id="ic">
+                <h2 class="mov_text  @(isGoingLeft ? "move-left delay-1" : "")">Login</h2>
+                <p class="mov_text  @(isGoingLeft ? "move-left delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+                <EditForm Model="@userModel" OnValidSubmit="HandleLogin">
+                    <div class="form-group mov_text @(isGoingLeft ? "move-left delay-3" : "" )">
+                        <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
+                    </div>
+                    <button type="submit" class="girisbtn mov_text @(isGoingLeft ? "move-left delay-4" : "")" tabindex="100">Login</button>
+                </EditForm>
+                <button id="moveleft" class="mov_text  @(isGoingLeft ? "move-left delay-5" : "")" @onclick="MoveRight">Sign Up</button>
+            </div>
         </div>
     </div>
-
-    <div class="login-image">
-    </div>
 </div>
+
+
+@code {
+    private UserModel userModel = new();
+    bool isGoingRight = false;
+    bool isGoingLeft = false;
+
+    private async Task MoveLeft()
+    {
+        isGoingRight = false;
+        isGoingLeft = false;
+        StateHasChanged();
+        await Task.Delay(50); 
+        isGoingLeft = true; 
+        StateHasChanged();
+    }
+
+    private async Task MoveRight()
+    {
+        isGoingRight = false;
+        isGoingLeft = false;
+        StateHasChanged();
+        await Task.Delay(50); 
+        isGoingRight = true; 
+        StateHasChanged();
+    }
+
+    private void HandleSignUp()
+    {
+        // Logika rejestracji użytkownika tutaj
+    }
+
+    private void HandleLogin()
+    {
+        // Logika logowania użytkownika tutaj
+    }
+
+    public class UserModel
+    {
+        public string Email { get; set; }
+    }
+}
+

@@ -1,70 +1,213 @@
-﻿.login-container {
+﻿/* Kontener główny z flexboxem */
+.toplam {
     display: flex;
-    height: 100vh; /* na całą wysokość okna */
-}
-
-h1{
-    color : #2e2e2e;
-}
-
-.login-form, .login-image {
-    flex: 1; /* po 50% szerokości */
-}
-
-.login-form {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    background: #d1d0cb; /* jasne tło */
-    display: flex;
-    justify-content: center; /* wyśrodkowanie poziome */
-    align-items: center;
-}
-
-form {
-    display: flex;
-    flex-direction: column; /* układ pionowy */
-    gap: 1.5rem; /* odstęp między elementami */
-    max-width: 400px; /* opcjonalne ograniczenie szerokości formularza */
-    margin: 0 auto; /* wyśrodkowanie formularza */
-}
-
-input[type="text"],
-input[type="password"],
-button[type="submit"] {
-    font-size: 1.5rem; /* większa czcionka */
-    padding: 1rem; /* większe pola */
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    width: 100%; /* zajmuje całą szerokość formularza */
+    width: 100vw;
+    height: 100vh; /* Pełna wysokość ekranu */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
-button[type="submit"] {
-    background-color: #6E6353;
-    color: white;
+/* Każda z połówek zajmuje 50% szerokości */
+.left, .right {
+    width: 50%;
+    display: flex;
+    justify-content: center; /* Wycentrowanie poziome zawartości */
+    align-items: center; /* Wycentrowanie pionowe zawartości */
+    padding: 30px 40px;
+    box-sizing: border-box;
+}
+
+/* Lewa strona - logowanie - kontrastująca */
+.left {
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+}
+
+/* Prawa strona - rejestracja - jasnoniebieskie tło */
+.right {
+    background-color: #e6f0ff;
+}
+
+/* Wnętrze kontenera formularza */
+#ic {
+    width: 100%;
+    max-width: 380px;
+}
+
+    /* Nagłówki i paragrafy */
+    #ic h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #222;
+        font-weight: 700;
+    }
+
+    #ic p {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 1.8rem;
+        line-height: 1.4;
+    }
+
+/* Grupowanie pól formularza */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+/* Style InputText */
+.bp-suggestions.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1.8px solid #b0b7c3;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    font-weight: 500;
+}
+
+    .bp-suggestions.form-control:focus {
+        outline: none;
+        border-color: #3a78f0;
+        box-shadow: 0 0 8px rgba(58, 120, 240, 0.4);
+    }
+
+/* Przycisk przesyłania */
+.girisbtn {
+    width: 100%;
+    padding: 12px 0;
+    background-color: #3a78f0;
     border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-weight: bold;
     transition: background-color 0.3s ease;
+    margin-top: 0.6rem;
 }
 
-    button[type="submit"]:hover {
-        background-color: #8A887E;
+    .girisbtn:hover {
+        background-color: #2c61c6;
     }
 
-
-.login-image {
-    background-color: #2e2e2e; /* przyciemnienie */
-    position: relative;
+/* Przycisk dodatkowy (przełącznik formularza) */
+#moveright, #moveleft {
+    margin-top: 18px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #3a78f0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
 }
 
-@media (max-width: 1199px) {
-    .login-image {
-        display: none;
+    #moveright:hover, #moveleft:hover {
+        color: #1e41a5;
+        text-decoration: underline;
+    }
+
+.red-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 1);
+    z-index: 20;
+    transition: transform 0.5s ease;
+}
+
+/* ANIMACJE */
+
+.red-overlay.move-right {
+    transform: translateX(100%);
+}
+
+.red-overlay.move-left {
+    transform: translateX(0%);
+}
+
+@keyframes slideFromLeftToLeftHalf {
+    from {
+        transform: translateX(-300%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 
+@keyframes slideFromRightToRightHalf {
+    from {
+        transform: translateX(300%);
+    }
 
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
+.mov_text.move-right {
+    animation: slideFromLeftToLeftHalf 1s ease forwards;
+}
 
+.mov_text.move-left {
+    animation: slideFromRightToRightHalf 1s ease forwards;
+}
+
+.move-right.delay1 {
+    opacity: 0;
+}
+
+.move-right.delay-2 {
+    opacity: 0;
+    animation-delay: 0.2s;
+}
+
+.move-right.delay-3 {
+    opacity: 0;
+    animation-delay: 0.4s;
+}
+
+.move-right.delay-4 {
+    opacity: 0;
+    animation-delay: 0.6s;
+}
+
+.move-right.delay-5 {
+    opacity: 0;
+    animation-delay: 0.8s;
+}
+
+.move-left.delay1 {
+    opacity: 0;
+}
+
+.move-left.delay-2 {
+    opacity: 0;
+    animation-delay: 0.2s;
+}
+
+.move-left.delay-3 {
+    opacity: 0;
+    animation-delay: 0.4s;
+}
+
+.move-left.delay-4 {
+    opacity: 0;
+    animation-delay: 0.6s;
+}
+
+.move-left.delay-5 {
+    opacity: 0;
+    animation-delay: 0.8s;
+}
+    
