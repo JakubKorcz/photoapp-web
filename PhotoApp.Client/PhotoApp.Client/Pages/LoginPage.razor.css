@@ -120,10 +120,59 @@
     height: 100%;
     background-color: rgba(255, 0, 0, 1);
     z-index: 20;
-    transition: transform 0.5s ease;
+    transition: transform 1s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* ANIMACJE */
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes disappear {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.image {
+    width: 500px;
+    height: 500px;
+    opacity: 0;
+    display : none;
+}
+
+    .image.appear {
+        animation: appear 1s ease forwards;
+        opacity:1;
+    }
+
+    .image.disappear {
+        animation: disappear 1s ease forwards;
+        opacity: 0;
+    }
+
+    .image.hidden {
+        display: none;
+    }
+
+    .image.show {
+        display: block;
+
+    }
 
 .red-overlay.move-right {
     transform: translateX(100%);
@@ -144,6 +193,17 @@
     }
 }
 
+@keyframes loginbtn_slideFromLeftToLeftHalf {
+    from {
+        transform: translateX(-1000%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 @keyframes slideFromRightToRightHalf {
     from {
         transform: translateX(300%);
@@ -155,6 +215,66 @@
     }
 }
 
+@keyframes loginbtn_slideFromRightToRightHalf {
+    from {
+        transform: translateX(1000%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+@keyframes slideFromLeftHalfToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-300%);
+        opacity: 0;
+    }
+}
+
+@keyframes loginbtn_slideFromLeftHalfToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-2500%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideFromRightHalfToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(300%);
+        opacity: 0;
+    }
+}
+
+@keyframes loginbtn_slideFromRightHalfToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(2500%);
+        opacity: 0;
+    }
+}
+
 .mov_text.move-right {
     animation: slideFromLeftToLeftHalf 1s ease forwards;
 }
@@ -163,28 +283,52 @@
     animation: slideFromRightToRightHalf 1s ease forwards;
 }
 
+.mov_text.move-out-right {
+    animation: slideFromRightHalfToRight 1s ease forwards;
+}
+
+.mov_text.move-out-left {
+    animation: slideFromLeftHalfToLeft 1s ease forwards;
+}
+
+.mov_btn.move-right {
+    animation: loginbtn_slideFromLeftToLeftHalf 1s ease forwards;
+}
+
+.mov_btn.move-left {
+    animation: loginbtn_slideFromRightToRightHalf 1s ease forwards;
+}
+
+.mov_btn.move-out-right {
+    animation: loginbtn_slideFromRightHalfToRight 1s ease forwards;
+}
+
+.mov_btn.move-out-left {
+    animation: loginbtn_slideFromLeftHalfToLeft 1s ease forwards;
+}
+
 .move-right.delay1 {
     opacity: 0;
 }
 
 .move-right.delay-2 {
     opacity: 0;
-    animation-delay: 0.2s;
+    animation-delay: 0.05s;
 }
 
 .move-right.delay-3 {
     opacity: 0;
-    animation-delay: 0.4s;
+    animation-delay: 0.1s;
 }
 
 .move-right.delay-4 {
     opacity: 0;
-    animation-delay: 0.6s;
+    animation-delay: 0.15s;
 }
 
 .move-right.delay-5 {
     opacity: 0;
-    animation-delay: 0.8s;
+    animation-delay: 0.32s;
 }
 
 .move-left.delay1 {
@@ -193,21 +337,21 @@
 
 .move-left.delay-2 {
     opacity: 0;
-    animation-delay: 0.2s;
+    animation-delay: 0.05s;
 }
 
 .move-left.delay-3 {
     opacity: 0;
-    animation-delay: 0.4s;
+    animation-delay: 0.1s;
 }
 
 .move-left.delay-4 {
     opacity: 0;
-    animation-delay: 0.6s;
+    animation-delay: 0.15s;
 }
 
 .move-left.delay-5 {
     opacity: 0;
-    animation-delay: 0.8s;
+    animation-delay: 0.32s;
 }
     

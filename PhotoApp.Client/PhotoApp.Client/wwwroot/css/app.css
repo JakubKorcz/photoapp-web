@@ -1,5 +1,5 @@
 html, body {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-weight: 400;
     font-style: normal;
     margin: 0;
@@ -19,6 +19,7 @@ img {
     padding: 0;
     height: 100%;
 }
+
 p {
     font-family: "Arsenal", sans-serif;
     font-weight: 400;
@@ -26,18 +27,18 @@ p {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
 
-.bebas {
-    font-family: "Bebas Neue", sans-serif;
+.main-font {
+    font-family: "Montserrat", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
 
-.arsenal {
+.second-font {
     font-family: "Arsenal", sans-serif;
     font-weight: 400;
     font-style: normal;
