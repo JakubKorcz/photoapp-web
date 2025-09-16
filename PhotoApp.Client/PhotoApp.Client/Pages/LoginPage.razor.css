@@ -1,10 +1,18 @@
-﻿/* Kontener główny z flexboxem */
+﻿/*
+    KOLORy STRONY
+    #e4e3e5 - jasny
+    #c6c6c6 - jasny soft
+    #8a887e - sredni
+    #524f4d - ciemny soft
+    #2e2e2e - ciemny
+*/
+
+/* Kontener główny z flexboxem */
 .toplam {
     display: flex;
     width: 100vw;
     height: 100vh; /* Pełna wysokość ekranu */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -22,13 +30,12 @@
 
 /* Lewa strona - logowanie - kontrastująca */
 .left {
-    background-color: #ffffff;
-    border-right: 1px solid #ddd;
+    background-color: #2e2e2e;
 }
 
 /* Prawa strona - rejestracja - jasnoniebieskie tło */
 .right {
-    background-color: #e6f0ff;
+    background-color: #e4e3e5;
 }
 
 /* Wnętrze kontenera formularza */
@@ -41,15 +48,21 @@
     #ic h2 {
         font-size: 2rem;
         margin-bottom: 0.5rem;
-        color: #222;
         font-weight: 700;
     }
 
     #ic p {
         font-size: 0.95rem;
-        color: #666;
         margin-bottom: 1.8rem;
         line-height: 1.4;
+    }
+
+    #ic h2.header_signup {
+        color: white;
+    }
+
+    #ic p.text_signup {
+        color: white;
     }
 
 /* Grupowanie pól formularza */
@@ -63,7 +76,7 @@
     padding: 10px 14px;
     font-size: 1rem;
     border-radius: 5px;
-    border: 1.8px solid #b0b7c3;
+    border: 1.8px solid black;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
     font-weight: 500;
@@ -71,18 +84,16 @@
 
     .bp-suggestions.form-control:focus {
         outline: none;
-        border-color: #3a78f0;
-        box-shadow: 0 0 8px rgba(58, 120, 240, 0.4);
+        border-color: black;
+        box-shadow: 0 0 8px black;
     }
 
 /* Przycisk przesyłania */
 .girisbtn {
     width: 100%;
-    padding: 12px 0;
-    background-color: #3a78f0;
+    padding: 12px 0; 
     border: none;
     border-radius: 5px;
-    color: #fff;
     font-weight: 600;
     font-size: 1.1rem;
     cursor: pointer;
@@ -90,9 +101,23 @@
     margin-top: 0.6rem;
 }
 
-    .girisbtn:hover {
-        background-color: #2c61c6;
-    }
+girisbtn.signup_btn {
+    color: black;
+    background-color: #e4e3e5;
+}
+
+.girisbtn.signup_btn:hover {
+    background-color: #c6c6c6;
+}
+
+.girisbtn.login_btn {
+    color: white;
+    background-color: #2e2e2e;
+}
+
+.girisbtn.login_btn:hover {
+    background-color: #524f4d;
+}
 
 /* Przycisk dodatkowy (przełącznik formularza) */
 #moveright, #moveleft {
@@ -100,17 +125,23 @@
     background: none;
     border: none;
     font-size: 1rem;
-    color: #3a78f0;
     font-weight: 600;
     cursor: pointer;
     transition: color 0.3s ease;
     padding: 0;
 }
 
-    #moveright:hover, #moveleft:hover {
-        color: #1e41a5;
-        text-decoration: underline;
-    }
+#moveright {
+    color: white;
+}
+
+#moveleft{
+    color: black;
+}
+
+#moveright:hover, #moveleft:hover {
+    text-decoration: underline;
+}
 
 .red-overlay {
     position: absolute;
@@ -118,7 +149,7 @@
     left: 0;
     width: 50%;
     height: 100%;
-    background-color: rgba(255, 0, 0, 1);
+    background-color: #2e2e2e;
     z-index: 20;
     transition: transform 1s ease;
     display: flex;

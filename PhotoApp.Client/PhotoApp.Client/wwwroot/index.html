@@ -43,12 +43,44 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
+        console.log('Script loaded');
         function scrollToElement(id) {
+            console.log('Script scrolled to elemnet');
             var element = document.getElementById(id);
             if (element) {
                 element.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         }
+
+        window.addScrollListener = function (dotNetObjRef) {
+            document.body.addEventListener('scroll', () => {
+                console.log('Script scrolled');
+                let sections = document.querySelectorAll('section');
+                let scrollPos = document.body.scrollTop /*|| document.body.pageYOffset*/;
+                console.log("Scroll event fired, scrollPos:", document.body.scrollTop /*|| document.body.pageYOffset*/);
+
+                let currentSectionId = null;
+                sections.forEach(sec => {
+                    let top = sec.offsetTop;
+                    let height = sec.offsetHeight;
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        currentSectionId = sec.id;
+                    }
+                });
+                console.log("currentSectionId:", currentSectionId)
+                if (currentSectionId) {
+                    dotNetObjRef.invokeMethodAsync('UpdateCurrentSection', currentSectionId);
+                }
+            });
+        };
+
+        //window.addScrollListener = function () {
+        //    console.log("scroll listener registered");
+        //    document.body.addEventListener('scroll', () => {
+        //        console.log("scroll event detected");
+        //        console.log("Scroll event fired, scrollPos:", document.body.scrollTop || document.body.pageYOffset);
+        //    });
+        //};
     </script>
 </body>
 

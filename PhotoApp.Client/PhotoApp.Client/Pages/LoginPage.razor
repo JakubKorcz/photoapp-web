@@ -12,26 +12,26 @@
         </div>
         <div class="left">
             <div id="ic">
-                <h2 class="mov_text  @(isGoingRight ? "move-right delay-1" : "") @(isGoingLeft ? "move-out-left delay-1" : "") ">Sign Up</h2>
-                <p class="mov_text  @(isGoingRight ? "move-right delay-2" : "") @(isGoingLeft ? "move-out-left delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+                <h2 class="header_signup mov_text  @(isGoingRight ? "move-right delay-1" : "") @(isGoingLeft ? "move-out-left delay-1" : "") ">Sign Up</h2>
+                <p class="text_signup mov_text  @(isGoingRight ? "move-right delay-2" : "") @(isGoingLeft ? "move-out-left delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
                 <EditForm Model="@userModel" OnValidSubmit="HandleSignUp">
                     <div class="form-group mov_text @(isGoingRight ? "move-right delay-3" : "") @(isGoingLeft ? "move-out-left delay-3" : "")">
                         <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email"  @bind-Value="userModel.Email" />
                     </div>
-                    <button type="submit" class="girisbtn mov_text  @(isGoingRight ? "move-right delay-4" : "") @(isGoingLeft ? "move-out-left delay-4" : "")">Sign Up</button>
+                    <button type="submit" class="girisbtn signup_btn mov_text  @(isGoingRight ? "move-right delay-4" : "") @(isGoingLeft ? "move-out-left delay-4" : "")">Sign Up</button>
                 </EditForm>
                 <button id="moveright" class="mov_btn  @(isGoingRight ? "move-right delay-5" : "") @(isGoingLeft ? "move-out-left delay-5" : "")" @onclick="MoveLeft">Login</button>
             </div>
         </div>
         <div class="right">
             <div id="ic">
-                <h2 class="mov_text  @(isGoingLeft ? "move-left delay-1" : "") @(isGoingRight ? "move-out-right delay-1" : "")">Login</h2>
-                <p class="mov_text  @(isGoingLeft ? "move-left delay-2" : "") @(isGoingRight ? "move-out-right delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+                <h2 class="header_login mov_text  @(isGoingLeft ? "move-left delay-1" : "") @(isGoingRight ? "move-out-right delay-1" : "")">Login</h2>
+                <p class="text_login mov_text  @(isGoingLeft ? "move-left delay-2" : "") @(isGoingRight ? "move-out-right delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
                 <EditForm Model="@userModel" OnValidSubmit="HandleLogin">
                     <div class="form-group mov_text @(isGoingLeft ? "move-left delay-3" : "") @(isGoingRight ? "move-out-right delay-3" : "")">
                         <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
                     </div>
-                    <button type="submit" class="girisbtn mov_text @(isGoingLeft ? "move-left delay-4" : "") @(isGoingRight ? "move-out-right delay-4" : "")" tabindex="100">Login</button>
+                    <button type="submit" class="girisbtn login_btn mov_text @(isGoingLeft ? "move-left delay-4" : "") @(isGoingRight ? "move-out-right delay-4" : "")" tabindex="100">Login</button>
                 </EditForm>
                 <button id="moveleft" class="mov_btn  @(isGoingLeft ? "move-left delay-5" : "") @(isGoingRight ? "move-out-right delay-5" : "")" @onclick="MoveRight">Sign Up</button>
             </div>
