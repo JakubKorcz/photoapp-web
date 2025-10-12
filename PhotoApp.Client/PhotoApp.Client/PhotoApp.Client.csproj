@@ -22,4 +22,8 @@
     <Folder Include="wwwroot\jpg\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\AuthStyles.css" />
+  </ItemGroup>
+
 </Project>

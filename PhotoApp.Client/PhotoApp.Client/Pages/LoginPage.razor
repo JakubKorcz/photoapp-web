@@ -4,48 +4,43 @@
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
 
-<div id="textbox">
-    <div class="toplam">
-        <div class="red-overlay @(isGoingRight ? "move-right" : "") @(isGoingLeft ? "move-left" : "") @(startPosition == 1 ? "move-right" : "")">
-            <img class="image @(isImageLoginDisappearing ? "disappear" : "appear") @(isImageLoginVisible ? "show" : "hidden")" src="jpg/skunks.jpg" alt="Skunks-login-image" />
-            <img class="image @(isImageSignUpDisappearing ? "disappear" : "appear") @(isImageSignUpVisible ? "show" : "hidden")" src="jpg/swinia.jpg" alt="swinia-signup-image" />
-        </div>
-        <div class="left">
-            <div id="ic">
-                <h2 class="header_signup mov_text  @(isGoingRight ? "move-right delay-1" : "") @(isGoingLeft ? "move-out-left delay-1" : "") ">Sign Up</h2>
-                <p class="text_signup mov_text  @(isGoingRight ? "move-right delay-2" : "") @(isGoingLeft ? "move-out-left delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
-                <EditForm Model="@userModel" OnValidSubmit="HandleSignUp">
-                    <div class="form-group mov_text @(isGoingRight ? "move-right delay-3" : "") @(isGoingLeft ? "move-out-left delay-3" : "")">
-                        <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email"  @bind-Value="userModel.Email" />
-                    </div>
-                    <button type="submit" class="girisbtn signup_btn mov_text  @(isGoingRight ? "move-right delay-4" : "") @(isGoingLeft ? "move-out-left delay-4" : "")">Sign Up</button>
-                </EditForm>
-                <button id="moveright" class="mov_btn  @(isGoingRight ? "move-right delay-5" : "") @(isGoingLeft ? "move-out-left delay-5" : "")" @onclick="MoveLeft">Login</button>
-            </div>
-        </div>
-        <div class="right">
-            <div id="ic">
-                <h2 class="header_login mov_text  @(isGoingLeft ? "move-left delay-1" : "") @(isGoingRight ? "move-out-right delay-1" : "")">Login</h2>
-                <p class="text_login mov_text  @(isGoingLeft ? "move-left delay-2" : "") @(isGoingRight ? "move-out-right delay-2" : "")">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
-                <EditForm Model="@userModel" OnValidSubmit="HandleLogin">
-                    <div class="form-group mov_text @(isGoingLeft ? "move-left delay-3" : "") @(isGoingRight ? "move-out-right delay-3" : "")">
-                        <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
-                    </div>
-                    <button type="submit" class="girisbtn login_btn mov_text @(isGoingLeft ? "move-left delay-4" : "") @(isGoingRight ? "move-out-right delay-4" : "")" tabindex="100">Login</button>
-                </EditForm>
-                <button id="moveleft" class="mov_btn  @(isGoingLeft ? "move-left delay-5" : "") @(isGoingRight ? "move-out-right delay-5" : "")" @onclick="MoveRight">Sign Up</button>
-            </div>
-        </div>
+<div class="toplam">
+    <div class="red-overlay @(isGoingRight ? "move-right" : "") @(isGoingLeft ? "move-left" : "") @(startPosition == 1 ? "move-right" : "")">
+        <img class="image @(isImageLoginDisappearing ? "disappear" : "appear") @(isImageLoginVisible ? "show" : "hidden")" src="jpg/skunks.jpg" alt="Skunks-login-image" />
+        <img class="image @(isImageSignUpDisappearing ? "disappear" : "appear") @(isImageSignUpVisible ? "show" : "hidden")" src="jpg/swinia.jpg" alt="swinia-signup-image" />
+    </div>
+
+    <div class="left">
+        @if (currentView == View.SignUp)
+        {
+            <SignUpComponent OnSwitchToLogin="MoveLeft" />
+        }
+        else
+        {
+            <SignUpComponent Hidden="true" />
+        }   
+    </div>
+
+    <div class="right">
+        @if (currentView == View.Login)
+        {
+            <LoginComponent OnSwitchToSignUp="MoveRight" />
+        }
+        else
+        {
+            <LoginComponent Hidden="true" />
+        }
     </div>
 </div>
 
-
 @code {
-    private string currentPath;
-    private UserModel userModel = new();
-    bool isGoingRight;
-    bool isGoingLeft;
-    int startPosition; //0 nothing | 1 signup | 2 login
+    private enum View { None, SignUp, Login }
+
+    private View currentView;
+    private bool isGoingRight;
+    private bool isGoingLeft;
+    private int startPosition; // 1 = signup, 2 = login
+
     private bool isImageLoginVisible;
     private bool isImageLoginDisappearing;
     private bool isImageSignUpVisible;
@@ -53,9 +48,10 @@
 
     protected override void OnInitialized()
     {
-        currentPath = NavManager.Uri; // pełny URL
-        if (currentPath.Contains("login"))
+        var uri = NavManager.Uri;
+        if (uri.Contains("login"))
         {
+            currentView = View.Login;
             startPosition = 2;
             isImageLoginVisible = true;
             isImageSignUpVisible = false;
@@ -64,6 +60,7 @@
         }
         else
         {
+            currentView = View.SignUp;
             startPosition = 1;
             isImageLoginVisible = false;
             isImageSignUpVisible = true;
@@ -74,55 +71,37 @@
 
     private async Task MoveLeft()
     {
-        startPosition = 0;  // forget about start position
+        startPosition = 0;
         isImageSignUpDisappearing = true;
         isGoingRight = false;
         isGoingLeft = false;
         StateHasChanged();
-        await Task.Delay(50); 
-        isGoingLeft = true; 
-        StateHasChanged(); 
+        await Task.Delay(50);
+        isGoingLeft = true;
+        StateHasChanged();
         await Task.Delay(500);
         isImageSignUpVisible = false;
-        StateHasChanged();
         isImageLoginDisappearing = false;
-        // await Task.Delay(500);
+        currentView = View.Login;
         isImageLoginVisible = true;
         StateHasChanged();
     }
 
     private async Task MoveRight()
     {
-        startPosition = 0; // forget about start position
+        startPosition = 0;
         isImageLoginDisappearing = true;
         isGoingRight = false;
         isGoingLeft = false;
         StateHasChanged();
-        await Task.Delay(50); 
-        isGoingRight = true; 
+        await Task.Delay(50);
+        isGoingRight = true;
         StateHasChanged();
         await Task.Delay(500);
         isImageLoginVisible = false;
-        StateHasChanged();
         isImageSignUpDisappearing = false;
-        // await Task.Delay(500);
+        currentView = View.SignUp;
         isImageSignUpVisible = true;
         StateHasChanged();
     }
-
-    private void HandleSignUp()
-    {
-        // Logika rejestracji użytkownika tutaj
-    }
-
-    private void HandleLogin()
-    {
-        // Logika logowania użytkownika tutaj
-    }
-
-    public class UserModel
-    {
-        public string Email { get; set; }
-    }
 }
-

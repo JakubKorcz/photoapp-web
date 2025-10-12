@@ -1,15 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PhotoApp.Api.Objects;
+using PhotoApp.Api.DbObjects;
 
 namespace PhotoApp.Api
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Database=postgres;Username=postgres;Password=dupa123");
+        }
+        public DbSet<User> Users { get; set; }
+      
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿@using PhotoApp.Client.Models
+@if (!Hidden)
+{
+    <div id="ic">
+        <h2 class="header_signup mov_text">@("Sign Up")</h2>
+        <p class="text_signup mov_text">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+        <EditForm Model="@userModel" OnValidSubmit="HandleSignUp">
+            <div class="form-group mov_text">
+                <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
+            </div>
+            <button type="submit" class="girisbtn auth_btn mov_text">Sign Up</button>
+        </EditForm>
+        <button id="moveright" class="mov_btn" @onclick="SwitchToLogin">Login</button>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnSwitchToLogin { get; set; }
+    [Parameter] public bool Hidden { get; set; }
+
+    private UserModel userModel = new();
+
+    private void HandleSignUp()
+    {
+        // Rejestracja
+    }
+
+    private async Task SwitchToLogin()
+    {
+        if (OnSwitchToLogin.HasDelegate)
+        {
+            await OnSwitchToLogin.InvokeAsync(null);
+        }
+    }
+}

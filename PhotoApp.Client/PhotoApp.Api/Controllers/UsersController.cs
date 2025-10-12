@@ -1,33 +1,96 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using PhotoApp.Api.Objects;
-using RegisterRequest = PhotoApp.Api.Objects.RegisterRequest;
+﻿using Microsoft.AspNetCore.Mvc;
+using PhotoApp.Api.DbObjects;
+using PhotoApp.Api.Mailer;
 
 namespace PhotoApp.Api.Controllers
 {
     [ApiController]
     [Route("users")]
-    public class UsersController : ControllerBase
+    public class UsersController(IConfiguration configuration, AppDbContext context) : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly AppDbContext _dbContext = context;
 
-        public UsersController(ILogger<UsersController> logger)
-        {
-            _logger = logger;
-        }
-
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterRequest request)
+        [HttpPost("register/{username}")]
+        public IActionResult RegisterRequest([FromRoute] string username)
         {
             try
             {
-                using (var dbContext = new AppDbContext())
+                var generatedCode = new CodeGenerator().Generate();
+                var mailer = new Mailer.Mailer(_configuration); 
+                mailer.SendRegisterMail(username, "Daryna", generatedCode);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("register/{username}/{code}")]
+        public IActionResult RegisterVerify([FromRoute] string username, [FromRoute] string code)
+        {
+            //TODO NALEZY JESZCZE DOKLADNIE PRZEMYSLEC
+            try
+            {
+                if (!Mailer.Mailer.IsValidEmail(username))
                 {
-                    var user = new User { Id = Guid.NewGuid(), Email = request.Username, Password = request.Password };
-                    dbContext.Users.Add(user);              
-                    dbContext.SaveChanges();
+                    throw new Exception("This value is not a proper email!");
+                }
+                var user = new User { Id = Guid.NewGuid(), Username = username };
+                _dbContext.Users.Add(user);              
+                _dbContext.SaveChanges();
+               
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("login/{username}")]
+        public IActionResult LoginRequest([FromRoute] string username)
+        {
+            try
+            {
+                var generatedCode = new CodeGenerator().Generate();
+                var mailer = new Mailer.Mailer(_configuration);
+                mailer.SendLoginMail(username, "Daryna", generatedCode);
+                var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
+                if (user is not null)
+                {
+                    user.LoginCode = generatedCode;
+                    user.CodeExpiration = DateTime.UtcNow.AddMinutes(10);
+                    _dbContext.SaveChanges();
                 }
                 return Ok();
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("login/{username}/{code}")]
+        public IActionResult LoginVerify([FromRoute] string username, [FromRoute]string code)
+        {
+            try
+            {
+                var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
+                if (user is null)
+                {
+                    return BadRequest();
+                }
+                if (user.LoginCode == int.Parse(code) && user.CodeExpiration >= DateTime.UtcNow)
+                {
+                    return Ok();
+                }
+                return Unauthorized(); 
             }
             catch (Exception ex)
             {
@@ -42,6 +105,5 @@ namespace PhotoApp.Api.Controllers
         {
             return Ok();
         }
-
     }
 }

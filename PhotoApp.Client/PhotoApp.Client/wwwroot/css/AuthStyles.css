@@ -30,7 +30,7 @@
 
 /* Lewa strona - logowanie - kontrastująca */
 .left {
-    background-color: #2e2e2e;
+    background-color: #e4e3e5;
 }
 
 /* Prawa strona - rejestracja - jasnoniebieskie tło */
@@ -55,14 +55,6 @@
         font-size: 0.95rem;
         margin-bottom: 1.8rem;
         line-height: 1.4;
-    }
-
-    #ic h2.header_signup {
-        color: white;
-    }
-
-    #ic p.text_signup {
-        color: white;
     }
 
 /* Grupowanie pól formularza */
@@ -101,23 +93,15 @@
     margin-top: 0.6rem;
 }
 
-girisbtn.signup_btn {
-    color: black;
-    background-color: #e4e3e5;
-}
 
-.girisbtn.signup_btn:hover {
-    background-color: #c6c6c6;
-}
-
-.girisbtn.login_btn {
+.girisbtn.auth_btn {
     color: white;
     background-color: #2e2e2e;
 }
 
-.girisbtn.login_btn:hover {
-    background-color: #524f4d;
-}
+    .girisbtn.auth_btn:hover {
+        background-color: #524f4d;
+    }
 
 /* Przycisk dodatkowy (przełącznik formularza) */
 #moveright, #moveleft {
@@ -132,7 +116,7 @@ girisbtn.signup_btn {
 }
 
 #moveright {
-    color: white;
+    color: black;
 }
 
 #moveleft{
@@ -213,7 +197,7 @@ girisbtn.signup_btn {
     transform: translateX(0%);
 }
 
-@keyframes slideFromLeftToLeftHalf {
+/*@keyframes slideFromLeftToLeftHalf {
     from {
         transform: translateX(-300%);
     }
@@ -336,9 +320,9 @@ girisbtn.signup_btn {
 
 .mov_btn.move-out-left {
     animation: loginbtn_slideFromLeftHalfToLeft 1s ease forwards;
-}
+}*/
 
-.move-right.delay1 {
+/*.move-right.delay1 {
     opacity: 0;
 }
 
@@ -384,5 +368,5 @@ girisbtn.signup_btn {
 .move-left.delay-5 {
     opacity: 0;
     animation-delay: 0.32s;
-}
+}*/
     
