@@ -26,4 +26,8 @@
     <None Include="wwwroot\css\AuthStyles.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoApp.Common\PhotoApp.Common.csproj" />
+  </ItemGroup>
+
 </Project>

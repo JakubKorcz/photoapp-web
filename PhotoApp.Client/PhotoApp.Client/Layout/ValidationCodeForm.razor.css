@@ -1,0 +1,27 @@
+﻿.code-box {
+    width: 50px;
+    height: 60px;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    caret-color: #fff;
+}
+
+    .code-box:focus {
+        border-color: #888;
+        box-shadow: 0 0 0 3px rgba(200, 200, 200, 0.2);
+        background-color: #2a2a2a;
+    }
+
+.six-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
