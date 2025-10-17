@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Mailer;
+using PhotoApp.Common.Models;
 
 namespace PhotoApp.Api.Controllers
 {
@@ -52,7 +53,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login/{username}")]
-        public IActionResult LoginRequest([FromRoute] string username)
+        public ActionResult<ServerAuthResponse> LoginRequest([FromRoute] string username)
         {
             try
             {
@@ -66,8 +67,15 @@ namespace PhotoApp.Api.Controllers
                     user.CodeExpiration = DateTime.UtcNow.AddMinutes(10);
                     _dbContext.SaveChanges();
                 }
-                return Ok();
-                
+                var response = new ServerAuthResponse
+                {
+                    Token = Guid.NewGuid().ToString(),
+                    Message = "Login code sent",
+                    Success = true
+                };
+
+                return Ok(response);
+
             }
             catch (Exception ex)
             {

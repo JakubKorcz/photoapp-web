@@ -15,15 +15,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazorClient",
-        policy =>
-        {
-            policy.WithOrigins("https://localhost:7197")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()   
+              .AllowAnyHeader()   
+              .AllowAnyMethod();   
+    });
 });
-
 
 var app = builder.Build();
 
@@ -33,8 +31,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// Add this to Configure method (before app.UseRouting)
-app.UseCors("AllowBlazorClient");
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

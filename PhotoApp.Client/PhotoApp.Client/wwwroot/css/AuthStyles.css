@@ -67,7 +67,7 @@
     width: 100%;
     padding: 10px 14px;
     font-size: 2rem;
-    border-radius: 5px;
+    border-radius: 20px;
     border: 1.8px solid black;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
@@ -85,7 +85,7 @@
     width: 100%;
     padding: 12px 0; 
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     font-weight: 600;
     font-size: 2rem;
     cursor: pointer;
@@ -368,5 +368,33 @@
 .move-left.delay-5 {
     opacity: 0;
     animation-delay: 0.32s;
+}*/
+
+@media (max-width: 1200px) {
+    .red-overlay {
+        display: none !important;
+    }
+
+    .left {
+        display: none !important;
+    }
+
+    .right {
+        width:100%;
+    }
+}
+
+/*@media (max-width: 1200px) {
+    .red-overlay {
+        display: none !important;
+    }
+
+    .right {
+        display: none !important;
+    }
+
+    .left {
+        width: 100%;
+    }
 }*/
     

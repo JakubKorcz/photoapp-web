@@ -11,7 +11,7 @@
                 <div class="form-group mov_text">
                     <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
                 </div>
-                <button type="submit" class="girisbtn auth_btn mov_text" tabindex="100" onclick="@SwitchToCode">Login</button>
+                <button type="submit" class="girisbtn auth_btn mov_text" tabindex="100">Login</button>
             </EditForm>
         }
         else
@@ -37,13 +37,9 @@
 
     // private ElementReference[] inputsRefs = new ElementReference[6];
 
-    private void SwitchToCode()
-    {
-        IsSixBoxesMode = true;
-    }
-
     private async void HandleLogin()
     {
+        IsSixBoxesMode = true;
         try
         {
             using (var conn = new ApiConnection())

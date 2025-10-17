@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@validationCode" OnValidSubmit="HandleCodeWrite">
-    <div class="six-boxes mov_text" style="display:flex; gap:5px;">
+    <div class="six-boxes mov_text">
         @for (int i = 0; i < 6; i++)
         {
             var index = i;
@@ -15,7 +15,7 @@
                    @ref="@inputRefs[index]"/>
         }
     </div>
-    <button class="girisbtn auth_btn mov_text" tabindex="101" @onclick="SubmitCode">Submit Code</button>
+    <button class="girisbtn auth_btn mov_text" tabindex="101">Submit Code</button>
 </EditForm>
 
 @code {
@@ -28,9 +28,32 @@
     private string? lastKey;
 
 
-    private void HandleCodeWrite()
+    private async void HandleCodeWrite()
     {
+        var code = string.Join("", codeDigits);
+        using (var conn = new ApiConnection())
+        {
+            ServerAuthResponse res;
+            if (IsLogin)
+            {
+                res = await conn.LoginVerify(User.Email, code);
+            }
+            else
+            {
+                res = await conn.RegisterVerify(User.Email, code);
+            }
 
+            Console.WriteLine(res.Message.ToString());
+            if (res.Success)
+            {
+                //Zapisz kod do cookies ???
+                NavigationManager.NavigateTo("/main");
+            }
+            else
+            {
+                //rzuc bledem i zreloaduj strone
+            }
+        }
     }
 
     private async void OnDigitInput(int index, ChangeEventArgs e)
@@ -82,33 +105,6 @@
             && !e.CtrlKey && !e.AltKey && !e.MetaKey)
         {
             codeDigits[index] = "";
-        }
-    }
-
-    private async void SubmitCode()
-    {
-        var code = string.Join("", codeDigits);
-        using (var conn = new ApiConnection())
-        {
-            ServerAuthResponse res;
-            if (IsLogin)
-            {
-                res = await conn.LoginVerify(User.Email, code);
-            }
-            else
-            {
-                res = await conn.RegisterVerify(User.Email, code);
-            }
-
-            if (res.Success)
-            {
-                //Zapisz kod do cookies ???
-                NavigationManager.NavigateTo("/main");
-            }
-            else
-            {
-                //rzuc bledem i zreloaduj strone
-            }
         }
     }
 }
