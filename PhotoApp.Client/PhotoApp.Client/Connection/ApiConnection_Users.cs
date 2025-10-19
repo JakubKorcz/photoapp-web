@@ -25,10 +25,25 @@ namespace PhotoApp.Client.Connection
 
         private async Task<ServerAuthResponse> SendPostRequestWithoutData(string url)
         {
-            using var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync(url, null);
+            var response = await _httpClient.PostAsync(url, null);
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ServerAuthResponse>(json)!;
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var obj = JsonSerializer.Deserialize<ServerAuthResponse>(json, options);
+            if (obj != null)
+            {
+                return obj;
+            }
+            else { 
+                return new ServerAuthResponse() { 
+                    Message = "Odczytany obiekt jest pusty",
+                    Success = false
+                };
+            }
         }
     }
 }

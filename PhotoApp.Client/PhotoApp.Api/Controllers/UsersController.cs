@@ -85,7 +85,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login/{username}/{code}")]
-        public IActionResult LoginVerify([FromRoute] string username, [FromRoute]string code)
+        public ActionResult<ServerAuthResponse> LoginVerify([FromRoute] string username, [FromRoute]string code)
         {
             try
             {
@@ -96,7 +96,13 @@ namespace PhotoApp.Api.Controllers
                 }
                 if (user.LoginCode == int.Parse(code) && user.CodeExpiration >= DateTime.UtcNow)
                 {
-                    return Ok();
+                    var response = new ServerAuthResponse()
+                    {
+                        Message = "Login Succesful",
+                        Token = Guid.NewGuid().ToString(),
+                        Success = true
+                    };
+                    return Ok(response);
                 }
                 return Unauthorized(); 
             }

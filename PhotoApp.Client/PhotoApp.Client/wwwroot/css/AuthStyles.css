@@ -47,31 +47,31 @@
     /* Nagłówki i paragrafy */
     #ic h2 {
         font-size: 4rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.6rem;
         font-weight: 700;
     }
 
     #ic p {
-        font-size: 1.5rem;
-        margin-bottom: 1.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
         line-height: 1.4;
     }
 
 /* Grupowanie pól formularza */
 .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.6rem;
 }
 
 /* Style InputText */
 .bp-suggestions.form-control {
     width: 100%;
-    padding: 10px 14px;
-    font-size: 2rem;
+    padding: 12px 14px;
+    font-size: 1.5rem;
     border-radius: 20px;
-    border: 1.8px solid black;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
     font-weight: 500;
+    margin: 0;
 }
 
     .bp-suggestions.form-control:focus {
@@ -87,10 +87,9 @@
     border: none;
     border-radius: 20px;
     font-weight: 600;
-    font-size: 2rem;
+    font-size: 1.4rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 0.6rem;
 }
 
 
@@ -105,10 +104,10 @@
 
 /* Przycisk dodatkowy (przełącznik formularza) */
 #moveright, #moveleft {
-    margin-top: 18px;
+    margin-top: 0.6rem;
     background: none;
     border: none;
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -139,6 +138,42 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.code-box {
+    width: 70px;
+    height: 80px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    /*border: 2px solid #333;*/
+    border-radius: 20px;
+    background-color: white;
+    color: black;
+    outline: none;
+    /*transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;*/
+    caret-color: black;
+    border: 0;
+}
+
+    .code-box:focus {
+        /*border-color: #1e1e1e;*/
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+        /* background-color: rgb(200,200,200);*/
+    }
+
+.six-boxes {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.6rem;
+}
+
+.error-message {
+    color: #cc0033; 
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 0.6rem;
 }
 
 /* ANIMACJE */

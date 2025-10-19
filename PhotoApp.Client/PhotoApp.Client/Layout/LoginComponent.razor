@@ -1,5 +1,6 @@
 ﻿@using PhotoApp.Client.Connection
 @using PhotoApp.Client.Models
+
 @if (!Hidden)
 {
     <div id="ic">
@@ -18,17 +19,21 @@
         {
             <ValidationCodeForm IsLogin=true User=userModel></ValidationCodeForm>
         }
-
-        @if (!IsSixBoxesMode)
+        @if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            <button id="moveleft" class="mov_btn" @onclick="SwitchToSignUp">Sign Up</button>
+            <p class="error-message">@ErrorMessage</p>
         }
+        <button id="moveleft" class="mov_btn" @onclick="SwitchToSignUp">Sign Up</button>
+      
     </div>
 }
 
 @code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
     [Parameter] public EventCallback OnSwitchToSignUp { get; set; }
     [Parameter] public bool Hidden { get; set; }
+    [Parameter] public string? ErrorMessage { get; set; }
 
     private UserModel userModel = new();
     private ValidationCode validationCode = new();
@@ -42,10 +47,7 @@
         IsSixBoxesMode = true;
         try
         {
-            using (var conn = new ApiConnection())
-            {
-                var response = await conn.Login(userModel.Email);
-            }
+            var response = await conn.Login(userModel.Email);
             StateHasChanged();
         }
         catch (Exception ex)

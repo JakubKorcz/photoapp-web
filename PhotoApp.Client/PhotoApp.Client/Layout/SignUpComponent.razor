@@ -10,11 +10,16 @@
             </div>
             <button type="submit" class="girisbtn auth_btn mov_text">Sign Up</button>
         </EditForm>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="error-message">@ErrorMessage</p>
+        }
         <button id="moveright" class="mov_btn" @onclick="SwitchToLogin">Login</button>
     </div>
 }
 
 @code {
+    [Parameter] public string? ErrorMessage { get; set; }
     [Parameter] public EventCallback OnSwitchToLogin { get; set; }
     [Parameter] public bool Hidden { get; set; }
 

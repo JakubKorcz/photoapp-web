@@ -1,8 +1,13 @@
-﻿namespace PhotoApp.Client.Connection
+﻿using System.Net.Http;
+
+namespace PhotoApp.Client.Connection
 {
     public partial class ApiConnection : IDisposable
     {
-        public ApiConnection() { }
+        private readonly HttpClient _httpClient;
+        public ApiConnection(HttpClient httpClient) {
+            _httpClient = httpClient;
+        }
         public void Dispose() { }
     }
 }

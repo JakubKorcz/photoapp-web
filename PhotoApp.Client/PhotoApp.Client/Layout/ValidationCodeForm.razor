@@ -19,6 +19,8 @@
 </EditForm>
 
 @code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
     [Parameter] public bool IsLogin { get; set; }
     [Parameter] public UserModel User { get; set; }
 
@@ -31,29 +33,30 @@
     private async void HandleCodeWrite()
     {
         var code = string.Join("", codeDigits);
-        using (var conn = new ApiConnection())
-        {
-            ServerAuthResponse res;
-            if (IsLogin)
+      
+            try
             {
-                res = await conn.LoginVerify(User.Email, code);
-            }
-            else
-            {
-                res = await conn.RegisterVerify(User.Email, code);
-            }
+                var res = IsLogin
+                    ? await conn.LoginVerify(User.Email, code)
+                    : await conn.RegisterVerify(User.Email, code);
 
-            Console.WriteLine(res.Message.ToString());
-            if (res.Success)
-            {
-                //Zapisz kod do cookies ???
-                NavigationManager.NavigateTo("/main");
+                if (res.Success)
+                {
+                    //Zapisz kod do cookies ???
+                    NavigationManager.NavigateTo("/main");
+                }
+                else
+                {
+                    string errorCode = "ERR001";
+                    NavigationManager.NavigateTo($"/login?errorCode={errorCode}", forceLoad: true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                //rzuc bledem i zreloaduj strone
+
+                Console.WriteLine(ex.ToString());
             }
-        }
+        
     }
 
     private async void OnDigitInput(int index, ChangeEventArgs e)

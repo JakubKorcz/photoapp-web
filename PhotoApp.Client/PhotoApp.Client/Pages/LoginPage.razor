@@ -1,5 +1,6 @@
 ﻿@page "/signup"
 @page "/login"
+@using PhotoApp.Common
 
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -13,7 +14,7 @@
     <div class="left">
         @if (currentView == View.SignUp)
         {
-            <SignUpComponent OnSwitchToLogin="MoveLeft" />
+            <SignUpComponent OnSwitchToLogin="MoveLeft" ErrorMessage=@ErrorMessage />
         }
         else
         {
@@ -24,7 +25,7 @@
     <div class="right">
         @if (currentView == View.Login)
         {
-            <LoginComponent OnSwitchToSignUp="MoveRight" />
+            <LoginComponent OnSwitchToSignUp="MoveRight" ErrorMessage=@ErrorMessage />
         }
         else
         {
@@ -46,10 +47,19 @@
     private bool isImageSignUpVisible;
     private bool isImageSignUpDisappearing;
 
+    private string? ErrorMessage { get; set; }
+
     protected override void OnInitialized()
     {
-        var uri = NavManager.Uri;
-        if (uri.Contains("login"))
+        var uri = new Uri(NavManager.Uri);
+
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        var errorCode = queryParams["errorCode"];
+        if (!string.IsNullOrEmpty(errorCode))
+        {
+            ErrorMessage = ErrorDictionary.GetMessage(errorCode);
+        }
+        if (uri.AbsolutePath.Contains("login"))
         {
             currentView = View.Login;
             startPosition = 2;
