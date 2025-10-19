@@ -46,13 +46,13 @@
 
     /* Nagłówki i paragrafy */
     #ic h2 {
-        font-size: 4rem;
+        font-size: 3rem;
         margin-bottom: 0.6rem;
         font-weight: 700;
     }
 
     #ic p {
-        font-size: 1rem;
+        font-size: 0.9rem;
         margin-bottom: 0.6rem;
         line-height: 1.4;
     }
@@ -66,8 +66,8 @@
 .bp-suggestions.form-control {
     width: 100%;
     padding: 12px 14px;
-    font-size: 1.5rem;
-    border-radius: 20px;
+    font-size: 1rem;
+    border-radius: 12px;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
     font-weight: 500;
@@ -85,9 +85,9 @@
     width: 100%;
     padding: 12px 0; 
     border: none;
-    border-radius: 20px;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -107,7 +107,7 @@
     margin-top: 0.6rem;
     background: none;
     border: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -147,7 +147,7 @@
     font-weight: bold;
     text-align: center;
     /*border: 2px solid #333;*/
-    border-radius: 20px;
+    border-radius: 12px;
     background-color: white;
     color: black;
     outline: none;
@@ -172,8 +172,7 @@
 .error-message {
     color: #cc0033; 
     font-size: 1rem;
-    font-weight: bold;
-    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
 }
 
 /* ANIMACJE */

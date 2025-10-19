@@ -12,16 +12,16 @@
                 <div class="form-group mov_text">
                     <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
                 </div>
+                @if (!string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <p class="error-message">@ErrorMessage</p>
+                }
                 <button type="submit" class="girisbtn auth_btn mov_text" tabindex="100">Login</button>
             </EditForm>
         }
         else
         {
             <ValidationCodeForm IsLogin=true User=userModel></ValidationCodeForm>
-        }
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            <p class="error-message">@ErrorMessage</p>
         }
         <button id="moveleft" class="mov_btn" @onclick="SwitchToSignUp">Sign Up</button>
       
