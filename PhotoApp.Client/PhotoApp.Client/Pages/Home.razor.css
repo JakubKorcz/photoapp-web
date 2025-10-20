@@ -17,6 +17,7 @@
     overflow-wrap: break-word;
     text-align: justify-all;
     line-height: 5.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);  
 }
 
 .custom-desc {
@@ -24,6 +25,7 @@
     white-space: normal;
     overflow-wrap: break-word;
     text-align: justify-all;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* czarny cień, lekko rozmyty */
     /*padding: 0 30px;*/
 }
 
@@ -31,6 +33,7 @@
     /*margin-left: 30px;*/
     padding: 1.5rem 4rem;
     font-size: 1.4rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* czarny cień, lekko rozmyty */
 }
 
 .custom-empty {

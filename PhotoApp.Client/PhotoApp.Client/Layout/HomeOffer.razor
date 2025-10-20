@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime JS
 @inject NavigationManager NavManager
 
-<div class="submenu">
+<div class="submenu both-padding">
     <ul class="menu">
         <li class="@((currentSection == 1) ? "active" : "nonactive")" @onclick="() => ScrollToSection(1)">01</li>
         <li class="@((currentSection == 2) ? "active" : "nonactive")" @onclick="() => ScrollToSection(2)">02</li>
@@ -15,7 +15,7 @@
 <li class="@((currentSection == "about") ? "active" : "")">About</li> *@
 
 <section id="section1">
-    <div class="left">
+    <div class="left both-padding">
         <h2>Konfiguracja wyglądu galerii</h2>
         <p>Możesz wybierać swój styl strony aby móc udostępnić klientom, tutaj masz ileś tam stylów, no i wysyłasz wow efekt klientom</p>
         <button class="btn btn-light second-font">
@@ -30,7 +30,7 @@
     <div class="left">
         <img src="jpg/password_grafika.png" alt="Skunks-login-image" />
     </div>
-    <div class="right">
+    <div class="right both-padding">
         <h2>Konfiguracja wyglądu galerii</h2>
         <p>Możesz wybierać swój styl strony aby móc udostępnić klientom, tutaj masz ileś tam stylów, no i wysyłasz wow efekt klientom</p>
         <button class="btn btn-light second-font">
@@ -39,7 +39,7 @@
     </div>
 </section>
 <section id="section3" >
-    <div class="left">
+    <div class="left both-padding">
         <h2>Konfiguracja wyglądu galerii</h2>
         <p>Możesz wybierać swój styl strony aby móc udostępnić klientom, tutaj masz ileś tam stylów, no i wysyłasz wow efekt klientom</p>
         <button class="btn btn-light second-font">
@@ -54,7 +54,7 @@
     <div class="left">
         <img src="jpg/password_grafika.png" alt="Skunks-login-image" />
     </div>
-    <div class="right">
+    <div class="right both-padding">
         <h2>Konfiguracja wyglądu galerii</h2>
         <p>Możesz wybierać swój styl strony aby móc udostępnić klientom, tutaj masz ileś tam stylów, no i wysyłasz wow efekt klientom</p>
         <button class="btn btn-light second-font">
