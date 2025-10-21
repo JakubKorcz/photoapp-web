@@ -24,6 +24,11 @@
         cursor: pointer;
     }
 
+        .menu > *:hover {
+            transform: scale(1.2); /* powiększenie do 120% */
+            transition: transform 0.2s ease;
+        }
+
 .nonactive {
     color: grey;
     font-size: 0.9rem;
@@ -48,20 +53,22 @@ section {
     display: flex;
 }
 
-#section1 {
-    background-color: pink;
+#section1 .left, #section1 .right {
+    background-color: #e4e4e4;
 }
 
-#section2 {
-    background-color: #2e2e2e;
+#section2 .left, #section2 .right {
+    background-color: #201f1f;
+    color:white;
 }
 
-#section3 {
-    background-color: #e4e3e5;
+#section3 .left, #section3 .right {
+    background-color: #e4e4e4;
 }
 
 #section4 {
-    background-color: #2e2e2e;
+    min-height: 250px;
+    height: auto;
 }
 
 .left {
@@ -98,3 +105,5 @@ img {
     max-height: 90%;
     max-width: auto;
 }
+
+

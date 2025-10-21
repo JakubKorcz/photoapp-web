@@ -1,0 +1,42 @@
+﻿<div class="boxes both-padding">
+    @for (int i = 0; i < boxCount; i++)
+    {
+        var index = i;
+        <div class="section-box">
+            <img class="plus-icon @(isRotated[index] ? "rotate-45" : "")" src="jpg/plus.png" @onclick="() => ToggleRotate(index)" />
+            <div class="text">
+                <h3>@GetHeader(index)</h3>
+                <p>@GetParagraph(i)</p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private const int boxCount = 3;
+    private bool[] isRotated = new bool[boxCount];
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < boxCount; i++)
+            isRotated[i] = false;
+    }
+
+    private void ToggleRotate(int index)
+    {
+        isRotated[index] = !isRotated[index];
+    }
+
+    private string GetHeader(int i)
+    {
+        return "Dupa";
+    }
+
+    private string GetParagraph(int i)
+    {
+        if (isRotated[i])
+            return "Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, ";
+        else
+            return "Dupa";
+    }
+}
