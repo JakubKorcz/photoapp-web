@@ -1,7 +1,4 @@
-﻿@inject IJSRuntime JS
-@inject NavigationManager NavManager
-
-<div class="submenu both-padding">
+﻿<div class="submenu both-padding">
     <ul class="menu">
         <li class="@((currentSection == 1) ? "active" : "nonactive")" @onclick="() => ScrollToSection(1)">01</li>
         <li class="@((currentSection == 2) ? "active" : "nonactive")" @onclick="() => ScrollToSection(2)">02</li>

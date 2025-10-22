@@ -6,7 +6,7 @@
             <img class="plus-icon @(isRotated[index] ? "rotate-45" : "")" src="jpg/plus.png" @onclick="() => ToggleRotate(index)" />
             <div class="text">
                 <h3>@GetHeader(index)</h3>
-                <p>@GetParagraph(i)</p>
+                <p>@GetParagraph(index)</p>
             </div>
         </div>
     }
@@ -20,6 +20,7 @@
     {
         for (int i = 0; i < boxCount; i++)
             isRotated[i] = false;
+        InitTexts();
     }
 
     private void ToggleRotate(int index)
@@ -35,8 +36,22 @@
     private string GetParagraph(int i)
     {
         if (isRotated[i])
-            return "Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, Dupa ale bardziej długa taka po francusku Duuuupa, LALALA, ";
+            return "";
         else
-            return "Dupa";
+            return "";
     }
+
+    private List<BoxText> texts = [];
+
+    private void InitTexts()
+    {
+        texts.Append(new BoxText() { });
+    }
+
+    internal class BoxText
+    {
+        public string Header { get; set; }
+        public string ShortParagraph { get; set; }
+        public string LongParagraph { get; set; }
+    } 
 }

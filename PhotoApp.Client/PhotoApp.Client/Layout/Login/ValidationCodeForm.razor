@@ -1,10 +1,4 @@
-﻿@using PhotoApp.Client.Connection
-@using PhotoApp.Client.Models
-@using PhotoApp.Common.Models
-
-@inject NavigationManager NavigationManager
-
-<EditForm Model="@validationCode" OnValidSubmit="HandleCodeWrite">
+﻿<EditForm Model="@validationCode" OnValidSubmit="HandleCodeWrite">
     <div class="six-boxes mov_text">
         @for (int i = 0; i < 6; i++)
         {
@@ -43,12 +37,12 @@
                 if (res.Success)
                 {
                     //Zapisz kod do cookies ???
-                    NavigationManager.NavigateTo("/main");
+                    NavManager.NavigateTo("/main");
                 }
                 else
                 {
                     string errorCode = "ERR001";
-                    NavigationManager.NavigateTo($"/login?errorCode={errorCode}", forceLoad: true);
+                    NavManager.NavigateTo($"/login?errorCode={errorCode}", forceLoad: true);
                 }
             }
             catch (Exception ex)
