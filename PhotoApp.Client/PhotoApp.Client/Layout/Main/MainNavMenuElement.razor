@@ -1,0 +1,12 @@
+﻿<div class="menu-element">
+    <img src="@ImageSrc"/>
+    <p>@Description</p>
+</div>
+
+@code {
+    [Parameter]
+    public string ImageSrc { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+}

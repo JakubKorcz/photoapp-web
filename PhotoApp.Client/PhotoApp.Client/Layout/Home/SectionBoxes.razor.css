@@ -34,12 +34,14 @@
 
 .rotate-45 {
     /* Rotacja o 45 stopni */
-    transform: rotate(45deg);
+    transform: rotate(585deg);
+    transition: transform 0.2s ease;
 }
 
 /* Gdy jest i rotacja i hover, łącz transformacje */
 .plus-icon.rotate-45:hover {
-    transform: scale(1.2) rotate(45deg);
+    transform: scale(1.2) rotate(585deg);
+    transition: transform 0.2s ease;
 }
 
 .text{
