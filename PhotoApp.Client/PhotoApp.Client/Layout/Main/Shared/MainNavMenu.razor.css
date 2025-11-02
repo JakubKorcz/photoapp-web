@@ -1,0 +1,24 @@
+﻿nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 110px;
+    background-color: red;
+    justify-content: space-between;
+}
+
+.elements.down {
+    margin-bottom:80px;
+}
+
+h2 {
+    margin: 6px;
+    text-align: center;
+    margin-top: 43px;
+    margin-bottom: 80px;
+}
+
+.submenu {
+    width : 240px;
+    background-color : blue;
+}

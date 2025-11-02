@@ -1,0 +1,16 @@
+﻿.content {
+    background-color: pink;
+    display: flex;
+    flex-direction: column;
+    margin : 0px;
+    width: 100%;
+    height: 100vh; /* cała wysokość okna przeglądarki */
+    overflow: hidden; /* ukryj przewijanie dla całej strony */
+}
+
+.main-content-body {
+    flex: 1; /* zajmuje pozostałą przestrzeń po menu */
+    overflow-y: auto; /* pojawia się scroll tylko, gdy treść przekracza wysokość */
+    background-color: yellow;
+    margin: 130px 0 0;
+}

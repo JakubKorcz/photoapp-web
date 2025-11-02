@@ -1,0 +1,33 @@
+﻿.new-gallery-page {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100%; /* cała wysokość okna przeglądarki */
+    text-align: right; /* opcjonalnie — ładniejsze wyrównanie tekstu */
+}
+
+.add-new-gallery {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.add-new-gallery-btn {
+    width: 120px; /* możesz dopasować rozmiar */
+    cursor: pointer;
+}
+
+.add-new-gallery figcaption {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.catchphrase {
+    margin: 80px;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #222;
+}

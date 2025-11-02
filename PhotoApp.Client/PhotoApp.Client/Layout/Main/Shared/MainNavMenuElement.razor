@@ -1,9 +1,12 @@
-﻿<div class="menu-element">
+﻿<div class="menu-element" @onclick="OnClick">
     <img src="@ImageSrc"/>
     <p>@Description</p>
 </div>
 
 @code {
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
     [Parameter]
     public string ImageSrc { get; set; } = string.Empty;
 

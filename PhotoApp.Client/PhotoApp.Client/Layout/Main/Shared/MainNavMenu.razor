@@ -1,0 +1,31 @@
+﻿<nav class="main-nav-menu">
+    <div class="elements up">
+        <h2> LOGO </h2>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Projekty" OnClick="ToggleSubMenu" ></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Akcje" OnClick="ToggleSubMenu"></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Dupa jasiu" OnClick="ToggleSubMenu"></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Ustawienia" OnClick="ToggleSubMenu"></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Więcej" OnClick="ToggleSubMenu"></MainNavMenuElement>
+    </div>
+    <div class="elements down">
+        <MainNavMenuElement ImageSrc="/jpg/icon_test.png" Description=""></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description=""></MainNavMenuElement>
+        <MainNavMenuElement ImageSrc="/icon-192.png" Description=""></MainNavMenuElement>
+    </div>
+</nav>
+@if (isSubMenuVisible)
+{
+    <div class="submenu">
+        <!-- Submenu content goes here -->
+    </div>
+}
+
+@code {
+    Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>() { };
+    bool isSubMenuVisible = false;
+
+    void ToggleSubMenu()
+    {
+        isSubMenuVisible = !isSubMenuVisible;
+    }
+}
