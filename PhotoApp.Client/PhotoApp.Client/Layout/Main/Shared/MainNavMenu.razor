@@ -1,31 +1,65 @@
 ﻿<nav class="main-nav-menu">
     <div class="elements up">
-        <h2> LOGO </h2>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Projekty" OnClick="ToggleSubMenu" ></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Akcje" OnClick="ToggleSubMenu"></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Dupa jasiu" OnClick="ToggleSubMenu"></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Ustawienia" OnClick="ToggleSubMenu"></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description="Więcej" OnClick="ToggleSubMenu"></MainNavMenuElement>
+        <h2>LOGO</h2>
+        <ul>
+            @foreach (var mainItem in mainMenuItems)
+            {
+                <li @onclick="() => ToggleSubMenu(mainItem.Description)">
+                    <MainNavMenuElement ImageSrc="/icon-192.png" Description="@mainItem.Description" />
+                    @if (visibleSubMenu == mainItem.Description)
+                    {
+                        <ul class="submenu">
+                            @foreach (var option in menuOptions)
+                            {
+                                <li>@option.Label</li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
     </div>
     <div class="elements down">
-        <MainNavMenuElement ImageSrc="/jpg/icon_test.png" Description=""></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description=""></MainNavMenuElement>
-        <MainNavMenuElement ImageSrc="/icon-192.png" Description=""></MainNavMenuElement>
+        <ul>
+            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
+            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
+            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
+        </ul>
     </div>
 </nav>
-@if (isSubMenuVisible)
+@if (visibleSubMenu == "Projekty" )
 {
-    <div class="submenu">
-        <!-- Submenu content goes here -->
-    </div>
+    <div class="submenu-background"></div>
 }
 
 @code {
-    Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>() { };
-    bool isSubMenuVisible = false;
-
-    void ToggleSubMenu()
+    private List<MenuOption> menuOptions = new()
     {
-        isSubMenuVisible = !isSubMenuVisible;
+        new MenuOption { Label = "Opcja 1", Value = "option1" },
+        new MenuOption { Label = "Opcja 2", Value = "option2" },
+        new MenuOption { Label = "Opcja 3", Value = "option3" }
+    };
+
+    private List<MenuItem> mainMenuItems = new()
+    {
+        new MenuItem { Description = "Projekty" },
+        new MenuItem { Description = "Akcje" },
+        new MenuItem { Description = "Ustawienia" },
+        new MenuItem { Description = "Więcej" }
+    };
+
+    private string visibleSubMenu = null;
+
+    void ToggleSubMenu(string description)
+    {
+        if (visibleSubMenu == description)
+            visibleSubMenu = null;  // close if already open
+        else
+            visibleSubMenu = description;
+    }
+
+    class MenuItem
+    {
+        public string Description { get; set; }
     }
 }
