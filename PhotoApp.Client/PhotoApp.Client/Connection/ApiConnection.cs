@@ -1,40 +1,36 @@
-﻿using PhotoApp.Common.Models;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace PhotoApp.Client.Connection
 {
     public partial class ApiConnection : IDisposable
     {
         private readonly HttpClient _httpClient;
+        private JsonSerializerOptions _options;
         public ApiConnection(HttpClient httpClient)
         {
             _httpClient = httpClient;
-        }
-        public void Dispose() { }
-
-        private async Task<ServerAuthResponse> SendPostRequestWithoutData(string url)
-        {
-            var response = await _httpClient.PostAsync(url, null);
-            var json = await response.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
+            _options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
-            var obj = JsonSerializer.Deserialize<ServerAuthResponse>(json, options);
-            if (obj != null)
-            {
-                return obj;
-            }
-            else
-            {
-                return new ServerAuthResponse()
-                {
-                    Message = "Odczytany obiekt jest pusty",
-                    Success = false
-                };
-            }
+        }
+        public void Dispose() { }
+
+        private async Task<T?> SendPostRequestWithoutData<T>(string url)
+        {
+            var response = await _httpClient.PostAsync(url, null);
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<T>(json, _options);
+        }
+
+        public async Task<T?> SendGetRequestWithoutData<T>(string url)
+        {
+            var response = await _httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<T>(json, _options);
         }
     }
 }

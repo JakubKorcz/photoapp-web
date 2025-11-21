@@ -1,0 +1,43 @@
+﻿.memory-panel {
+    background-color: gray;
+    padding: 10px 20px;
+    border-radius : 4px;
+}
+
+.text{
+    display : flex;
+    flex-direction : row;
+    justify-content : space-between;
+}
+
+.progress-container {
+    position: relative; /* rodzic musi mieć pozycję relatywną */
+    width: 350px;
+    height: 20px;
+}
+
+.progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 12px;
+    background-color: white;
+    width: 100%;
+}
+
+.progress-bar-used {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    height: 12px;
+}
+
+h5 {
+    font-size: 16px;
+}
+
+p {
+    font-size : 14px;
+}
+

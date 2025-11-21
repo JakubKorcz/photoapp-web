@@ -4,12 +4,12 @@
         <ul>
             @foreach (var mainItem in mainMenuItems)
             {
-                <li @onclick="() => ToggleSubMenu(mainItem.Description)">
+                <li @onclick="() => ToggleSubMenu(Enum.Parse<MenuOptions>(mainItem.Description))">
                     <MainNavMenuElement ImageSrc="/icon-192.png" Description="@mainItem.Description" />
-                    @if (visibleSubMenu == mainItem.Description)
+                    @if (visibleSubMenu == Enum.Parse<MenuOptions>(mainItem.Description))
                     {
                         <ul class="submenu">
-                            @foreach (var option in menuOptions)
+                            @foreach (var option in GetMenuSubOptions(Enum.Parse<MenuOptions>(mainItem.Description)))
                             {
                                 <li>@option.Label</li>
                             }
@@ -27,39 +27,53 @@
         </ul>
     </div>
 </nav>
-@if (visibleSubMenu == "Projekty" )
+@if (visibleSubMenu == MenuOptions.Projekty )
 {
     <div class="submenu-background"></div>
 }
 
 @code {
-    private List<MenuOption> menuOptions = new()
+    enum MenuOptions
     {
-        new MenuOption { Label = "Opcja 1", Value = "option1" },
-        new MenuOption { Label = "Opcja 2", Value = "option2" },
-        new MenuOption { Label = "Opcja 3", Value = "option3" }
-    };
+        Projekty, Akcje, Ustawienia, Więcej
+    }
 
     private List<MenuItem> mainMenuItems = new()
     {
-        new MenuItem { Description = "Projekty" },
-        new MenuItem { Description = "Akcje" },
-        new MenuItem { Description = "Ustawienia" },
-        new MenuItem { Description = "Więcej" }
+        new MenuItem { Description = MenuOptions.Projekty.ToString() },
+        new MenuItem { Description = MenuOptions.Akcje.ToString() },
+        new MenuItem { Description = MenuOptions.Ustawienia.ToString() },
+        new MenuItem { Description = MenuOptions.Więcej.ToString() }
     };
 
-    private string visibleSubMenu = null;
+    private MenuOptions? visibleSubMenu = null;
 
-    void ToggleSubMenu(string description)
+    void ToggleSubMenu(MenuOptions description)
     {
         if (visibleSubMenu == description)
-            visibleSubMenu = null;  // close if already open
+            visibleSubMenu = null;  
         else
             visibleSubMenu = description;
     }
 
     class MenuItem
     {
-        public string Description { get; set; }
+        public required string Description { get; set; }
     }
+
+    private List<MenuOption> GetMenuSubOptions(MenuOptions selected) =>
+    selected switch
+    {
+        MenuOptions.Więcej => new List<MenuOption>
+        {
+            new MenuOption { Label = "Opcja 1", Value = "option1" },
+            new MenuOption { Label = "Opcja 2", Value = "option2" },
+            new MenuOption { Label = "Opcja 3", Value = "option3" },
+            new MenuOption { Label = "Opcja 4", Value = "option4" }
+        },
+        MenuOptions.Projekty => new List<MenuOption>(),
+        MenuOptions.Ustawienia => new List<MenuOption>(),
+        MenuOptions.Akcje => new List<MenuOption>(),
+        _ => new List<MenuOption>(),
+    };
 }
