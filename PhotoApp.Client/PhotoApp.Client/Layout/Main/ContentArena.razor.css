@@ -1,5 +1,5 @@
 ﻿.content {
-    background-color: pink;
+    background-color: var(--primary-grey-color);
     display: flex;
     flex-direction: column;
     margin: 0px;
@@ -11,6 +11,6 @@
 .main-content-body {
     flex: 1; /* zajmuje pozostałą przestrzeń po menu */
     overflow-y: auto; /* pojawia się scroll tylko, gdy treść przekracza wysokość */
-    background-color: yellow;
+    background-color: var(--primary-grey-color);
     margin: 130px 0 0;
 }

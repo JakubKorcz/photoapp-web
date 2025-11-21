@@ -1,2 +1,5 @@
-﻿body {
+﻿:root {
+    --primary-grey-color: #e4e4e4;
+    --lighter-grey-color: #TODO;
+    --darker-grey-color: #TODO;
 }
