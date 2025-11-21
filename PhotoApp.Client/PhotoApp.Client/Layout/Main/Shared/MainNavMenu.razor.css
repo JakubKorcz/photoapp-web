@@ -6,7 +6,6 @@
 nav {
     display: flex;
     flex-direction: column;
-    gap: 16px;
     width: 110px;
     background-color: red;
     justify-content: space-between;
@@ -17,6 +16,7 @@ nav {
         width:100%;
         list-style: none;
         margin:0px;
+        gap:10px;
     }
 
 .elements.down {
@@ -39,18 +39,14 @@ h2 {
     top: -15px;
     left: 100%;
     background-color: blue;
-    width: 240px;
+    width: 200px;
     display: block;
     padding: 0;
-    margin: 0;
-}
-
-.submenu-background {
-    width: 240px;
-    background-color: lightseagreen;
+    margin: 5px;
 }
 
     .submenu li {
         list-style: none;
         padding: 5px 10px;
+        margin-bottom: 8px; /* odstęp między elementami pionowo */
     }

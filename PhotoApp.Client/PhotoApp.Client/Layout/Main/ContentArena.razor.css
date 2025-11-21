@@ -2,8 +2,8 @@
     background-color: pink;
     display: flex;
     flex-direction: column;
-    margin : 0px;
-    width: 100%;
+    margin: 0px;
+    width: 100%; /* nie wychodź poza ekran, nawet na mobile */
     height: 100vh; /* cała wysokość okna przeglądarki */
     overflow: hidden; /* ukryj przewijanie dla całej strony */
 }

@@ -1,5 +1,7 @@
 ﻿<div class="menu-element" @onclick="OnClick">
-    <img src="@ImageSrc"/>
+    <span class="material-symbols-outlined" id="icon" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40 ;">
+        @ImageName
+    </span>
     <p>@Description</p>
 </div>
 
@@ -8,7 +10,7 @@
     public EventCallback OnClick { get; set; }
 
     [Parameter]
-    public string ImageSrc { get; set; } = string.Empty;
+    public string ImageName { get; set; } = string.Empty;
 
     [Parameter]
     public string Description { get; set; } = string.Empty;

@@ -5,7 +5,7 @@
             @foreach (var mainItem in mainMenuItems)
             {
                 <li @onclick="() => ToggleSubMenu(Enum.Parse<MenuOptions>(mainItem.Description))">
-                    <MainNavMenuElement ImageSrc="/icon-192.png" Description="@mainItem.Description" />
+                    <MainNavMenuElement ImageName="@mainItem.IconName" Description="@mainItem.Description" />
                     @if (visibleSubMenu == Enum.Parse<MenuOptions>(mainItem.Description))
                     {
                         <ul class="submenu">
@@ -21,29 +21,30 @@
     </div>
     <div class="elements down">
         <ul>
-            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
-            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
-            <li><MainNavMenuElement ImageSrc="/icon-192.png" Description="" /></li>
+            <li><MainNavMenuElement ImageName="help" Description="" /></li>
+            <li><MainNavMenuElement ImageName="credit_card" Description="" /></li>
+            <li><MainNavMenuElement ImageName="account_circle" Description="" /></li>
         </ul>
     </div>
 </nav>
 @if (visibleSubMenu == MenuOptions.Projekty )
 {
-    <div class="submenu-background"></div>
+    <MainNavSubMenuFolders/>
 }
 
 @code {
     enum MenuOptions
     {
-        Projekty, Akcje, Ustawienia, Więcej
+        Projekty, Akcje, Opinie, Ustawienia, Więcej
     }
 
     private List<MenuItem> mainMenuItems = new()
     {
-        new MenuItem { Description = MenuOptions.Projekty.ToString() },
-        new MenuItem { Description = MenuOptions.Akcje.ToString() },
-        new MenuItem { Description = MenuOptions.Ustawienia.ToString() },
-        new MenuItem { Description = MenuOptions.Więcej.ToString() }
+        new MenuItem { Description = MenuOptions.Projekty.ToString(), IconName="folder_open" },
+        new MenuItem { Description = MenuOptions.Akcje.ToString(), IconName="notifications"},
+        new MenuItem { Description = MenuOptions.Opinie.ToString(), IconName="feedback" },
+        new MenuItem { Description = MenuOptions.Ustawienia.ToString(), IconName="settings" },
+        new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu" }
     };
 
     private MenuOptions? visibleSubMenu = null;
@@ -59,6 +60,7 @@
     class MenuItem
     {
         public required string Description { get; set; }
+        public required string IconName { get; set; }
     }
 
     private List<MenuOption> GetMenuSubOptions(MenuOptions selected) =>

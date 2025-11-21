@@ -15,14 +15,15 @@
 }
 
 .add-new-gallery-btn {
-    width: 120px; /* możesz dopasować rozmiar */
+    font-size: 90px; 
     cursor: pointer;
 }
 
 .add-new-gallery figcaption {
     margin-top: 8px;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: #555;
+    font-weight :bold;
 }
 
 .catchphrase {
