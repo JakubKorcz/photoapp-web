@@ -1,13 +1,4 @@
-﻿/*
-    KOLORy STRONY
-    #e4e3e5 - jasny
-    #c6c6c6 - jasny soft
-    #8a887e - sredni
-    #524f4d - ciemny soft
-    #2e2e2e - ciemny
-*/
-
-/* Kontener główny z flexboxem */
+﻿/* Kontener główny z flexboxem */
 .toplam {
     display: flex;
     width: 100vw;
@@ -67,7 +58,7 @@
     width: 100%;
     padding: 12px 14px;
     font-size: 1rem;
-    border-radius: 12px;
+    border-radius: 4%;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
     font-weight: 500;
@@ -85,7 +76,7 @@
     width: 100%;
     padding: 12px 0; 
     border: none;
-    border-radius: 12px;
+    border-radius: 4%;
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
@@ -147,7 +138,7 @@
     font-weight: bold;
     text-align: center;
     /*border: 2px solid #333;*/
-    border-radius: 12px;
+    border-radius: 4%;
     background-color: white;
     color: black;
     outline: none;

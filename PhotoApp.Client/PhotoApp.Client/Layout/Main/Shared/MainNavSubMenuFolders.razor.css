@@ -1,6 +1,6 @@
 ﻿.submenu-background {
     width: 15%;
-    background-color: lightseagreen;
+    background-color: var(--lighter-grey-color);
     box-sizing: border-box;
     display : flex;
     padding : 10px;

@@ -1,7 +1,7 @@
 ﻿.memory-panel {
-    background-color: white;
+    background-color: var(--lighter-grey-color);
     padding: 9px 20px;
-    border-radius : 4px;
+    border-radius : 4%;
     height : 67px;
     width: 390px;
 }

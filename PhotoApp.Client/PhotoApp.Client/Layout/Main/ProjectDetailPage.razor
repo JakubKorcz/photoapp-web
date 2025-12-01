@@ -1,0 +1,34 @@
+﻿<div class="details">
+    <ProjectDetailTabs SelectedTab="@selectedTab" SelectTab="@OnTabSelected" tabs="@tabs" importTab="@importTab" />
+</div>
+
+@code {
+    public enum Tab
+    {
+        ProjectDescription,
+        Photos,
+        Album,
+        Settings,
+        Activity,
+        Import
+    }
+
+    List<MenuItem> tabs = new List<MenuItem>()
+    {
+        new MenuItem(){Description = "a", IconName="menu", Id = (int)Tab.ProjectDescription},
+        new MenuItem(){Description = "b", IconName="menu", Id = (int)Tab.Photos},
+        new MenuItem(){Description = "c", IconName="menu", Id = (int)Tab.Album},
+        new MenuItem(){Description = "d", IconName="menu", Id = (int)Tab.Settings},
+        new MenuItem(){Description = "e", IconName="menu", Id = (int)Tab.Activity},
+    };
+
+    MenuItem importTab = new MenuItem() { Description = "f", IconName = "menu", Id = (int)Tab.Import };
+
+    private int? selectedTab = null;
+
+    private void OnTabSelected(int tabIndex)
+    {
+        selectedTab = tabIndex;
+        StateHasChanged();
+    }
+}

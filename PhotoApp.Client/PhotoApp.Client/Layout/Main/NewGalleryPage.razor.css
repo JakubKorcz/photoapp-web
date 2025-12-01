@@ -30,5 +30,5 @@
     margin: 80px;
     font-size: 3rem;
     font-weight: 600;
-    color: #222;
+    color: var(--darker-grey-color);
 }

@@ -1,0 +1,43 @@
+﻿.tabs {
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    background-color: aquamarine;
+    list-style-type: none;
+    padding: 0px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: solid 1px black;
+}
+
+    .tabs li {
+        display: flex;
+        flex: 1;
+        padding: 10px;
+        border: solid 1px black;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+        .tabs li:last-child {
+            flex: 2; 
+        }
+
+.import-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 90%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+}
+
+.active {
+    /* Dodaj tu styl dla aktywnej zakładki */
+    background-color: #007bff;
+    color: white;
+}

@@ -1,13 +1,35 @@
 ﻿<div class="content"> 
     <UpperMenu></UpperMenu>
     <main class="main-content-body">
-        @* Tutaj logika całej strony *@
-        <NewGalleryPage></NewGalleryPage>
+        @if (currentScreen == AppScreen.NewGallery)
+        {
+            <NewGalleryPage OnClick="ShowProjectDetailPage"/>            
+        }
 
+        @if (currentScreen == AppScreen.ProjectDetail)
+        {
+            <ProjectDetailPage/>    
+        }
     </main>
 </div>
 
 
 @code {
-    //Zarządzanie stanami strony tutaj najlepeij bez przeładowania
+    private enum AppScreen
+    {
+        NewGallery,
+        ProjectDetail,
+    }
+
+    private AppScreen currentScreen;
+
+    protected override void OnInitialized()
+    {
+        currentScreen = AppScreen.NewGallery;
+    }   
+
+    private void ShowProjectDetailPage()
+    {
+        currentScreen = AppScreen.ProjectDetail;
+    }
 }

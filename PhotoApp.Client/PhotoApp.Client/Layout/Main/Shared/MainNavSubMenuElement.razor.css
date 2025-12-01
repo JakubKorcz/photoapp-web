@@ -1,0 +1,15 @@
+﻿li {
+    list-style: none;
+    padding: 10px 10px;
+    display : flex;
+    flex-direction : row;
+}
+
+    li span#icon {
+        margin-right: 10px; 
+        vertical-align: middle; 
+    }
+
+    li:not(:last-child) {
+        border-bottom: 2px solid var(--dark-color);
+    }
