@@ -1,19 +1,19 @@
 ﻿<ul class="tabs">
-    @foreach (var tab in Tabs)
+    @foreach (var tab in Tabs[..^1])
     {
-        <li class="@(SelectedTab == tab.Id ? "active" : "")" @onclick="() => SelectTab(tab.Id)">
+        <li class="@(SelectedTab == tab.Id ? "active" : "")" @onclick="() => SelectTab.InvokeAsync(tab.Id)">
             <span class="material-symbols-outlined" id="icon" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40 ;">
                 @tab.IconName
             </span>
             @tab.Description
         </li>
     }
-    <li class="@(SelectedTab == ImportTab.Id ? "active" : "")" @onclick="() => SelectTab(ImportTab.Id)">
+    <li class="@(SelectedTab == Tabs[^1].Id ? "active" : "")" @onclick="() => SelectTab.InvokeAsync(Tabs[^1].Id)">
         <button class="import-btn">
             <span class="material-symbols-outlined" id="icon" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40 ;">
-                @ImportTab.IconName
+                @Tabs[^1].IconName
             </span>
-            @ImportTab.Description
+            @Tabs[^1].Description
         </button>
     </li>
 </ul>
@@ -23,5 +23,4 @@
     [Parameter] public int? SelectedTab { get; set; } = null;
     [Parameter] public EventCallback<int> SelectTab { get; set; }
     [Parameter] public List<MenuItem> Tabs { get; set; }
-    [Parameter] public MenuItem ImportTab { get; set; }
 }

@@ -7,7 +7,7 @@
         // Pomocne pole które pokazuje opis po najechaniu na element 
         public string? OnHoverText { get; set; }
         // Pomocne pole które przechowuje konkretny enum do identyfikacji elelmentu 
-        public int? Id { get; set; } = null;
+        public int Id { get; set; }
 
         public MenuItem()
         {

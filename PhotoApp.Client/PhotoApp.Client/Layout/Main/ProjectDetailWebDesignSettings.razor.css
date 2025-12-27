@@ -1,0 +1,21 @@
+﻿.webDesignContent {
+    margin: 60px;
+    display : flex;
+    gap: 15px;
+    flex-direction : column;
+}
+
+.setting {
+    display: flex;
+    flex-direction : row;
+}
+
+    .setting > h5 {
+        flex: 0 0 15%; 
+        margin: 0;
+    }
+
+    .setting > :not(h5) {
+        flex-grow: 1; 
+        min-width: 0; 
+    }
