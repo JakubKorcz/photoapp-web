@@ -51,7 +51,7 @@
         public string ProjectName { get; set; }
         public List<Photo> Photos { get; set; }
         public List<Folder> Folders { get; set; }
-        public WebDesignSettings MobileDesignSettings { get; set; }
+        public WebDesignSettings MobileDesignSettings { get; set; } = new WebDesignSettings();
         public WebDesignSettings DesktopDesignSettings { get; set; }
         public ProjectSettings ProjectSettings { get; set; }
     }

@@ -91,9 +91,31 @@ input[type="color"].circle {
 
 
 .font-picker {
-    border : solid 3px black;
-    min-width : 300px;
-    height : 60px;
-    align-items: center;
+    border: solid 2px black;
+    min-width: 200px;
+    min-height: 50px;
+    text-align: center;
+}
 
+p{
+    margin : 0;
+}
+
+
+
+
+.tile-option {
+    position: relative;
+}
+
+.tile-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+.tile-option input[type="radio"]:checked + .tile-content {
+    background-color: #007bff; 
+    color: white; 
 }
