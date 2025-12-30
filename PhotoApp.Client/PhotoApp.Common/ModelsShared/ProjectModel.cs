@@ -11,12 +11,15 @@
 
     public enum Layout
     {
-        
+        Left,
+        Center,
+        Right
     }
+
     public class Photo
     {
         public Guid Id { get; set; }
-        public Guid Destination { get; set; }
+        public Guid ProjectDestination { get; set; }
         public string Url { get; set; }
         public string Description { get; set; }
         public bool IsLiked { get; set; }
@@ -41,13 +44,15 @@
     {
 
     }
-    public class GalleryPageModel
+    public class ProjectModel
     {
         public Guid Id { get; set; }
+        public Guid Creator {  get; set; }
         public string ProjectName { get; set; }
         public List<Photo> Photos { get; set; }
         public List<Folder> Folders { get; set; }
-        public WebDesignSettings DesignSettings { get; set; }
+        public WebDesignSettings MobileDesignSettings { get; set; }
+        public WebDesignSettings DesktopDesignSettings { get; set; }
         public ProjectSettings ProjectSettings { get; set; }
     }
 }
