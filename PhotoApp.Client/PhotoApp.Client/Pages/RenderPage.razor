@@ -1,0 +1,23 @@
+﻿@page "/gallery/{Id:guid}"
+
+<h1>
+    @model.Creator
+</h1>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    ProjectModel model;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        model = new ProjectModel();
+    }
+
+    // Pobieranie strumieniowe nie wszytsko na raz tylko po kolei i zwracanie 
+    public List<Photo> GetPhotos()
+    {
+        foreach(var photo in )
+    }
+}

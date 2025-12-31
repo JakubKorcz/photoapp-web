@@ -33,7 +33,7 @@
 
     public class WebDesignSettings
     {
-        public Photo CoverPhoto { get; set; }
+        public Guid CoverPhoto { get; set; }
         public string FontFamily { get; set; }
         public int FontSize { get; set; }
         public FontWeight FontWeight { get; set; }
@@ -47,12 +47,36 @@
     public class ProjectModel
     {
         public Guid Id { get; set; }
-        public Guid Creator {  get; set; }
+        public Guid Creator { get; set; }
         public string ProjectName { get; set; }
         public List<Photo> Photos { get; set; }
         public List<Folder> Folders { get; set; }
         public WebDesignSettings MobileDesignSettings { get; set; } = new WebDesignSettings();
         public WebDesignSettings DesktopDesignSettings { get; set; }
-        public ProjectSettings ProjectSettings { get; set; }
+        public ProjectSettings ProjectSettings { get; set; } = new ProjectSettings();
+
+        //Pomocniczy konstruktor do wstępnej konfiguracji
+        public ProjectModel()
+        {
+            Id = new Guid();
+            Creator = new Guid();
+            ProjectName = "Test Name";
+            Photos = new List<Photo>()
+            {
+                new Photo()
+                {
+                    Id = Guid.Empty,
+                    ProjectDestination = new Guid(),
+                    Url = "skunks.jpg",
+                    Description = "SKUNKSIK",
+                    IsLiked = false
+                }
+            };
+            Folders = null;
+            DesktopDesignSettings = new WebDesignSettings() { 
+                CoverPhoto = Guid.Empty
+            };
+
+        }
     }
 }
