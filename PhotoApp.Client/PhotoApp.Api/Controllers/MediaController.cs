@@ -12,14 +12,16 @@ namespace PhotoApp.Api.Controllers
         private readonly AppDbContext _dbContext = context;
 
         [HttpGet("")]
-        public Task<IActionResult> GetAllMediaForUser([FromBody] List<MediaDto> medias)
+        public Task<IActionResult> GetMedia([FromBody] MediaDto media)
         {
-            var media = await _dbContext.ProjectMedia
-       .FirstOrDefaultAsync(m => m.ProjectId == projectId && m.Id == mediaId);
+            if (media == null)
+            {
+                throw new ArgumentNullException(nameof(media));
+            }
 
-            if (media?.ImageData == null) return NotFound();
-
-            return File(media.ImageData, media.ContentType ?? "application/octet-stream", media.FileName);
+            //var imageData = 
+            ////var imageData = 
+            //return File(media.ImageData, media.ContentType ?? "application/octet-stream", media.FileName);
         }
     }
 }
