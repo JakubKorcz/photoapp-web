@@ -1,4 +1,4 @@
-﻿namespace PhotoApp.Common.Models
+﻿namespace PhotoApp.Common.ModelsShared
 {
     public class ServerAuthResponse
     {

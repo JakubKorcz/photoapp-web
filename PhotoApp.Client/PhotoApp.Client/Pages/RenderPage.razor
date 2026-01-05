@@ -8,16 +8,16 @@
     [Parameter]
     public Guid Id { get; set; }
 
-    ProjectModel model;
+    ProjectDto model;
 
     protected override async Task OnInitializedAsync()
     { 
-        model = new ProjectModel();
+        model = new ProjectDto();
     }
 
     // Pobieranie strumieniowe nie wszytsko na raz tylko po kolei i zwracanie 
-    public List<Photo> GetPhotos()
-    {
-        foreach(var photo in )
-    }
+    // public List<Photo> GetPhotos()
+    // {
+    //     foreach(var photo in )
+    // }
 }

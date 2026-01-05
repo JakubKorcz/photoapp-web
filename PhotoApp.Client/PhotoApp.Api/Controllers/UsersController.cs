@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Mailer;
-using PhotoApp.Common.Models;
+using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Controllers
 {

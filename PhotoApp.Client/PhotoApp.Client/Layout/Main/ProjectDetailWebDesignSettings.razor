@@ -16,7 +16,7 @@
         </div>
         <div class="setting">
             <h5>Czcionka</h5>
-            <InputRadioGroup @bind-Value="Project.MobileDesignSettings.FontLayout">
+            <InputRadioGroup @bind-Value="Project.MobileDesignSettings.FontWeight">
                 @foreach (var layoutVal in Enum.GetValues<FontWeight>())
                 {
                     <label class="tile-option">
@@ -68,5 +68,5 @@
 </div>
 
 @code {
-    ProjectModel Project { get; set; } = new ProjectModel();
+    ProjectDto Project { get; set; } = new ProjectDto();
 }

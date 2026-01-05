@@ -1,6 +1,6 @@
 ﻿namespace PhotoApp.Api.DbObjects
 {
-    public class Photo
+    public class Media
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

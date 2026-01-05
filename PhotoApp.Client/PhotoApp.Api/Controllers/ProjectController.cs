@@ -10,12 +10,11 @@ namespace PhotoApp.Api.Controllers
         private readonly IConfiguration _configuration = configuration;
         private readonly AppDbContext _dbContext = context;
 
+        //Metoda zwracająca wszystkie projekty dla danego użytkownika ()
         [HttpGet("")]
         public IActionResult GetAllProjectsForUser()
         {
             var projects = _dbContext.Projects.Select(p => p.Id).ToList();
-            var stringGuid = "123";
-            var folder = _dbContext.Folders.FirstOrDefault(f => f.ProjectId == Guid.Parse(stringGuid)).Project.Creator;
             return Ok(projects);
         }
 

@@ -6,11 +6,8 @@ namespace PhotoApp.Api.DbObjects
     {
         public Guid Id { get; set; }
         public Guid Creator {  get; set; }
-        public Guid Destination { get; set; }
-        public string Url { get; set; }
-        public string Description { get; set; }
-        public bool IsLiked { get; set; }
-        public List<ProjectFolder> Folders {  get; set; }
-        public List<Photo> Photos { get; set; }
+        public string ProjectName { get; set; }
+        public List<ProjectFolder>? Folders { get; set; } = null;
+        public List<Media>? Medias { get; set; } = null;
     }
 }
