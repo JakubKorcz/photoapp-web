@@ -2,11 +2,15 @@
 
 namespace PhotoApp.Client.Models
 {
-    public class ProjectDto
+    public class ProjectBaseInformationDto
     {
         public Guid Id { get; set; }
         public Guid Creator { get; set; }
         public string ProjectName { get; set; }
+    }
+
+    public class ProjectDto : ProjectBaseInformationDto
+    {
         public List<MediaDto> Media { get; set; }
         public List<FolderDto> Folders { get; set; }
         public DesignSettingsDto MobileDesignSettings { get; set; } = new DesignSettingsDto();
