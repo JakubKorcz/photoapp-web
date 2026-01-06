@@ -10,10 +10,30 @@
             </span>
         </div>
     </div>
-   
-
+    @if(Projects != null)
+    {
+        @foreach (var el in Projects)
+        {
+            <p> @el.ProjectName </p>
+        }
+    }
+    else
+    {
+        <p>Ładowanie projektów...</p>
+    }
 </div>
 
 @code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    public List<ProjectBaseInformationDto> Projects { get; set; } = null;
 
+    protected override async Task OnInitializedAsync()
+    {
+        IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(new Guid());
+        Projects = enumerable.ToList();
+        StateHasChanged();
+    }
+
+    
 }

@@ -1,5 +1,4 @@
-﻿using PhotoApp.Common.Models;
-using PhotoApp.Common.ModelsShared;
+﻿using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Client.Connection
 {

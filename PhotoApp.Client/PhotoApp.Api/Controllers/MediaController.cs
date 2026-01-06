@@ -11,17 +11,18 @@ namespace PhotoApp.Api.Controllers
         private readonly IConfiguration _configuration = configuration;
         private readonly AppDbContext _dbContext = context;
 
-        [HttpGet("")]
-        public Task<IActionResult> GetMedia([FromBody] MediaDto media)
-        {
-            if (media == null)
-            {
-                throw new ArgumentNullException(nameof(media));
-            }
+        //[HttpGet("{url}")]
+        //public Task<ActionResult> GetMedia([FromRoute] string url)
+        //{
+        //    //if (media == null)
+        //    //{
+        //    //    throw new ArgumentNullException(nameof(media));
+        //    //}
 
-            //var imageData = 
-            ////var imageData = 
-            //return File(media.ImageData, media.ContentType ?? "application/octet-stream", media.FileName);
-        }
+        //    ////var imageData = 
+        //    //////var imageData = 
+        //    //return File(media.ImageData, "application/octet-stream", media.Description);
+        //    return Ok()
+        //}
     }
 }
