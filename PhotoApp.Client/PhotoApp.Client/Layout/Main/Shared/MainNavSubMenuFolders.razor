@@ -5,17 +5,27 @@
             <span class="material-symbols-outlined">
                 swap_vert
             </span>
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" @onclick="ToggleSearch">
                 search
             </span>
         </div>
     </div>
-    @if(Projects != null)
+    @if (isSearchVisible)
     {
-        @foreach (var el in Projects)
+        <div class="search-container">
+            <input @bind="searchTerm" @oninput="FilterProjects" placeholder="Szukaj projektów..." class="form-control" />
+        </div>
+    }
+    @if (filteredProjects != null && filteredProjects.Any())
+    {
+        foreach (var el in filteredProjects)
         {
-            <p> @el.ProjectName </p>
+            <div class="button-with-project" onclick="">@el.ProjectName</div>
         }
+    }
+    else if (Projects != null)
+    {
+        <p>Brak projektów pasujących do wyszukiwania</p>
     }
     else
     {
@@ -27,13 +37,44 @@
     [Inject]
     private ApiConnection conn { get; set; } = default!;
     public List<ProjectBaseInformationDto> Projects { get; set; } = null;
+    private List<ProjectBaseInformationDto>? filteredProjects;
+    private string searchTerm = "";
+    private bool isSearchVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
         IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(new Guid());
         Projects = enumerable.ToList();
+        filteredProjects = Projects;
         StateHasChanged();
     }
 
-    
+    private void ToggleSearch()
+    {
+        isSearchVisible = !isSearchVisible;
+        if (!isSearchVisible)
+        {
+            searchTerm = "";
+            filteredProjects = Projects;
+        }
+        StateHasChanged();
+    }
+
+    private async Task FilterProjects(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+
+        if (Projects == null) return;
+
+        filteredProjects = string.IsNullOrWhiteSpace(searchTerm)
+            ? Projects
+            : Projects.Where(p => p.ProjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OpenProject()
+    {
+        
+    }
 }

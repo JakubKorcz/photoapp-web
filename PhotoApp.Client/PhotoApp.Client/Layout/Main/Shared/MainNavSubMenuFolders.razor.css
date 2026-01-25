@@ -14,3 +14,13 @@
     flex-direction : row;
     justify-content : space-between;
 }
+
+.button-with-project {
+    background-color: white;
+    margin-top: 10px;
+    display: flex; 
+    align-items: center; 
+    height: 50px;
+    padding: 5px;
+    border-radius: 4%;
+}

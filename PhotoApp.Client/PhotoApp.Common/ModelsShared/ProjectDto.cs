@@ -7,6 +7,7 @@ namespace PhotoApp.Client.Models
         public Guid Id { get; set; }
         public Guid Creator { get; set; }
         public string ProjectName { get; set; }
+        public DateOnly CreatedAt { get; set; }
     }
 
     public class ProjectDto : ProjectBaseInformationDto
