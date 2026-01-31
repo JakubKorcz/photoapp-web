@@ -19,7 +19,7 @@
                 case SortPossibilities.SortByDate:
                     // Ikonka następnego sposobu sortowania - Bez sortowania
                     <span class="material-symbols-outlined" @onclick="() => ChangeCurrentSortType(SortPossibilities.NoSort)">
-                        <p> swap_vert </p>
+                        swap_vert
                     </span>
                     break;
                 default:
@@ -106,7 +106,6 @@
 
     private void Sort(SortPossibilities sortBy, string searchString)
     {
-        Console.WriteLine($"Aktualny stan: {sortBy.ToString()}, {searchString}");
         ProjectsAfterStringFilter = new List<ProjectBaseInformationDto>();
         if (!string.IsNullOrEmpty(searchString))
         {
