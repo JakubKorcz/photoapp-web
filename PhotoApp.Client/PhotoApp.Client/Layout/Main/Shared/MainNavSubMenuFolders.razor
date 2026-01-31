@@ -2,10 +2,31 @@
     <div id="header">
         <h5>Projekty</h5>
         <div class="icons">
-            <span class="material-symbols-outlined">
-                swap_vert
-            </span>
-            <span class="material-symbols-outlined" @onclick="ToggleSearch">
+            @switch (currentSortType)
+            {
+                case SortPossibilities.NoSort:
+                    // Ikonka następnego sposobu sortowania - Sortowanie alfabetycznie
+                    <span class="material-symbols-outlined" @onclick="() => ChangeCurrentSortType(SortPossibilities.SortAlphabetically)">
+                        swap_vert
+                    </span>
+                    break;
+                case SortPossibilities.SortAlphabetically:
+                    // Ikonka następnego sposobu sortowania - Sortowanie po dacie
+                    <span class="material-symbols-outlined" @onclick="() => ChangeCurrentSortType(SortPossibilities.SortByDate)">
+                        swap_vert
+                    </span>
+                    break;
+                case SortPossibilities.SortByDate:
+                    // Ikonka następnego sposobu sortowania - Bez sortowania
+                    <span class="material-symbols-outlined" @onclick="() => ChangeCurrentSortType(SortPossibilities.NoSort)">
+                        <p> swap_vert </p>
+                    </span>
+                    break;
+                default:
+                    break;
+            }
+           
+            <span class="material-symbols-outlined" @onclick="Search">
                 search
             </span>
         </div>
@@ -13,17 +34,21 @@
     @if (isSearchVisible)
     {
         <div class="search-container">
-            <input @bind="searchTerm" @oninput="FilterProjects" placeholder="Szukaj projektów..." class="form-control" />
+            <input @bind="searchTerm" @oninput="PullSerachTermValueAndSort" placeholder="Szukaj projektów..." class="form-control" />
         </div>
     }
-    @if (filteredProjects != null && filteredProjects.Any())
+    @if (ProjectsToDisplay != null && ProjectsToDisplay.Count > 0)
     {
-        foreach (var el in filteredProjects)
+        foreach (var key in ProjectsToDisplay.Keys)
         {
-            <div class="button-with-project" onclick="">@el.ProjectName</div>
+            <h4 class="project-group-header">@key</h4>
+            foreach (var el in ProjectsToDisplay[key])
+            {
+                <div class="button-with-project" onclick="() => OpenProject(@el.Id)">@el.ProjectName</div>
+            }
         }
     }
-    else if (Projects != null)
+    else if (ProjectsAfterStringFilter != null && ProjectsAfterStringFilter.Count == 0)
     {
         <p>Brak projektów pasujących do wyszukiwania</p>
     }
@@ -34,46 +59,94 @@
 </div>
 
 @code {
+    protected enum SortPossibilities
+    {
+        NoSort,
+        SortAlphabetically,
+        SortByDate
+    }
+
     [Inject]
     private ApiConnection conn { get; set; } = default!;
-    public List<ProjectBaseInformationDto> Projects { get; set; } = null;
-    private List<ProjectBaseInformationDto>? filteredProjects;
+    public List<ProjectBaseInformationDto> AllProjects { get; set; } = null;
+    public List<ProjectBaseInformationDto> ProjectsAfterStringFilter { get; set; } = null;
+    public Dictionary<string, List<ProjectBaseInformationDto>> ProjectsToDisplay { get; set; } = null;
     private string searchTerm = "";
     private bool isSearchVisible = false;
+    private SortPossibilities currentSortType = SortPossibilities.NoSort;
 
     protected override async Task OnInitializedAsync()
     {
         IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(new Guid());
-        Projects = enumerable.ToList();
-        filteredProjects = Projects;
+        AllProjects = enumerable.ToList();
+        Sort(SortPossibilities.NoSort, "");
         StateHasChanged();
     }
 
-    private void ToggleSearch()
+    private void Search()
     {
         isSearchVisible = !isSearchVisible;
-        if (!isSearchVisible)
-        {
-            searchTerm = "";
-            filteredProjects = Projects;
-        }
+        Sort(currentSortType, searchTerm);
         StateHasChanged();
     }
 
-    private async Task FilterProjects(ChangeEventArgs e)
+    private async Task PullSerachTermValueAndSort(ChangeEventArgs e)
     {
         searchTerm = e.Value?.ToString() ?? "";
-
-        if (Projects == null) return;
-
-        filteredProjects = string.IsNullOrWhiteSpace(searchTerm)
-            ? Projects
-            : Projects.Where(p => p.ProjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-
+        Sort(currentSortType, searchTerm);
         StateHasChanged();
     }
 
-    private void OpenProject()
+    private async Task ChangeCurrentSortType(SortPossibilities nextSortType)
+    {
+        currentSortType = nextSortType;
+        Sort(nextSortType, searchTerm);
+        StateHasChanged();
+    }
+
+    private void Sort(SortPossibilities sortBy, string searchString)
+    {
+        Console.WriteLine($"Aktualny stan: {sortBy.ToString()}, {searchString}");
+        ProjectsAfterStringFilter = new List<ProjectBaseInformationDto>();
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            foreach (var project in AllProjects)
+            {
+                if (project.ProjectName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                {
+                    ProjectsAfterStringFilter.Add(project);
+                }
+            }
+        }
+        else
+        {
+            ProjectsAfterStringFilter = AllProjects;
+        }
+
+        ProjectsToDisplay = sortBy switch
+        {
+            SortPossibilities.NoSort => new Dictionary<string, List<ProjectBaseInformationDto>>
+            {
+                { "", ProjectsAfterStringFilter.ToList() }
+            },
+
+            SortPossibilities.SortAlphabetically => ProjectsAfterStringFilter
+                .OrderBy(p => p.ProjectName)
+                .GroupBy(p => p.ProjectName[0].ToString().ToUpper())
+                .ToDictionary(g => g.Key, g => g.ToList()),
+
+            SortPossibilities.SortByDate => ProjectsAfterStringFilter
+                .OrderBy(Pages => Pages.ProjectName)
+                .OrderByDescending(p => p.CreatedAt)
+                .GroupBy(p => $"{p.CreatedAt:yyyy.MM}")
+                .ToDictionary(g => g.Key, g => g.ToList()),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(sortBy), $"Nieobsłużony typ sortowania: {sortBy}")
+        };
+        StateHasChanged();
+    }
+
+    private void OpenProject(Guid id)
     {
         
     }

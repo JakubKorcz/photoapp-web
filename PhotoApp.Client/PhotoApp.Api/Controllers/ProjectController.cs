@@ -28,9 +28,9 @@ namespace PhotoApp.Api.Controllers
             //Ręczna inicjalizacja projektów
             var projects = new List<ProjectBaseInformationDto>()
             {
-               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Projekt"},
-               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Abecadło"},
-               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Kubabuba"},
+               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Projekt", CreatedAt = new DateOnly(2025,10,10)},
+               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Abecadło", CreatedAt = new DateOnly(2025,11,14)},
+               new ProjectBaseInformationDto(){Id = new Guid(), Creator = new Guid(), ProjectName = "Kubabuba", CreatedAt = new DateOnly(2026,01,20)},
             };
 
             return Ok(projects);
