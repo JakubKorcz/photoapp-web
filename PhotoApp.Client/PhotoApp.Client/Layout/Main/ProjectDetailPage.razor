@@ -33,6 +33,7 @@
             switch (activeItem.Id)
             {
                 case 0:
+                    <ProjectFolderStructureView Project="@currentPrj"/>
                     break;
                 case 1:
                     break;
@@ -52,6 +53,10 @@
 </div>
 
 @code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    ProjectDto currentPrj { get; set; } = null;
+
     public enum Tab
     {
         ProjectDescription,
@@ -60,6 +65,11 @@
         Settings,
         Activity,
         Import
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPrj = await conn.GetProject(new Guid(), new Guid()); //TODO uzupełnić poprawne parametry
     }
 
     List<MenuItem> tabs = new List<MenuItem>()

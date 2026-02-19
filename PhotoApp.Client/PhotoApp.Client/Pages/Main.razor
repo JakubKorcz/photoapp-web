@@ -1,10 +1,12 @@
 ﻿@page "/"
+@page "/{Guid:guid}"
 
 <div class="page-layout">
     <MainNavMenu></MainNavMenu>
-    <ContentArena></ContentArena>
+    <ContentArea></ContentArea>
 </div>
 
 @code {
-
+    [Parameter]
+    public Guid? Guid { get; set; }
 }

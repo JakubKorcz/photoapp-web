@@ -1,0 +1,6 @@
+@PhotoApp.BucketImitator_HostAddress = http://localhost:5119
+
+GET {{PhotoApp.BucketImitator_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -35,7 +35,23 @@ namespace PhotoApp.Client.Models
                     IsLiked = false
                 }
             };
-            Folders = null;
+            Folders = new List<FolderDto>() { 
+                new FolderDto()
+                {
+                    Id = Guid.Empty,
+                    Name = "Żaba"
+                },
+                new FolderDto()
+                {
+                    Id = Guid.Empty,
+                    Name = "Królik"
+                },
+                new FolderDto()
+                {
+                    Id = Guid.Empty,
+                    Name = "Koń"
+                }
+            };
             DesktopDesignSettings = new DesignSettingsDto() { 
                 CoverPhoto = Guid.Empty
             };
