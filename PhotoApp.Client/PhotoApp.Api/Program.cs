@@ -1,3 +1,4 @@
+using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using PhotoApp.Api;
 
@@ -21,6 +22,21 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()   
               .AllowAnyMethod();   
     });
+});
+
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var config = new AmazonS3Config
+    {
+        ServiceURL = "https://fsn1.your-objectstorage.com",
+        ForcePathStyle = true 
+    };
+
+    return new AmazonS3Client(
+        awsAccessKeyId: "ACCESS_KEY",
+        awsSecretAccessKey: "SECRET_KEY",
+        config
+    );
 });
 
 var app = builder.Build();
