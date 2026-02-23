@@ -7,9 +7,11 @@ namespace PhotoApp.Api.DbObjects
         [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public List<ProjectFolder> Folders { get; set; }
+        public List<Media> Medias { get; set; }
 
         //FK
-        public Guid ProjectId { get; set; }
+        public ProjectFolder Parent { get; set; }
         public Project Project { get; set; }
 
     }

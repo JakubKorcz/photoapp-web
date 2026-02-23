@@ -12,6 +12,8 @@ namespace PhotoApp.Api
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectFolder> Folders { get; set; }
+        public DbSet<Media> Medias { get; set; }
+        public DbSet<ProjectWebDesign> WebDesignes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,16 @@ namespace PhotoApp.Api
             //ProjectFolder
             modelBuilder.Entity<ProjectFolder>()
                 .HasKey(u => u.Id);
+
+            //Media
+            modelBuilder.Entity<Media>()
+                .HasKey(u => u.Id);
+
+            //Webdesign
+            modelBuilder.Entity<ProjectWebDesign>()
+                .HasKey(u => u.Id);
+
+            
         }
     }
 }

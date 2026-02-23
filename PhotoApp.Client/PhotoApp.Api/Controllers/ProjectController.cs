@@ -39,9 +39,8 @@ namespace PhotoApp.Api.Controllers
         [HttpGet("{userId}/{id}")]
         public ActionResult<ProjectDto> GetProjectConfiguration([FromRoute] Guid userId, [FromRoute] Guid id)
         {
-            var conf = new ProjectDto();
-            //var configuration = _dbContext.Projects
-            //    .FirstOrDefault(p => p.Id == id && p.Creator == userId);
+            var configuration = _dbContext.Projects
+                .FirstOrDefault(p => p.Id == id && p.Creator == userId);
             return Ok(configuration);
         }
     }
