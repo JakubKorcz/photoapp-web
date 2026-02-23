@@ -6,10 +6,12 @@ namespace PhotoApp.Api.DbObjects
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid Owner {  get; set; }
         public string ProjectName { get; set; }
         public DateOnly CreatedAt { get; set; }
         //FK
         public ProjectFolder MainFolder { get; set; }
+        public User Owner { get; set; }
+        public User Creator { get; set; }
+
     }
 }

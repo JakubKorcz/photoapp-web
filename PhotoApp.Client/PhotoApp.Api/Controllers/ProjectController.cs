@@ -15,15 +15,15 @@ namespace PhotoApp.Api.Controllers
         [HttpGet("{userId}")]
         public ActionResult<IEnumerable<ProjectBaseInformationDto>> GetAllProjectsForUser([FromRoute] Guid userId)
         {
-            //var projects = _dbContext.Projects
-            //    .Where(p => p.Creator == userId)
-            //    .Select(p => new ProjectBaseInformationDto
-            //    {
-            //        Id = p.Id,
-            //        Creator = p.Creator,
-            //        ProjectName = p.ProjectName
-            //    })
-            //    .ToList();
+            var projects = _dbContext.Projects
+                .Where(p => p.Creator == userId)
+                .Select(p => new ProjectBaseInformationDto
+                {
+                    Id = p.Id,
+                    Creator = p.Creator,
+                    ProjectName = p.ProjectName
+                })
+                .ToList();
 
             //Ręczna inicjalizacja projektów
             var projects = new List<ProjectBaseInformationDto>()
