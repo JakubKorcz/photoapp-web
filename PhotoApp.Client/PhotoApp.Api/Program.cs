@@ -1,9 +1,12 @@
 using Amazon.S3;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using PhotoApp.Api;
+using PhotoApp.Api.Repository;
+using PhotoApp.Api.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Configuration.AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
 
@@ -12,7 +15,12 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("db_connection_string")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("db_connection_string")), ServiceLifetime.Scoped);
+
+builder.Services.AddScoped<UserRepository, UserRepository>();
+builder.Services.AddScoped<ProjectRepository, ProjectRepository>();
+
+builder.Services.AddScoped<ProjectService, ProjectService>();
 
 builder.Services.AddCors(options =>
 {
@@ -39,6 +47,18 @@ builder.Services.AddSingleton<IAmazonS3>(sp =>
     );
 });
 
+var configuration = new MapperConfiguration(config =>
+{
+    config.AddProfile(new MappingProfile());
+}, new NullLoggerFactory());
+
+var mapper = configuration.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +72,9 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 

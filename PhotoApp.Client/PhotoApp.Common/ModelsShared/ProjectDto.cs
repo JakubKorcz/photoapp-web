@@ -2,14 +2,6 @@
 
 namespace PhotoApp.Client.Models
 {
-    public class ProjectBaseInformationDto
-    {
-        public Guid Id { get; set; }
-        public Guid Creator { get; set; }
-        public string ProjectName { get; set; }
-        public DateOnly CreatedAt { get; set; }
-    }
-
     public class ProjectDto : ProjectBaseInformationDto
     {
         public FolderDto MainFolder { get; set; } = new FolderDto();

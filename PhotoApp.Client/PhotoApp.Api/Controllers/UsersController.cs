@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Mailer;
+using PhotoApp.Api.Repository;
 using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Controllers
 {
     [ApiController]
     [Route("users")]
-    public class UsersController(IConfiguration configuration, AppDbContext context) : ControllerBase
+    public class UsersController(IConfiguration configuration, UserRepository userRepository) : ControllerBase
     {
         private readonly IConfiguration _configuration = configuration;
-        private readonly AppDbContext _dbContext = context;
+        private readonly UserRepository _userRepository = userRepository;
 
         [HttpPost("register/{username}")]
         public IActionResult RegisterRequest([FromRoute] string username)
@@ -30,7 +31,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("register/{username}/{code}")]
-        public IActionResult RegisterVerify([FromRoute] string username, [FromRoute] string code)
+        public async Task<IActionResult> RegisterVerify([FromRoute] string username, [FromRoute] string code)
         {
             //TODO NALEZY JESZCZE DOKLADNIE PRZEMYSLEC
             try
@@ -39,11 +40,14 @@ namespace PhotoApp.Api.Controllers
                 {
                     throw new Exception("This value is not a proper email!");
                 }
-                var user = new User { Id = Guid.NewGuid(), Username = username };
-                _dbContext.Users.Add(user);              
-                _dbContext.SaveChanges();
-               
-                return Ok();
+
+                if (!string.IsNullOrEmpty(username))
+                {
+                    return Ok(await _userRepository.CreateUserAsync(username));
+                }
+
+                return BadRequest("Username cannot be empty");
+                
             }
             catch (Exception ex)
             {
@@ -60,12 +64,14 @@ namespace PhotoApp.Api.Controllers
                 var generatedCode = new CodeGenerator().Generate();
                 var mailer = new Mailer.Mailer(_configuration);
                 mailer.SendLoginMail(username, "Daryna", generatedCode);
-                var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
+                var user = _userRepository.GetUserByUsernameAsync(username);
+
                 if (user is not null)
                 {
-                    user.LoginCode = generatedCode;
-                    user.CodeExpiration = DateTime.UtcNow.AddMinutes(10);
-                    _dbContext.SaveChanges();
+                    //user.LoginCode = generatedCode;
+                    //user.CodeExpiration = DateTime.UtcNow.AddMinutes(10);
+                    //_dbContext.SaveChanges();
+                    //Dodanie czasu i kodu logowania do bazy
                 }
                 var response = new ServerAuthResponse
                 {
@@ -89,12 +95,12 @@ namespace PhotoApp.Api.Controllers
         {
             try
             {
-                var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
+                var user = _userRepository.GetUserByUsernameAsync(username);
                 if (user is null)
                 {
                     return BadRequest();
                 }
-                if (user.LoginCode == int.Parse(code) && user.CodeExpiration >= DateTime.UtcNow)
+                if (1 == 1)//user.LoginCode == int.Parse(code) && user.CodeExpiration >= DateTime.UtcNow)
                 {
                     var response = new ServerAuthResponse()
                     {
@@ -111,13 +117,6 @@ namespace PhotoApp.Api.Controllers
                 Console.WriteLine(ex.ToString());
                 return BadRequest();
             }
-        }
-
-
-        [HttpGet]
-        public IActionResult Test()
-        {
-            return Ok();
         }
     }
 }
