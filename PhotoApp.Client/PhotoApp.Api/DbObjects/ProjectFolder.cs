@@ -5,14 +5,16 @@ namespace PhotoApp.Api.DbObjects
     public class ProjectFolder
     {
         [Key]
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public List<ProjectFolder> Folders { get; set; }
-        public List<Media> Medias { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Name { get; set; } = string.Empty;
+        //czy folder jest folderem głównym projektu, czy podfolderem. 
+        public bool IsHeadFolder { get; set; } = false;
+
+        public List<ProjectFolder> Folders { get; set; } = new();
+        public List<Media> Medias { get; set; } = new();
 
         //FK
-        public ProjectFolder Parent { get; set; }
-        public Project Project { get; set; }
-
+        public Guid? ParentFolderId { get; set; }
+        public ProjectFolder? ParentFolder { get; set; }
     }
 }

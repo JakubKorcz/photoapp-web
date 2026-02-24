@@ -14,35 +14,33 @@ namespace PhotoApp.Api
         public DbSet<ProjectFolder> Folders { get; set; }
         public DbSet<Media> Medias { get; set; }
         public DbSet<ProjectWebDesign> WebDesignes { get; set; }
+        public DbSet<Project_ProjectWebDesign> Project_ProjectWebDesigns { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            //User
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.Id);
+            //Username musi być unikalne
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
-            //Project
-            modelBuilder.Entity<Project>()
-                .HasKey(u => u.Id);
+            //ProjectID i Device muszą być unikalne w tabeli Project_ProjectWebDesign czyli dla kazdego projektu istnieje tyle webdesignow ile jest urzadzen
+            modelBuilder.Entity<Project_ProjectWebDesign>()
+                .HasIndex(ppwd => new { ppwd.ProjectId, ppwd.Device })
+                .IsUnique();
 
-            //ProjectFolder
-            modelBuilder.Entity<ProjectFolder>()
-                .HasKey(u => u.Id);
+            //Klucze obce w tabeli pośredniej Project_ProjectWebDesign
+            modelBuilder.Entity<Project_ProjectWebDesign>()
+                .HasOne(ppwd => ppwd.Project)
+                .WithMany() 
+                .HasForeignKey(ppwd => ppwd.ProjectId);
 
-            //Media
-            modelBuilder.Entity<Media>()
-                .HasKey(u => u.Id);
+            modelBuilder.Entity<Project_ProjectWebDesign>()
+                .HasOne(ppwd => ppwd.ProjectWebDesign)
+                .WithMany()
+                .HasForeignKey(ppwd => ppwd.ProjectWebDesignId);
 
-            //Webdesign
-            modelBuilder.Entity<ProjectWebDesign>()
-                .HasKey(u => u.Id);
 
-            
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

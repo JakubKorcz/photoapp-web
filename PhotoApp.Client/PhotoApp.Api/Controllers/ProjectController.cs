@@ -15,15 +15,15 @@ namespace PhotoApp.Api.Controllers
         [HttpGet("{userId}")]
         public ActionResult<IEnumerable<ProjectBaseInformationDto>> GetAllProjectsForUser([FromRoute] Guid userId)
         {
-            var projects = _dbContext.Projects
-                .Where(p => p.Creator == userId)
-                .Select(p => new ProjectBaseInformationDto
-                {
-                    Id = p.Id,
-                    Creator = p.Creator,
-                    ProjectName = p.ProjectName
-                })
-                .ToList();
+            //var projects = _dbContext.Projects
+            //    .Where(p => p.Creator == userId)
+            //    .Select(p => new ProjectBaseInformationDto
+            //    {
+            //        Id = p.Id,
+            //        Creator = p.Creator,
+            //        ProjectName = p.ProjectName
+            //    })
+            //    .ToList();
 
             //Ręczna inicjalizacja projektów
             var projects = new List<ProjectBaseInformationDto>()
@@ -40,7 +40,7 @@ namespace PhotoApp.Api.Controllers
         public ActionResult<ProjectDto> GetProjectConfiguration([FromRoute] Guid userId, [FromRoute] Guid id)
         {
             var configuration = _dbContext.Projects
-                .FirstOrDefault(p => p.Id == id && p.Creator == userId);
+                .FirstOrDefault(p => p.Id == id && p.Owner.Id == userId);
             return Ok(configuration);
         }
     }
