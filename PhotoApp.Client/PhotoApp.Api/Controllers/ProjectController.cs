@@ -10,17 +10,16 @@ namespace PhotoApp.Api.Controllers
 {
     [ApiController]
     [Route("project")]
-    public class ProjectController(IConfiguration configuration, ProjectService projectService, IMapper mapper) : ControllerBase
+    public class ProjectController(IConfiguration configuration, ProjectService projectService) : ControllerBase
     {
         private readonly IConfiguration _configuration = configuration;
         private readonly ProjectService _projectService = projectService;
-        private readonly IMapper _mapper = mapper;
 
         [HttpGet("{username}")]
         public ActionResult<IEnumerable<ProjectBaseInformationDto>> GetAllProjectsForUser([FromRoute] string username)
         {
             var projects = _projectService.GetAllProjectsByUsernameAsync(username);
-            return Ok(_mapper.Map<List<ProjectBaseInformationDto>>(projects));
+            return Ok(projects);
         }
 
         [HttpGet("{username}/{id}")]
@@ -29,5 +28,11 @@ namespace PhotoApp.Api.Controllers
             var project = _projectService.GetProjectByIdAsync(id);
             return Ok(project);
         }
-    }
+
+        [HttpPost]
+        public ActionResult UpdateProject([FromBody] ProjectDto createProjectDto)
+        {
+            var projectId = _projectService.CreateProjectAsync(createProjectDto);
+            return Ok(projectId);
+        }
 }

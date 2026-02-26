@@ -16,7 +16,6 @@ namespace PhotoApp.Client.Models
             Username = "";
             ProjectName = "Test Name";
             MainFolder = new FolderDto() { 
-                Name = "home",
                 Folders = new List<FolderDto>()
                 {
                     new FolderDto()

@@ -1,10 +1,14 @@
-﻿using PhotoApp.Api.DbObjects;
+﻿using AutoMapper;
+using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
+using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Service
 {
-    public class ProjectService(UserRepository userRepository, ProjectRepository projectRepository, ProjectFolderRepository projectFolderRepository, MediaRepository mediaRepository)
+    public class ProjectService(IMapper mapper, UserRepository userRepository, ProjectRepository projectRepository, ProjectFolderRepository projectFolderRepository, MediaRepository mediaRepository)
     {
+        private readonly IMapper _mapper = mapper;
+        //CREATE
         public async Task<Project> CreateProjectWithUsernameAsync(string username, string projectName)
         {
             var user = await userRepository.GetUserByUsernameAsync(username) ?? throw new Exception($"Cannot create project for non-existent user '{username}'.");
@@ -14,11 +18,12 @@ namespace PhotoApp.Api.Service
             return project;
         }
 
-        public async Task<List<Project>> GetAllProjectsByUsernameAsync(string username)
+        //READ
+        public async Task<List<ProjectBaseInformationDto>> GetAllProjectsByUsernameAsync(string username)
         {
             var user = await userRepository.GetUserByUsernameAsync(username) ?? throw new Exception($"Cannot create project for non-existent user '{username}'.");
             var projects = await projectRepository.GetAllProjectsForUserAsync(user);
-            return projects;
+            return _mapper.Map<List<ProjectBaseInformationDto>>(projects);
         }
 
         public async Task<Project?> GetProjectByIdAsync(Guid id)
@@ -34,9 +39,11 @@ namespace PhotoApp.Api.Service
             return project;
         }
 
-        public Task<Project?> UpdateProject(Project project)
+        //UPDATE
+        public async Task<Project> UpdateProjectAsync(Project project)
         {
-
+            return await projectRepository.UpdateProjectAsync(project);
         }
+        //DELETE
     }
 }
