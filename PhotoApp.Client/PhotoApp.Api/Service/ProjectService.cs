@@ -9,6 +9,8 @@ namespace PhotoApp.Api.Service
         {
             var user = await userRepository.GetUserByUsernameAsync(username) ?? throw new Exception($"Cannot create project for non-existent user '{username}'.");
             var project = await projectRepository.CreateProjectAsync(user, projectName);
+
+            //TODO Tworzenie katalogów, tworzenie stylów i podpięcie
             return project;
         }
 
@@ -30,6 +32,11 @@ namespace PhotoApp.Api.Service
             }
             //TODO download design
             return project;
+        }
+
+        public Task<Project?> UpdateProject(Project project)
+        {
+
         }
     }
 }

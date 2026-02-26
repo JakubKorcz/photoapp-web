@@ -8,10 +8,9 @@ namespace PhotoApp.Common.ModelsShared
 {
     public class FolderDto
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<FolderDto> Folders { get; set; }
-        public List<MediaDto> Medias { get; set; }
-        
+        public List<FolderDto> Folders { get; set; } = [];
+        public List<MediaDto>? Medias { get; set; } = [];
     }
 }

@@ -4,7 +4,7 @@ namespace PhotoApp.Client.Models
 {
     public class ProjectDto : ProjectBaseInformationDto
     {
-        public FolderDto MainFolder { get; set; } = new FolderDto();
+        public FolderDto? MainFolder { get; set; }
         public DesignSettingsDto MobileDesignSettings { get; set; } = new DesignSettingsDto();
         public DesignSettingsDto DesktopDesignSettings { get; set; }
         public ProjectSettingsDto ProjectSettings { get; set; } = new ProjectSettingsDto();
@@ -13,7 +13,7 @@ namespace PhotoApp.Client.Models
         public ProjectDto()
         {
             Id = new Guid();
-            Creator = new Guid();
+            Username = "";
             ProjectName = "Test Name";
             MainFolder = new FolderDto() { 
                 Name = "home",

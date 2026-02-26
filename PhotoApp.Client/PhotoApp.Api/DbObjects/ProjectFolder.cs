@@ -16,5 +16,7 @@ namespace PhotoApp.Api.DbObjects
         //FK
         public Guid? ParentFolderId { get; set; }
         public ProjectFolder? ParentFolder { get; set; }
+
+        public Guid? ProjectId { get; set; }
     }
 }
