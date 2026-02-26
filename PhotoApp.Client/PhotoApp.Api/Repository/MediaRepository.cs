@@ -7,6 +7,12 @@ namespace PhotoApp.Api.Repository
     {
         private readonly AppDbContext context = context;
 
+        public async Task<Media> CreateMediaAsync(Media media)
+        {
+            context.Medias.Add(media);
+            return media;
+        }
+
         public async Task<List<Media>> GetAllMediasFromFolderAsync(Guid folderId)
         {
             var medias = context.Medias.Where(m => m.ParentFolderId == folderId).ToList();
@@ -19,10 +25,10 @@ namespace PhotoApp.Api.Repository
             return medias;
         }
 
-        public async Task<Media> CreateMedia(MediaDto media)
+        public async Task<Media?> GetMediaByIdAsync(Guid mediaId)
         {
-           
-
+            var media = context.Medias.FirstOrDefault(m => m.Id == mediaId);
+            return media;
         }
     }
 }

@@ -8,8 +8,10 @@ namespace PhotoApp.Api
     {
         public MappingProfile()
         {
-            CreateMap<Project, ProjectBaseInformationDto>()
-                .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.UserId)); 
+            CreateMap<Project, ProjectBaseInformationDto>();
+            //CreateMap<Project, ProjectDto>();
+            CreateMap<Media, MediaDto>();
+            CreateMap<MediaDto, Media>();
 
             //CreateMap<DbObjects.ProjectFolder, FolderDto>();
             //CreateMap<DbObjects.ProjectWebDesign, DesignSettingsDto>();

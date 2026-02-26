@@ -14,21 +14,21 @@ namespace PhotoApp.Api.DbObjects
         [Required]
         public string Extension { get; set; } = string.Empty;
         public PhotoType Type { get; set; }
-        public string Url { get; set; } = string.Empty;
+        public string ObjectKey { get; set; } = string.Empty;
         public bool IsLiked { get; set; }
         public long SizeBytes { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public List<Media>? ConnectedMedias { get; set; }
         //FK
-        public Guid ParentFolderId { get; set; }
+        public Guid? ParentFolderId { get; set; }
         public ProjectFolder ParentFolder { get; set; } = null!;
 
-        public Guid ProjectId { get; set; }
+        public Guid? ProjectId { get; set; }
         public Project Project { get; set; } = null!;
 
-        
-        public Guid ParentMediaId { get; set; }
+        //FK for media connected to other media eg. preview or thumbnail
+        public Guid? ParentMediaId { get; set; }
         public Media ParentMedia { get; set; } = null!;
     }
 }
