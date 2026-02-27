@@ -14,8 +14,7 @@ namespace PhotoApp.Api.DbObjects
         public Guid MainFolderId { get; set; }
         public ProjectFolder MainFolder { get; set; } = null!;
 
-        [Required]
-        public Guid UserId { get; set; }
+        public required string Username { get; set; }
         public User Owner { get; set; } = null!;
 
         public List<Project_ProjectWebDesign> WebDesignAssignments { get; set; } = new();

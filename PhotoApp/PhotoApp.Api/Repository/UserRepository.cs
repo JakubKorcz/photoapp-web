@@ -19,6 +19,11 @@ namespace PhotoApp.Api.Repository
             return context.Users.SingleOrDefault(u => u.Username == username);
         }
 
+        public async Task<User?> GetUserByIdAsync(Guid id)
+        {
+            return context.Users.SingleOrDefault(u => u.Id == id);
+        }
+
         //UPDATE
         public async Task<User?> UpdateUserAsync()
         {

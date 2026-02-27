@@ -6,7 +6,7 @@ namespace PhotoApp.Common.ModelsShared
 {
     public class ProjectBaseInformationDto
     {
-        public Guid? Id { get; set; }
+        public Guid? Id { get; init; }
         public string Username { get; set; }
         public string ProjectName { get; set; }
         public DateTime? CreatedAt { get; set; }

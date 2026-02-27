@@ -74,18 +74,24 @@ namespace PhotoApp.Api.Repository
                 throw new InvalidOperationException("Cannot delete the project's main folder.");
             }
 
-            if (folder.Folders.Any())
+            if (folder.Folders.Count != 0)
             {
                 throw new InvalidOperationException("Cannot delete folder with existing subfolders.");
             }
 
-            if (folder.Medias.Any())
+            if (folder.Medias.Count != 0)
             {
                 throw new InvalidOperationException("Cannot delete folder with existing medias.");
             }
 
             context.Folders.Remove(folder);
             await context.SaveChangesAsync();
+        }
+
+        //EXISTS
+        public async Task<bool> FolderExistsInProjectAsync(Guid folderId, Guid projectId)
+        {
+            return await context.Folders.AsNoTracking().AnyAsync(f => f.Id == folderId && f.ProjectId == projectId);
         }
     }
 }

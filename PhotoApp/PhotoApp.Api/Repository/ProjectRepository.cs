@@ -1,26 +1,22 @@
 ﻿using PhotoApp.Api.DbObjects;
+using Microsoft.EntityFrameworkCore;
+using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Repository
 {
     public class ProjectRepository(AppDbContext context)
     {
         private readonly AppDbContext context = context;
-        public async Task<Project> CreateProjectAsync(User user, string projectName)
+        public async Task<Project?> CreateProjectAsync(Project project)
         {
-            var project = new Project
-            {
-                ProjectName = projectName,
-                UserId = user.Id,
-            };
-
             context.Projects.Add(project);
             await context.SaveChangesAsync();
             return project;
         }
 
-        public async Task<List<Project>> GetAllProjectsForUserAsync(User user)
+        public async Task<List<Project>> GetAllProjectsForUserAsync(string username)
         {
-            var list = context.Projects.Where(p => p.UserId == user.Id).ToList();
+            var list = context.Projects.Where(p => p.Username == username).ToList();
             return list;
         }
 
@@ -28,6 +24,12 @@ namespace PhotoApp.Api.Repository
         {
             var project = context.Projects.FirstOrDefault(p => p.Id == id);
             return project;
+        }
+
+        public async Task<bool> ProjectExistsAsync(Guid projectId)
+        {
+            return await context.Projects
+                .AnyAsync(p => p.Id == projectId);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace PhotoApp.Common.ModelsShared
 {
     public class MediaDto
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; init; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Extension { get; set; }

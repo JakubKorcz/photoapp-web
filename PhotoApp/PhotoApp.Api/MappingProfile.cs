@@ -9,13 +9,13 @@ namespace PhotoApp.Api
         public MappingProfile()
         {
             CreateMap<Project, ProjectBaseInformationDto>();
-            //CreateMap<Project, ProjectDto>();
+            //Ignoruj kopiowania Id, bo to jest generowane przez bazę danych i nie powinno być nadpisywane podczas tworzenia nowego projektu.
+            CreateMap<ProjectBaseInformationDto, Project>()
+                .ForMember(p => p.Id, opt => opt.Ignore());
+
             CreateMap<Media, MediaDto>();
             CreateMap<MediaDto, Media>();
 
-            //CreateMap<DbObjects.ProjectFolder, FolderDto>();
-            //CreateMap<DbObjects.ProjectWebDesign, DesignSettingsDto>();
-            //CreateMap<DbObjects.Media, MediaDto>();
         }
     }
 }

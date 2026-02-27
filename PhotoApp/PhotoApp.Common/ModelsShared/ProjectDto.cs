@@ -2,8 +2,9 @@
 
 namespace PhotoApp.Client.Models
 {
-    public class ProjectDto : ProjectBaseInformationDto
+    public class ProjectDto  
     {
+        public ProjectBaseInformationDto ProjectBaseInformationDto {  get; set; }
         public FolderDto? MainFolder { get; set; }
         public DesignSettingsDto MobileDesignSettings { get; set; } = new DesignSettingsDto();
         public DesignSettingsDto DesktopDesignSettings { get; set; }
@@ -12,9 +13,6 @@ namespace PhotoApp.Client.Models
         //Pomocniczy konstruktor do wstępnej konfiguracji
         public ProjectDto()
         {
-            Id = new Guid();
-            Username = "";
-            ProjectName = "Test Name";
             MainFolder = new FolderDto() { 
                 Folders = new List<FolderDto>()
                 {

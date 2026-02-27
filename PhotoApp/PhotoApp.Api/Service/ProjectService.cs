@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
+using PhotoApp.Client.Models;
 using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Service
@@ -9,12 +10,11 @@ namespace PhotoApp.Api.Service
     {
         private readonly IMapper _mapper = mapper;
         //CREATE
-        public async Task<Project> CreateProjectWithUsernameAsync(string username, string projectName)
+        public async Task<Project?> CreateProjectWithUserIdAsync(ProjectBaseInformationDto projectDto)
         {
-            var user = await userRepository.GetUserByUsernameAsync(username) ?? throw new Exception($"Cannot create project for non-existent user '{username}'.");
-            var project = await projectRepository.CreateProjectAsync(user, projectName);
-
-            //TODO Tworzenie katalogów, tworzenie stylów i podpięcie
+            var mappedProject = _mapper.Map<Project>(projectDto);
+            var user = await userRepository.GetUserByUsernameAsync(mappedProject.Username) ?? throw new Exception($"Cannot create project for non-existent user '{mappedProject.Username}'.");
+            var project = await projectRepository.CreateProjectAsync(mappedProject);
             return project;
         }
 
@@ -22,7 +22,7 @@ namespace PhotoApp.Api.Service
         public async Task<List<ProjectBaseInformationDto>> GetAllProjectsByUsernameAsync(string username)
         {
             var user = await userRepository.GetUserByUsernameAsync(username) ?? throw new Exception($"Cannot create project for non-existent user '{username}'.");
-            var projects = await projectRepository.GetAllProjectsForUserAsync(user);
+            var projects = await projectRepository.GetAllProjectsForUserAsync(username);
             return _mapper.Map<List<ProjectBaseInformationDto>>(projects);
         }
 
@@ -40,8 +40,10 @@ namespace PhotoApp.Api.Service
         }
 
         //UPDATE
-        public async Task<Project> UpdateProjectAsync(Project project)
+        public async Task<Project> UpdateProjectAsync(ProjectDto projectDto)
         {
+            var project = _mapper.Map<Project>(projectDto.ProjectBaseInformationDto);
+
             return await projectRepository.UpdateProjectAsync(project);
         }
         //DELETE
