@@ -1,10 +1,13 @@
-﻿using PhotoApp.Api.DbObjects;
+﻿using AutoMapper;
+using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
+using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Service
 {
-    public class MediaService(MediaRepository mediaRepository, ProjectRepository projectRepository, ProjectFolderRepository folderRepository)
+    public class MediaService(IMapper mapper, MediaRepository mediaRepository, ProjectRepository projectRepository, ProjectFolderRepository folderRepository)
     {
+        private readonly IMapper _mapper = mapper;
         public async Task<Media?> ConnectWithProject(Guid mediaId, Guid projectId, Guid parentFolderId)
         {
             if (!await projectRepository.ProjectExistsAsync(projectId))
@@ -30,6 +33,22 @@ namespace PhotoApp.Api.Service
 
             var media = await mediaRepository.UpdateDestinationFolderAsync(mediaId, destinationFolderId);
             return media;
+        }
+
+        public async Task<Media> CreateMediaAsync(MediaDto mediaDto)
+        {
+            var media = _mapper.Map<Media>(mediaDto);
+
+            if (media.ProjectId == null)
+                throw new InvalidOperationException("Media must be connected to a project");
+
+            if (!await projectRepository.ProjectExistsAsync((Guid)media.ProjectId))
+                throw new KeyNotFoundException("Project not found");
+
+            if (!await folderRepository.FolderExistsInProjectAsync(parentFolderId, projectId))
+                throw new KeyNotFoundException("Folder not found in project");
+            var createdMedia = await mediaRepository.CreateMediaAsync(media);
+            return createdMedia;
         }
     }
 }

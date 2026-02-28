@@ -35,4 +35,5 @@ namespace PhotoApp.Api.Controllers
             var projectId = _projectService.CreateProjectAsync(createProjectDto);
             return Ok(projectId);
         }
+    }
 }
