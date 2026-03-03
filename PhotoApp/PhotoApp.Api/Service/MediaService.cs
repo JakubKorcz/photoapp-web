@@ -45,8 +45,6 @@ namespace PhotoApp.Api.Service
             if (!await projectRepository.ProjectExistsAsync((Guid)media.ProjectId))
                 throw new KeyNotFoundException("Project not found");
 
-            if (!await folderRepository.FolderExistsInProjectAsync(parentFolderId, projectId))
-                throw new KeyNotFoundException("Folder not found in project");
             var createdMedia = await mediaRepository.CreateMediaAsync(media);
             return createdMedia;
         }

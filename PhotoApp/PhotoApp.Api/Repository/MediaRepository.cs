@@ -29,7 +29,7 @@ namespace PhotoApp.Api.Repository
 
         public async Task<Media?> GetMediaByIdAsync(Guid mediaId)
         {
-            var media = context.Medias.FirstOrDefault(m => m.Id == mediaId);
+            var media = context.Medias.SingleOrDefault(m => m.Id == mediaId);
             return media;
         }
 

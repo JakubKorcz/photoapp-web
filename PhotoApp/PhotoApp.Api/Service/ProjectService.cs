@@ -44,7 +44,9 @@ namespace PhotoApp.Api.Service
         {
             var project = _mapper.Map<Project>(projectDto.ProjectBaseInformationDto);
 
-            return await projectRepository.UpdateProjectAsync(project);
+            //return await projectRepository.UpdateProjectAsync(project);
+            return project; //TODO
+
         }
         //DELETE
     }

@@ -32,8 +32,9 @@ namespace PhotoApp.Api.Controllers
         [HttpPost]
         public ActionResult UpdateProject([FromBody] ProjectDto createProjectDto)
         {
-            var projectId = _projectService.CreateProjectAsync(createProjectDto);
-            return Ok(projectId);
+            //var projectId = _projectService.CreateProjectAsync(createProjectDto);
+            //return Ok(projectId);
+            return Ok(); //TODO
         }
     }
 }
