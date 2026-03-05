@@ -1,3 +1,13 @@
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  app-network:
+    driver: bridge
+  db-network:
+    driver: bridge
+
 services:
   photo-app-client:
     build:
@@ -6,7 +16,13 @@ services:
     container_name: photo-app-client
     ports:
       - "8080:80"
+    networks:
+      - app-network
+    environment:
+      - VITE_API_URL=${API_PUBLIC_URL}
     restart: unless-stopped
+    depends_on:
+      - photo-app-api
   
   photo-app-api:
     build:
@@ -16,10 +32,23 @@ services:
     ports:
       - "5000:8080"
       - "8081:8081"
+    networks:
+      - app-network
+      - db-network
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=photo-app-postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - MinioSettings__Endpoint=photo-app-minio:9000
+      - MinioSettings__AccessKey=${MINIO_ROOT_USER}
+      - MinioSettings__SecretKey=${MINIO_ROOT_PASSWORD}
+      - MinioSettings__UseSSL=false
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
   
   photo-app-imageprocessor:
     build: 
@@ -28,20 +57,34 @@ services:
     container_name: photo-app-imageprocessor
     ports:
       - "8082:8080"
+    networks:
+      - app-network
+    environment:
+      - Api__BaseUrl=http://photo-app-api:8080
     restart: unless-stopped
+    depends_on:
+      minio:
+        condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
     container_name: photo-app-postgres
     ports:
       - "5432:5432"
+    networks:
+      - db-network
     environment:
-      POSTGRES_DB: photoapp
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d photoapp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   minio:
     image: minio/minio:latest
@@ -49,9 +92,11 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+    networks:
+      - app-network
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
@@ -62,7 +107,4 @@ services:
       timeout: 20s
       retries: 3
 
-volumes:
-  postgres_data:
-  minio_data:
 

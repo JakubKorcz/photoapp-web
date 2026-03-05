@@ -1,21 +1,19 @@
-using Amazon.S3;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using PhotoApp.Api;
 using PhotoApp.Api.Repository;
 using PhotoApp.Api.Service;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Configuration.AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("db_connection_string")), ServiceLifetime.Scoped);
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]), ServiceLifetime.Scoped);
 
 builder.Services.AddScoped<UserRepository, UserRepository>();
 builder.Services.AddScoped<ProjectRepository, ProjectRepository>();
@@ -32,19 +30,23 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton<IAmazonS3>(sp =>
-{
-    var config = new AmazonS3Config
-    {
-        ServiceURL = "https://fsn1.your-objectstorage.com",
-        ForcePathStyle = true 
-    };
+var minioEndpoint = builder.Configuration["MinioSettings:Endpoint"];
+var minioAccessKey = builder.Configuration["MinioSettings:AccessKey"];
+var minioSecretKey = builder.Configuration["MinioSettings:SecretKey"];
+var useSSL = builder.Configuration.GetValue<bool>("MinioSettings:UseSSL", false);
 
-    return new AmazonS3Client(
-        awsAccessKeyId: "ACCESS_KEY",
-        awsSecretAccessKey: "SECRET_KEY",
-        config
-    );
+builder.Services.AddSingleton<IMinioClient>(sp =>
+{
+    var client = new MinioClient()
+        .WithEndpoint(minioEndpoint)
+        .WithCredentials(minioAccessKey, minioSecretKey);
+
+    if (useSSL)
+    {
+        client = client.WithSSL();
+    }
+
+    return client.Build();
 });
 
 var configuration = new MapperConfiguration(config =>

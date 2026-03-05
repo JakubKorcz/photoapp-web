@@ -6,7 +6,7 @@ namespace PhotoApp.Client.Connection
     {
         public async Task<MemoryInfoResponse> GetMemoryInfo()
         {
-            var url = $"https://localhost:7003/account/memory";
+            var url = $"/account/memory";
             var response = await SendGetRequestWithoutData<MemoryInfoResponse>(url);
             return response!; //TODO handle null properly
         }
