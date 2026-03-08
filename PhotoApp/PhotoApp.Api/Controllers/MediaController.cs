@@ -12,13 +12,6 @@ namespace PhotoApp.Api.Controllers
         private readonly IConfiguration _configuration = configuration;
         private readonly MediaService _mediaService = mediaService;
 
-        [HttpGet("{mediaId}/url")]
-        public ActionResult<IEnumerable<string>> GetMediaBucketUrl([FromRoute] Guid mediaId)
-        {
-            return Ok("Dupa");
-            //return Ok(projects);
-        }
-
         [HttpPost("")]
         public ActionResult<ProjectDto> GetProjectConfiguration([FromBody] MediaDto mediaDto)
         {

@@ -3,7 +3,13 @@
     <main class="main-content-body">
         @if (currentScreen == AppScreen.NewGallery)
         {
-            <NewGalleryPage OnClick="ShowProjectDetailPage"/>            
+            <NewGalleryPage OnClick="ShowNewGalleryBaseInformationPopup" />
+            if (showNewGalleryBaseInformationPopup)
+            {
+                <NewGalleryBaseInformationPopup OnOkClicked="@ShowProjectDetailPage" OnCancelClicked="@HideNewGalleryBaseInformationPopup">
+
+                </NewGalleryBaseInformationPopup>
+            }
         }
 
         @if (currentScreen == AppScreen.ProjectDetail)
@@ -15,6 +21,10 @@
 
 
 @code {
+    [Parameter]
+    public Guid? ProjectId { get; set; }
+
+    private bool showNewGalleryBaseInformationPopup = false;
     private enum AppScreen
     {
         NewGallery,
@@ -25,11 +35,29 @@
 
     protected override void OnInitialized()
     {
-        currentScreen = AppScreen.NewGallery;
+        if (ProjectId == null) 
+        {
+            currentScreen = AppScreen.NewGallery;
+        }
+        else
+        {
+            currentScreen = AppScreen.ProjectDetail;
+        }
+
     }   
 
     private void ShowProjectDetailPage()
     {
         currentScreen = AppScreen.ProjectDetail;
+    }
+
+    private void ShowNewGalleryBaseInformationPopup()
+    {
+        showNewGalleryBaseInformationPopup = true;
+    }
+
+    private void HideNewGalleryBaseInformationPopup()
+    {
+        showNewGalleryBaseInformationPopup = false;
     }
 }

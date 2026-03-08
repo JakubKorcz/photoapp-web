@@ -44,7 +44,7 @@
             <h4 class="project-group-header">@key</h4>
             foreach (var el in ProjectsToDisplay[key])
             {
-                <div class="button-with-project" onclick="() => OpenProject(@el.Id)">@el.ProjectName</div>
+                <div class="button-with-project" @onclick="() => OpenProject(el.Id)">@el.ProjectName</div>
             }
         }
     }
@@ -145,7 +145,7 @@
         StateHasChanged();
     }
 
-    private void OpenProject(Guid id)
+    private void OpenProject(Guid? id)
     {
         
     }

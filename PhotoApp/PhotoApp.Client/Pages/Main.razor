@@ -3,10 +3,10 @@
 
 <div class="page-layout">
     <MainNavMenu></MainNavMenu>
-    <ContentArea></ContentArea>
+    <ContentArea ProjectId="@ProjectId"></ContentArea>
 </div>
 
 @code {
     [Parameter]
-    public Guid? Guid { get; set; }
+    public Guid? ProjectId { get; set; }
 }

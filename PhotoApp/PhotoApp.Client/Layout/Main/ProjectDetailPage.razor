@@ -57,6 +57,9 @@
     private ApiConnection conn { get; set; } = default!;
     ProjectDto currentPrj { get; set; } = null;
 
+    [Parameter]
+    public Guid ProjectId { get; set; }
+
     public enum Tab
     {
         ProjectDescription,
@@ -69,7 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentPrj = await conn.GetProject(new Guid(), new Guid()); //TODO uzupełnić poprawne parametry
+        currentPrj = await conn.GetProject(new Guid(), ProjectId); //TODO uzupełnić poprawne parametry
     }
 
     List<MenuItem> tabs = new List<MenuItem>()

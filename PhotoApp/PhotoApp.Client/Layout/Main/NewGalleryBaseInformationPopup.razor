@@ -1,0 +1,17 @@
+<div class="overlay">
+    <div class="popup">
+
+        <button @onclick="OnCancelClicked">
+            Anuluj
+        </button>
+
+        <button @onclick="OnOkClicked">
+            Utwórz
+        </button>
+    </div>
+</div>
+
+@code{
+    [Parameter] public EventCallback OnOkClicked { get; set; }
+    [Parameter] public EventCallback OnCancelClicked { get; set; }
+}
