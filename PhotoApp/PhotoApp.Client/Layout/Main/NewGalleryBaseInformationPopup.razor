@@ -27,10 +27,20 @@
                         <InputRadio Value="true" /> Na zawsze
                     </label>
                 </InputRadioGroup>
+
                 @if (!projectFormModel.IsPernament){
-                    <InputSelect @bind-Value="projectFormModel.ExpiryDate">
-                     
+                    <InputSelect @bind-Value="projectFormModel.SelectedExpiryDate">
+                        <option value=@ExpiryDateSelectOption.TwoWeeks>Dwa tygodnie</option>
+                        <option value=@ExpiryDateSelectOption.OneMonth>Miesiąc</option>
+                        <option value=@ExpiryDateSelectOption.TwoMonths>Dwa miesiące</option>
+                        <option value=@ExpiryDateSelectOption.Custom>Wybierz dowolną datę...</option>
                     </InputSelect>
+
+                    <MudDatePicker Label=""
+                                   Value="projectFormModel.ExpiryDate"
+                                   ValueChanged="@((DateTime? date) => OnDateChanged(date))"
+                                   ShowToolbar="false" />
+                    <p>@projectFormModel.ExpiryDate</p>
                 }
                 
             </div>
@@ -63,6 +73,8 @@
 </div>
 
 @code{
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
     [Parameter] public EventCallback OnOkClicked { get; set; }
     [Parameter] public EventCallback OnCancelClicked { get; set; }
 
@@ -70,7 +82,13 @@
 
     private async Task HandleValidSubmit()
     {
+        conn.
         //Wysłanie zapytania do bazy i utworzenie nowego projektu
         await OnOkClicked.InvokeAsync();
+    }
+
+    private void OnDateChanged(DateTime? newDate)
+    {
+        projectFormModel.ExpiryDate = newDate;
     }
 }

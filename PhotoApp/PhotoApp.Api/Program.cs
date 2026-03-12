@@ -49,6 +49,7 @@ builder.Services.AddSingleton<IMinioClient>(sp =>
     return client.Build();
 });
 
+//AutoMapper
 var configuration = new MapperConfiguration(config =>
 {
     config.AddProfile(new MappingProfile());

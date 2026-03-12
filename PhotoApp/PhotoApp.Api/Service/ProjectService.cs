@@ -3,6 +3,7 @@ using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
 using PhotoApp.Client.Models;
 using PhotoApp.Common.ModelsShared;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PhotoApp.Api.Service
 {
@@ -10,11 +11,13 @@ namespace PhotoApp.Api.Service
     {
         private readonly IMapper _mapper = mapper;
         //CREATE
-        public async Task<Project?> CreateProjectWithUserIdAsync(ProjectBaseInformationDto projectDto)
+        public async Task<Project?> CreateProjectAsync(ProjectBaseInformationDto projectDto)
         {
             var mappedProject = _mapper.Map<Project>(projectDto);
             var user = await userRepository.GetUserByUsernameAsync(mappedProject.Username) ?? throw new Exception($"Cannot create project for non-existent user '{mappedProject.Username}'.");
             var project = await projectRepository.CreateProjectAsync(mappedProject);
+            var mainFolder = await projectFolderRepository.CreateMainFolderAsync(project!.Id);
+            //TODO stworz basic usatwienia i webdesign
             return project;
         }
 
