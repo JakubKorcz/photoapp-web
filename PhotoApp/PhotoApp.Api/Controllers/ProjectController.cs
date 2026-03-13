@@ -29,11 +29,11 @@ namespace PhotoApp.Api.Controllers
             return Ok(project);
         }
 
-        [HttpPost("users/{username}/projects")]
-        public ActionResult<ProjectBaseInformationDto> CreateBaseProject([FromBody] ProjectBaseInformationDto projectBase)
-        {
-            var project = _projectService.CreateProjectWithUserIdAsync
-        }
+        //[HttpPost("users/{username}/projects")]
+        //public ActionResult<ProjectBaseInformationDto> CreateBaseProject([FromBody] ProjectBaseInformationDto projectBase)
+        //{
+        //    var project = _projectService.CreateProjectWithUserIdAsync
+        //}
 
         [HttpPut("users/{username}/projects")]
         public ActionResult UpdateProject([FromBody] ProjectDto createProjectDto)

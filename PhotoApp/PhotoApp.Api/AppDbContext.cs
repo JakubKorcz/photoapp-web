@@ -15,6 +15,7 @@ namespace PhotoApp.Api
         public DbSet<Media> Medias { get; set; }
         public DbSet<ProjectWebDesign> WebDesignes { get; set; }
         public DbSet<Project_ProjectWebDesign> Project_ProjectWebDesigns { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,7 +39,6 @@ namespace PhotoApp.Api
                 .HasOne(ppwd => ppwd.ProjectWebDesign)
                 .WithMany()
                 .HasForeignKey(ppwd => ppwd.ProjectWebDesignId);
-
 
             base.OnModelCreating(modelBuilder);
         }

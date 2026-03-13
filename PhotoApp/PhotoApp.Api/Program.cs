@@ -15,10 +15,13 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]), ServiceLifetime.Scoped);
 
-builder.Services.AddScoped<UserRepository, UserRepository>();
-builder.Services.AddScoped<ProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<MediaRepository>();
+builder.Services.AddScoped<ProjectFolderRepository>();
+builder.Services.AddScoped<ProjectRepository>();
+builder.Services.AddScoped<RefreshTokenRepository>();
+builder.Services.AddScoped<UserRepository>();
 
-builder.Services.AddScoped<ProjectService, ProjectService>();
+builder.Services.AddScoped<ProjectService>();
 
 builder.Services.AddCors(options =>
 {

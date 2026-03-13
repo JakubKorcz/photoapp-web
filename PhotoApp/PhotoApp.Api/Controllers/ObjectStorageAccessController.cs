@@ -1,14 +1,7 @@
-﻿using Amazon.S3;
-using Amazon.S3.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Minio;
 using Minio.DataModel.Args;
 using PhotoApp.Api.Repository;
-using PhotoApp.Api.Service;
-using PhotoApp.Client.Models;
-using PhotoApp.Common.ModelsShared;
-using System.Data.Entity.Core.Objects;
-using System.Net.Mime;
 
 namespace PhotoApp.Api.Controllers
 {

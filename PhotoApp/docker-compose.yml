@@ -38,6 +38,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - AppSettings__Token=DlugiTestowyTokenPotrzebnyDoPoprawnegoTworzeniaJWTAccessTokenWAplikacji12345678900987654321QWERTY
+      - AppSettings__Issuer=PhotoApp.Api
+      - AppSettings__Audience=PhotoApp.Client
       - ConnectionStrings__DefaultConnection=Host=photo-app-postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - MinioSettings__Endpoint=photo-app-minio:9000
       - MinioSettings__AccessKey=${MINIO_ROOT_USER}

@@ -77,7 +77,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(new Guid());
+        IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(username: "LALAL");
         AllProjects = enumerable.ToList();
         Sort(SortPossibilities.NoSort, "");
         StateHasChanged();

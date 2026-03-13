@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 
-namespace PhotoApp.Api.Mailer
+namespace PhotoApp.Api.Tools.Mailer
 {
     public class Mailer(IConfiguration configuration)
     {
@@ -9,7 +9,7 @@ namespace PhotoApp.Api.Mailer
         public string FromPassword { get; set; } = configuration["app_password"]!;
         public static string DisplayedName { get; set; } = "PhotoAppTestName";
 
-        public void SendLoginMail(string toEmail, string toName, int code)
+        public void SendLoginMail(string toEmail, string toName, string code)
         {
             var fromAddress = new MailAddress(FromAddress, DisplayedName);
             var toAddress = new MailAddress(toEmail, toName);

@@ -19,13 +19,13 @@ namespace PhotoApp.Api.Controllers
             return Ok();//TODO
         }
 
-        [HttpPost]
-        public ActionResult UpdateProject([FromBody] ProjectDto createProjectDto)
-        {
-            //    var projectId = _projectService.CreateProjectAsync(createProjectDto);
-            //    return Ok(projectId);
-            //} //TODO
-            return Ok();
-        }
+        //[HttpPost]
+        //public ActionResult UpdateProject([FromBody] ProjectDto createProjectDto)
+        //{
+        //    //    var projectId = _projectService.CreateProjectAsync(createProjectDto);
+        //    //    return Ok(projectId);
+        //    //} //TODO
+        //    return Ok();
+        //}
     }
 }

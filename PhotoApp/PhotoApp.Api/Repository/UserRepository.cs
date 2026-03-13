@@ -1,4 +1,5 @@
 ﻿using PhotoApp.Api.DbObjects;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PhotoApp.Api.Repository
 {
@@ -28,6 +29,17 @@ namespace PhotoApp.Api.Repository
         public async Task<User?> UpdateUserAsync()
         {
             return null;
+        }
+
+        public async Task<User?> UpdateUserEmailLoginCodeAsync(string username, string genCode, DateTime dateExpire)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            if (user == null) return null;
+            user.EmailLoginCode = genCode;
+            user.EmailLoginCodeExpiration = dateExpire;
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
         }
 
         //DELETE
