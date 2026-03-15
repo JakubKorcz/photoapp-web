@@ -5,8 +5,8 @@ namespace PhotoApp.Api.Tools.Mailer
 {
     public class Mailer(IConfiguration configuration)
     {
-        public string FromAddress { get; set; } = configuration["app_email"]!;
-        public string FromPassword { get; set; } = configuration["app_password"]!;
+        public string FromAddress { get; set; } = configuration.GetValue<string>("AppSettings:Email")!;
+        public string FromPassword { get; set; } = configuration.GetValue<string>("AppSettings:EmailPassword")!;
         public static string DisplayedName { get; set; } = "PhotoAppTestName";
 
         public void SendLoginMail(string toEmail, string toName, string code)

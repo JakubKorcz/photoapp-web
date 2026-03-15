@@ -47,7 +47,8 @@ namespace PhotoApp.Api.Repository
         {
             try
             {
-                var tokens = context.RefreshTokens.Where(rt => rt.Username == username && rt.IsActive).ToList();
+                var tokens = context.RefreshTokens.Where(rt => rt.Username == username).ToList();
+                tokens = [.. tokens.Where(t => t.IsActive)];
                 foreach (var token in tokens)
                 {
                     token.IsRevoked = true;
@@ -57,6 +58,7 @@ namespace PhotoApp.Api.Repository
             }
             catch (Exception ex)
             {
+                throw new Exception(ex.Message);
                 return false;
             }
         }

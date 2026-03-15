@@ -38,7 +38,7 @@ namespace PhotoApp.Api.Controllers
         { 
             try
             {
-                var user = await userService.TryLoginAsync(request);
+                var user = await userService.TryLoginAsync(request, false);
                 if (user is null)
                 {
                     return BadRequest("Login or password is incorrect.");
@@ -76,7 +76,7 @@ namespace PhotoApp.Api.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return BadRequest();
+                return BadRequest(ex.ToString());
             }
         }
 

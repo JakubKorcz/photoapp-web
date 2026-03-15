@@ -25,6 +25,7 @@ builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddCors(options =>
 {

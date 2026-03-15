@@ -12,7 +12,7 @@ namespace PhotoApp.Api.Service
 {
     public class UserService(UserRepository _userRepository, RefreshTokenRepository _refreshTokenRepository, IConfiguration _configuration)
     {
-        public async Task<User?> TryLoginAsync(UserModel request)
+        public async Task<User?> TryLoginAsync(UserModel request, bool isNewEmailCodeGenerating = true)
         {
             var user = await _userRepository.GetUserByUsernameAsync(request.Email);
             if (user is null)
@@ -25,15 +25,22 @@ namespace PhotoApp.Api.Service
                 return null;
             }
 
-            var generatedCode = new CodeGenerator().Generate();
-            var mailer = new Mailer(_configuration);
-            mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
-
-            if (user is not null)
+            if (isNewEmailCodeGenerating)
             {
-                return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
-            }
+                var generatedCode = new CodeGenerator().Generate();
+                var mailer = new Mailer(_configuration);
+                mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
 
+                if (user is not null)
+                {
+                    return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
+                }
+            }
+            else
+            {
+                return user;
+            }
+           
             return null;
         }
 
@@ -45,12 +52,18 @@ namespace PhotoApp.Api.Service
             }
 
             var existingUser = await _userRepository.GetUserByUsernameAsync(request.Email);
+
+            User user;
             if (existingUser is not null)
             {
-                return null;
+                if (existingUser.IsActive) throw new Exception("Cannot register existing user");
+                user = existingUser;
             }
-
-            var user = await _userRepository.CreateUserAsync(request.Email, request.Password);
+            else
+            {
+                user = await _userRepository.CreateUserAsync(request.Email, request.Password);
+            }
+            
             var generatedCode = new CodeGenerator().Generate();
             var mailer = new Mailer(_configuration);
             mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
@@ -103,6 +116,7 @@ namespace PhotoApp.Api.Service
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user is null)
             {
+                throw new Exception("User not found");
                 return null;
             }
             var tm = new TokenManager(_configuration);
@@ -110,6 +124,7 @@ namespace PhotoApp.Api.Service
             var result = await _refreshTokenRepository.SetAllTokensForUserAsRevokedAsync(username);
             if (!result)
             {
+                throw new Exception("Failed to revoke existing tokens");
                 return null;
             }
             return await _refreshTokenRepository.CreateRefreshTokenAsync(username, refreshToken);
