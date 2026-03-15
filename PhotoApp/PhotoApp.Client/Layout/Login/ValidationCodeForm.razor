@@ -31,11 +31,12 @@
             try
             {
                 var res = IsLogin
-                    ? await conn.LoginVerify(User.Email, code)
-                    : await conn.RegisterVerify(User.Email, code);
+                    ? await conn.LoginVerify(User, code)
+                    : await conn.RegisterVerify(User, code);
 
                 if (res.Success)
                 {
+                    //LALAL
                     //Zapisz kod do cookies ???
                     NavManager.NavigateTo("/main");
                 }

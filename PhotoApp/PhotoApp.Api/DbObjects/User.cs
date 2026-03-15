@@ -13,6 +13,8 @@ namespace PhotoApp.Api.DbObjects
         public DateTime? EmailLoginCodeExpiration { get; set; }
         public List<Project> Projects { get; set; } = new();
         public List<RefreshToken> RefreshTokens { get; set; } = new();
+        //Flaga oznaczająca, czy konto po rejestracji zostało aktywowane przez użytkownika (np. poprzez kliknięcie linku w emailu)
+        public bool IsActive { get; set; }
 
         public bool HasValidLoginCode(string code)
         {

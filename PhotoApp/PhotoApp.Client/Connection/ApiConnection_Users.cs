@@ -14,15 +14,15 @@ namespace PhotoApp.Client.Connection
         {
             var url = $"/auth/login/{code}";
             var response = await SendPostRequest<ServerAuthResponse, UserModel>(url, user);
-            return response!; //TODO handle null properly
+            return response!; 
         }
-        public async Task<ServerAuthResponse> Register(string username)
+        public async Task<ServerAuthResponse> Register(UserModel user)
         {
             var url = $"/auth/register";
             var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);
             return response!; //TODO handle null properly
         }
-        public async Task<ServerAuthResponse> RegisterVerify(string username, string code)
+        public async Task<ServerAuthResponse> RegisterVerify(UserModel user, string code)
         {
             var url = $"/auth/register/{code}";
             var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);

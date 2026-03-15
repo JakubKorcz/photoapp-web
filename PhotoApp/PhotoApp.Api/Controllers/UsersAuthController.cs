@@ -1,4 +1,5 @@
-﻿using Amazon.S3.Model.Internal.MarshallTransformations;
+﻿using Amazon.Runtime.Internal;
+using Amazon.S3.Model.Internal.MarshallTransformations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,43 +14,64 @@ namespace PhotoApp.Api.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class UsersAuthController(IConfiguration _configuration, UserService userService) : ControllerBase
+    public class UsersAuthController(UserService userService) : ControllerBase
     {
         [HttpPost("register")]
-        public IActionResult RegisterRequest([FromBody] UserModel request)
+        public async Task<IActionResult> RegisterRequest([FromBody] UserModel request)
         {
             try
             {
-                var generatedCode = new CodeGenerator().Generate();
-                var mailer = new Mailer(_configuration); 
-                mailer.SendRegisterMail(username, "Daryna", generatedCode);
-                return Ok();
+                if (await userService.RegisterUserAsync(request) is not null)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error during creating user.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
-        [HttpPost("register/{username}/{code}")]
-        public async Task<IActionResult> RegisterVerify([FromRoute] string username, [FromRoute] string code)
-        {
-            //TODO NALEZY JESZCZE DOKLADNIE PRZEMYSLEC
+        [HttpPost("register/{code}")]
+        public async Task<IActionResult> RegisterVerify([FromBody] UserModel request, [FromRoute] string code)
+        { 
             try
             {
-                if (!Mailer.IsValidEmail(username))
+                var user = await userService.TryLoginAsync(request);
+                if (user is null)
                 {
-                    throw new Exception("This value is not a proper email!");
+                    return BadRequest("Login or password is incorrect.");
                 }
 
-                if (!string.IsNullOrEmpty(username))
+                if (user.HasValidLoginCode(code))
                 {
-                    return Ok(await _userRepository.CreateUserAsync(username));
-                }
+                    var activatedUser = await userService.ActivateUserAsync(user.Username);
+                    var accessToken = await userService.GenerateNewAccessToken(user.Username);
 
-                return BadRequest("Username cannot be empty");
-                
+                    if (string.IsNullOrEmpty(accessToken))
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate access token.");
+                    }
+
+                    var refreshToken = await userService.GenerateNewRefreshToken(user.Username);
+                    if (refreshToken is null)
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
+                    }
+                    SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
+
+                    var response = new ServerAuthResponse()
+                    {
+                        Username = user.Username,
+                        AccessToken = accessToken,
+                        Success = true
+                    };
+
+                    return Ok(response);
+                }
+                return Unauthorized();
+
             }
             catch (Exception ex)
             {
@@ -59,7 +81,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> LoginRequest([FromBody] UserModel request)
+        public async Task<IActionResult> LoginRequest([FromBody] UserModel request)
         {
             var user = await userService.TryLoginAsync(request);
             if (user is null)

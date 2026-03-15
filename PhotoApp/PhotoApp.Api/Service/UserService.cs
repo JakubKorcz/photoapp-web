@@ -37,6 +37,31 @@ namespace PhotoApp.Api.Service
             return null;
         }
 
+        public async Task<User?> RegisterUserAsync(UserModel request)
+        {
+            if (!Mailer.IsValidEmail(request.Email))
+            {
+                throw new Exception("This value is not a proper email!");
+            }
+
+            var existingUser = await _userRepository.GetUserByUsernameAsync(request.Email);
+            if (existingUser is not null)
+            {
+                return null;
+            }
+
+            var user = await _userRepository.CreateUserAsync(request.Email, request.Password);
+            var generatedCode = new CodeGenerator().Generate();
+            var mailer = new Mailer(_configuration);
+            mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
+
+            if (user is not null)
+            {
+                return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
+            }
+            return null;
+        }
+
         public async Task<User?> CheckEmailCodeAsync(UserModel request, string code)
         {
             var user = await _userRepository.GetUserByUsernameAsync(request.Email);
@@ -96,10 +121,15 @@ namespace PhotoApp.Api.Service
             if (user is null)
             {
                 return null;
-            }   
+            }
             var tm = new TokenManager(_configuration);
             var accessToken = tm.GenerateJWTAccessToken(user: user);
             return accessToken;
+        }
+
+        public async Task<User?> ActivateUserAsync(string username)
+        {
+            return await _userRepository.ActivateUserByUsername(username);
         }
     }
 }

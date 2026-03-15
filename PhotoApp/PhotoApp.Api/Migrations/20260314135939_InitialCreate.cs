@@ -18,7 +18,8 @@ namespace PhotoApp.Api.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     IsHeadFolder = table.Column<bool>(type: "boolean", nullable: false),
-                    ParentFolderId = table.Column<Guid>(type: "uuid", nullable: true)
+                    ParentFolderId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,8 +37,10 @@ namespace PhotoApp.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    LoginCode = table.Column<int>(type: "integer", nullable: true),
-                    CodeExpiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    EmailLoginCode = table.Column<string>(type: "text", nullable: true),
+                    EmailLoginCodeExpiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,23 +55,47 @@ namespace PhotoApp.Api.Migrations
                     ProjectName = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     MainFolderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    MainFolderId1 = table.Column<Guid>(type: "uuid", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Folders_MainFolderId",
-                        column: x => x.MainFolderId,
+                        name: "FK_Projects_Folders_MainFolderId1",
+                        column: x => x.MainFolderId1,
                         principalTable: "Folders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Projects_Users_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "boolean", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -79,10 +106,15 @@ namespace PhotoApp.Api.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Extension = table.Column<string>(type: "text", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    ObjectKey = table.Column<string>(type: "text", nullable: false),
                     IsLiked = table.Column<bool>(type: "boolean", nullable: false),
-                    ParentFolderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false)
+                    SizeBytes = table.Column<long>(type: "bigint", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    ParentFolderId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ParentMediaId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -91,14 +123,17 @@ namespace PhotoApp.Api.Migrations
                         name: "FK_Medias_Folders_ParentFolderId",
                         column: x => x.ParentFolderId,
                         principalTable: "Folders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Medias_Medias_ParentMediaId",
+                        column: x => x.ParentMediaId,
+                        principalTable: "Medias",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Medias_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -123,7 +158,7 @@ namespace PhotoApp.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Project_ProjectWebDesign",
+                name: "Project_ProjectWebDesigns",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -135,26 +170,26 @@ namespace PhotoApp.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Project_ProjectWebDesign", x => x.Id);
+                    table.PrimaryKey("PK_Project_ProjectWebDesigns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Project_ProjectWebDesign_Projects_ProjectId",
+                        name: "FK_Project_ProjectWebDesigns_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Project_ProjectWebDesign_Projects_ProjectId1",
+                        name: "FK_Project_ProjectWebDesigns_Projects_ProjectId1",
                         column: x => x.ProjectId1,
                         principalTable: "Projects",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Project_ProjectWebDesign_WebDesignes_ProjectWebDesignId",
+                        name: "FK_Project_ProjectWebDesigns_WebDesignes_ProjectWebDesignId",
                         column: x => x.ProjectWebDesignId,
                         principalTable: "WebDesignes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Project_ProjectWebDesign_WebDesignes_ProjectWebDesignId1",
+                        name: "FK_Project_ProjectWebDesigns_WebDesignes_ProjectWebDesignId1",
                         column: x => x.ProjectWebDesignId1,
                         principalTable: "WebDesignes",
                         principalColumn: "Id");
@@ -171,39 +206,49 @@ namespace PhotoApp.Api.Migrations
                 column: "ParentFolderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Medias_ParentMediaId",
+                table: "Medias",
+                column: "ParentMediaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Medias_ProjectId",
                 table: "Medias",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_ProjectWebDesign_ProjectId_Device",
-                table: "Project_ProjectWebDesign",
+                name: "IX_Project_ProjectWebDesigns_ProjectId_Device",
+                table: "Project_ProjectWebDesigns",
                 columns: new[] { "ProjectId", "Device" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_ProjectWebDesign_ProjectId1",
-                table: "Project_ProjectWebDesign",
+                name: "IX_Project_ProjectWebDesigns_ProjectId1",
+                table: "Project_ProjectWebDesigns",
                 column: "ProjectId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_ProjectWebDesign_ProjectWebDesignId",
-                table: "Project_ProjectWebDesign",
+                name: "IX_Project_ProjectWebDesigns_ProjectWebDesignId",
+                table: "Project_ProjectWebDesigns",
                 column: "ProjectWebDesignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_ProjectWebDesign_ProjectWebDesignId1",
-                table: "Project_ProjectWebDesign",
+                name: "IX_Project_ProjectWebDesigns_ProjectWebDesignId1",
+                table: "Project_ProjectWebDesigns",
                 column: "ProjectWebDesignId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_MainFolderId",
+                name: "IX_Projects_MainFolderId1",
                 table: "Projects",
-                column: "MainFolderId");
+                column: "MainFolderId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId",
+                name: "IX_Projects_OwnerId",
                 table: "Projects",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -222,7 +267,10 @@ namespace PhotoApp.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Project_ProjectWebDesign");
+                name: "Project_ProjectWebDesigns");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "WebDesignes");

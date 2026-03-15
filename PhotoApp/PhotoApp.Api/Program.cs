@@ -5,6 +5,9 @@ using PhotoApp.Api;
 using PhotoApp.Api.Repository;
 using PhotoApp.Api.Service;
 using Minio;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,7 @@ var minioAccessKey = builder.Configuration["MinioSettings:AccessKey"];
 var minioSecretKey = builder.Configuration["MinioSettings:SecretKey"];
 var useSSL = builder.Configuration.GetValue<bool>("MinioSettings:UseSSL", false);
 
+// Rejestracja MinioClient
 builder.Services.AddSingleton<IMinioClient>(sp =>
 {
     var client = new MinioClient()
@@ -51,6 +55,23 @@ builder.Services.AddSingleton<IMinioClient>(sp =>
 
     return client.Build();
 });
+
+//Authentication scheme
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!))
+        };
+    });
+
 
 //AutoMapper
 var configuration = new MapperConfiguration(config =>
@@ -83,5 +104,13 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapControllers();
+
+//Automatyczny update bazy danych przy starcie aplikacji
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
 
 app.Run();

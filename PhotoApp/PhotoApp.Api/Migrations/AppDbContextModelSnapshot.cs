@@ -17,7 +17,7 @@ namespace PhotoApp.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.3")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,6 +35,9 @@ namespace PhotoApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsLiked")
                         .HasColumnType("boolean");
 
@@ -42,19 +45,33 @@ namespace PhotoApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ParentFolderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Url")
+                    b.Property<string>("ObjectKey")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("ParentFolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentMediaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ParentFolderId");
+
+                    b.HasIndex("ParentMediaId");
 
                     b.HasIndex("ProjectId");
 
@@ -73,18 +90,25 @@ namespace PhotoApp.Api.Migrations
                     b.Property<Guid>("MainFolderId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("MainFolderId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MainFolderId");
+                    b.HasIndex("MainFolderId1");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Projects");
                 });
@@ -103,6 +127,9 @@ namespace PhotoApp.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<Guid?>("ParentFolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -175,17 +202,57 @@ namespace PhotoApp.Api.Migrations
                     b.ToTable("Project_ProjectWebDesigns");
                 });
 
+            modelBuilder.Entity("PhotoApp.Api.DbObjects.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("PhotoApp.Api.DbObjects.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CodeExpiration")
+                    b.Property<string>("EmailLoginCode")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EmailLoginCodeExpiration")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("LoginCode")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -203,17 +270,19 @@ namespace PhotoApp.Api.Migrations
                 {
                     b.HasOne("PhotoApp.Api.DbObjects.ProjectFolder", "ParentFolder")
                         .WithMany("Medias")
-                        .HasForeignKey("ParentFolderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ParentFolderId");
+
+                    b.HasOne("PhotoApp.Api.DbObjects.Media", "ParentMedia")
+                        .WithMany("ConnectedMedias")
+                        .HasForeignKey("ParentMediaId");
 
                     b.HasOne("PhotoApp.Api.DbObjects.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("ParentFolder");
+
+                    b.Navigation("ParentMedia");
 
                     b.Navigation("Project");
                 });
@@ -222,13 +291,13 @@ namespace PhotoApp.Api.Migrations
                 {
                     b.HasOne("PhotoApp.Api.DbObjects.ProjectFolder", "MainFolder")
                         .WithMany()
-                        .HasForeignKey("MainFolderId")
+                        .HasForeignKey("MainFolderId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhotoApp.Api.DbObjects.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithMany("Projects")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -282,6 +351,18 @@ namespace PhotoApp.Api.Migrations
                     b.Navigation("ProjectWebDesign");
                 });
 
+            modelBuilder.Entity("PhotoApp.Api.DbObjects.RefreshToken", b =>
+                {
+                    b.HasOne("PhotoApp.Api.DbObjects.User", null)
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("PhotoApp.Api.DbObjects.Media", b =>
+                {
+                    b.Navigation("ConnectedMedias");
+                });
+
             modelBuilder.Entity("PhotoApp.Api.DbObjects.Project", b =>
                 {
                     b.Navigation("WebDesignAssignments");
@@ -297,6 +378,13 @@ namespace PhotoApp.Api.Migrations
             modelBuilder.Entity("PhotoApp.Api.DbObjects.ProjectWebDesign", b =>
                 {
                     b.Navigation("WebDesignAssignments");
+                });
+
+            modelBuilder.Entity("PhotoApp.Api.DbObjects.User", b =>
+                {
+                    b.Navigation("Projects");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿using PhotoApp.Api.DbObjects;
+﻿using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Identity;
+using PhotoApp.Api.DbObjects;
 using System.Reflection.Metadata.Ecma335;
 
 namespace PhotoApp.Api.Repository
@@ -6,9 +8,11 @@ namespace PhotoApp.Api.Repository
     public class UserRepository(AppDbContext context)
     {
         //CREATE
-        public async Task<User> CreateUserAsync(string username)
+        public async Task<User> CreateUserAsync(string username, string password)
         {
             var user = new User { Username = username };
+            var passwordHash = new PasswordHasher<User>().HashPassword(user, password);
+            user.PasswordHash = passwordHash;
             context.Users.Add(user);
             await context.SaveChangesAsync();
             return user;
@@ -37,6 +41,27 @@ namespace PhotoApp.Api.Repository
             if (user == null) return null;
             user.EmailLoginCode = genCode;
             user.EmailLoginCodeExpiration = dateExpire;
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User?> UpdateUserPasswordAsync(string username, string newPassword)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            if (user == null) return null;
+            var passwordHash = new PasswordHasher<User>().HashPassword(user, newPassword);
+            user.PasswordHash = passwordHash;
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User?> ActivateUserByUsername(string username)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            if (user == null) return null;
+            user.IsActive = true;
             context.Users.Update(user);
             await context.SaveChangesAsync();
             return user;
