@@ -12,7 +12,7 @@ namespace PhotoApp.Api.Tools.Mailer
         public void SendLoginMail(string toEmail, string toName, string code)
         {
             var fromAddress = new MailAddress(FromAddress, DisplayedName);
-            var toAddress = new MailAddress( toEmail, toName); // Chwilowe do testów, potem będzie toEmail i toName z parametru
+            var toAddress = new MailAddress(toEmail, toName); // Chwilowe do testów, potem będzie toEmail i toName z parametru
 
 
             string subject = "elo elo";
