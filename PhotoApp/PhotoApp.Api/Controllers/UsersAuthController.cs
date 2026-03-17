@@ -17,7 +17,7 @@ namespace PhotoApp.Api.Controllers
     public class UsersAuthController(UserService userService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterRequest([FromBody] UserModel request)
+        public async Task<IActionResult> RegisterRequest([FromBody] UserModelDto request)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("register/{code}")]
-        public async Task<IActionResult> RegisterVerify([FromBody] UserModel request, [FromRoute] string code)
+        public async Task<IActionResult> RegisterVerify([FromBody] UserModelDto request, [FromRoute] string code)
         { 
             try
             {
@@ -81,7 +81,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginRequest([FromBody] UserModel request)
+        public async Task<IActionResult> LoginRequest([FromBody] UserModelDto request)
         {
             var user = await userService.TryLoginAsync(request);
             if (user is null)
@@ -92,11 +92,11 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login/{code}")]
-        public async Task<ActionResult<ServerAuthResponse>> LoginVerify([FromBody] UserModel request, [FromRoute] string code)
+        public async Task<ActionResult<ServerAuthResponse>> LoginVerify([FromBody] UserModelDto request, [FromRoute] string code)
         {
             try
             {
-                var user = await userService.TryLoginAsync(request);
+                var user = await userService.TryLoginAsync(request, false);
                 if (user is null)
                 {
                     return BadRequest("Login or password is incorrect.");

@@ -12,9 +12,9 @@ namespace PhotoApp.Api.Service
 {
     public class UserService(UserRepository _userRepository, RefreshTokenRepository _refreshTokenRepository, IConfiguration _configuration)
     {
-        public async Task<User?> TryLoginAsync(UserModel request, bool isNewEmailCodeGenerating = true)
+        public async Task<User?> TryLoginAsync(UserModelDto request, bool isNewEmailCodeGenerating = true)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(request.Email);
+            var user = await _userRepository.GetUserByUsernameAsync(request.Username);
             if (user is null)
             {
                 return null;
@@ -25,33 +25,17 @@ namespace PhotoApp.Api.Service
                 return null;
             }
 
-            if (isNewEmailCodeGenerating)
-            {
-                var generatedCode = new CodeGenerator().Generate();
-                var mailer = new Mailer(_configuration);
-                mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
-
-                if (user is not null)
-                {
-                    return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
-                }
-            }
-            else
-            {
-                return user;
-            }
-           
-            return null;
+            return user;
         }
 
-        public async Task<User?> RegisterUserAsync(UserModel request)
+        public async Task<User?> RegisterUserAsync(UserModelDto request)
         {
             if (!Mailer.IsValidEmail(request.Email))
             {
                 throw new Exception("This value is not a proper email!");
             }
 
-            var existingUser = await _userRepository.GetUserByUsernameAsync(request.Email);
+            var existingUser = await _userRepository.GetUserByUsernameAsync(request.Username);
 
             User user;
             if (existingUser is not null)
@@ -61,9 +45,9 @@ namespace PhotoApp.Api.Service
             }
             else
             {
-                user = await _userRepository.CreateUserAsync(request.Email, request.Password);
+                user = await _userRepository.CreateUserAsync(request.Username, request.Email, request.Password);
             }
-            
+
             var generatedCode = new CodeGenerator().Generate();
             var mailer = new Mailer(_configuration);
             mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
@@ -75,9 +59,9 @@ namespace PhotoApp.Api.Service
             return null;
         }
 
-        public async Task<User?> CheckEmailCodeAsync(UserModel request, string code)
+        public async Task<User?> CheckEmailCodeAsync(UserModelDto request, string code)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(request.Email);
+            var user = await _userRepository.GetUserByUsernameAsync(request.Username);
             if (user is null)
             {
                 return null;
@@ -116,7 +100,6 @@ namespace PhotoApp.Api.Service
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user is null)
             {
-                throw new Exception("User not found");
                 return null;
             }
             var tm = new TokenManager(_configuration);
@@ -124,7 +107,6 @@ namespace PhotoApp.Api.Service
             var result = await _refreshTokenRepository.SetAllTokensForUserAsRevokedAsync(username);
             if (!result)
             {
-                throw new Exception("Failed to revoke existing tokens");
                 return null;
             }
             return await _refreshTokenRepository.CreateRefreshTokenAsync(username, refreshToken);
@@ -135,7 +117,7 @@ namespace PhotoApp.Api.Service
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user is null)
             {
-                return null;
+                throw new Exception("Cannot generate access token for non existing user");
             }
             var tm = new TokenManager(_configuration);
             var accessToken = tm.GenerateJWTAccessToken(user: user);
@@ -145,6 +127,20 @@ namespace PhotoApp.Api.Service
         public async Task<User?> ActivateUserAsync(string username)
         {
             return await _userRepository.ActivateUserByUsername(username);
+        }
+
+        public async Task<User> SendNewNumberCodeEmail(User user)
+        {
+            var generatedCode = new CodeGenerator().Generate();
+            var mailer = new Mailer(_configuration);
+            mailer.SendLoginMail(user.Email, user.Username, generatedCode);
+
+            if (user is not null)
+            {
+                return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
+            }
+
+            throw new Exception("Cannot send email with new number code");
         }
     }
 }

@@ -9,6 +9,7 @@ namespace PhotoApp.Client.Connection
         public MappingProfile()
         {
             CreateMap<ProjectFormModel, ProjectBaseInformationDto>();
+            CreateMap<UserModel, UserModelDto>();
         }
     }
 }

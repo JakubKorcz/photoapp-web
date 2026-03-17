@@ -8,6 +8,8 @@ namespace PhotoApp.Api.DbObjects
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         public string Username { get; set; } = string.Empty;
+        [Required]
+        public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string? EmailLoginCode { get; set; }
         public DateTime? EmailLoginCodeExpiration { get; set; }

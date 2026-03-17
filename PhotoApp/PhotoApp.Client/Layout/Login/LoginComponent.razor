@@ -10,7 +10,7 @@
                     <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
                 </div>
                 <div class="form-group mov_text">
-                    <InputText id="password" class="bp-suggestions form-control" placeholder="Password" @bind-Value="userModel.Password" />
+                    <InputText type="password" id="password" class="bp-suggestions form-control" placeholder="Password" @bind-Value="userModel.Password" />
                 </div>
                 @if (!string.IsNullOrEmpty(ErrorMessage))
                 {
@@ -47,12 +47,13 @@
         IsSixBoxesMode = true;
         try
         {
+
             var response = await conn.Login(userModel);
             StateHasChanged();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error has ocured {ex.Message}");
+            ErrorMessage = ex.Message;
         }
     }
 

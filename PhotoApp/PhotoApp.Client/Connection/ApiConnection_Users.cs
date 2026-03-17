@@ -1,4 +1,5 @@
-﻿using PhotoApp.Common.ModelsShared;
+﻿using PhotoApp.Client.Models;
+using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Client.Connection
 {
@@ -7,24 +8,28 @@ namespace PhotoApp.Client.Connection
         public async Task<ServerAuthResponse> Login(UserModel user)
         {
             var url = $"/auth/login";
-            var response = await SendPostRequest<ServerAuthResponse, UserModel>(url, user);
+            var userDto = _mapper.Map<UserModelDto>(user);
+            var response = await SendPostRequest<ServerAuthResponse, UserModelDto>(url, userDto);
             return response!;
         }
         public async Task<ServerAuthResponse> LoginVerify(UserModel user, string code)
         {
             var url = $"/auth/login/{code}";
-            var response = await SendPostRequest<ServerAuthResponse, UserModel>(url, user);
+            var userDto = _mapper.Map<UserModelDto>(user);
+            var response = await SendPostRequest<ServerAuthResponse, UserModelDto>(url, userDto);
             return response!; 
         }
         public async Task<ServerAuthResponse> Register(UserModel user)
         {
             var url = $"/auth/register";
+            var userDto = _mapper.Map<UserModelDto>(user);
             var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);
             return response!; //TODO handle null properly
         }
         public async Task<ServerAuthResponse> RegisterVerify(UserModel user, string code)
         {
             var url = $"/auth/register/{code}";
+            var userDto = _mapper.Map<UserModelDto>(user);
             var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);
             return response!; //TODO handle null properly
         }

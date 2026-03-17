@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using PhotoApp.Api.DbObjects;
+using PhotoApp.Common.EnumShared;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -9,12 +10,13 @@ namespace PhotoApp.Api.Tools.Tokens
 {
     public class TokenManager(IConfiguration configuration)
     {
-        public string GenerateJWTAccessToken(User user)
+        public string GenerateJWTAccessToken(User user, SystemRole role = SystemRole.Member)
         {
             var claims = new List<Claim>() 
             { 
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.Username),
+                new(ClaimTypes.Role, role.ToString())
             };
 
             var jwtKey = configuration.GetValue<string>("AppSettings:Token")

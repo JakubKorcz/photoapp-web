@@ -8,9 +8,9 @@ namespace PhotoApp.Api.Repository
     public class UserRepository(AppDbContext context)
     {
         //CREATE
-        public async Task<User> CreateUserAsync(string username, string password)
+        public async Task<User> CreateUserAsync(string username, string email, string password)
         {
-            var user = new User { Username = username };
+            var user = new User { Username = username, Email = email };
             var passwordHash = new PasswordHasher<User>().HashPassword(user, password);
             user.PasswordHash = passwordHash;
             context.Users.Add(user);
@@ -35,10 +35,9 @@ namespace PhotoApp.Api.Repository
             return null;
         }
 
-        public async Task<User?> UpdateUserEmailLoginCodeAsync(string username, string genCode, DateTime dateExpire)
+        public async Task<User> UpdateUserEmailLoginCodeAsync(string username, string genCode, DateTime dateExpire)
         {
-            var user = await GetUserByUsernameAsync(username);
-            if (user == null) return null;
+            var user = await GetUserByUsernameAsync(username) ?? throw new Exception("Cannot ganarate number code for non existing user.");
             user.EmailLoginCode = genCode;
             user.EmailLoginCodeExpiration = dateExpire;
             context.Users.Update(user);
@@ -46,10 +45,9 @@ namespace PhotoApp.Api.Repository
             return user;
         }
 
-        public async Task<User?> UpdateUserPasswordAsync(string username, string newPassword)
+        public async Task<User> UpdateUserPasswordAsync(string username, string newPassword)
         {
-            var user = await GetUserByUsernameAsync(username);
-            if (user == null) return null;
+            var user = await GetUserByUsernameAsync(username) ?? throw new Exception("Cannot update password for non existing user.");
             var passwordHash = new PasswordHasher<User>().HashPassword(user, newPassword);
             user.PasswordHash = passwordHash;
             context.Users.Update(user);
@@ -59,8 +57,7 @@ namespace PhotoApp.Api.Repository
 
         public async Task<User?> ActivateUserByUsername(string username)
         {
-            var user = await GetUserByUsernameAsync(username);
-            if (user == null) return null;
+            var user = await GetUserByUsernameAsync(username) ?? throw new Exception("Cannot activate non existing user.");
             user.IsActive = true;
             context.Users.Update(user);
             await context.SaveChangesAsync();
@@ -69,7 +66,7 @@ namespace PhotoApp.Api.Repository
 
         //DELETE
         public async Task DeleteUserByUsernameAsync(string username) { 
-            var user = await GetUserByUsernameAsync(username) ?? throw new KeyNotFoundException("User not found."); ;
+            var user = await GetUserByUsernameAsync(username) ?? throw new Exception("Cannot delete non existing user.");
             context.Users.Remove(user);
             await context.SaveChangesAsync();
         }
