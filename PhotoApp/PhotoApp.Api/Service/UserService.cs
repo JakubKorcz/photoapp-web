@@ -121,8 +121,7 @@ namespace PhotoApp.Api.Service
 
         public async Task<bool> CheckUserAccountActivityAsync(string username)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(username);
-            if (user is null) throw new Exception("Cannot check account activity for non existing user");
+            var user = await _userRepository.GetUserByUsernameAsync(username) ?? throw new Exception("Cannot check account activity for non existing user");
             return user.IsActive;
         }
 
