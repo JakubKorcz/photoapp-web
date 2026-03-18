@@ -4,6 +4,7 @@ using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
 using PhotoApp.Api.Tools.Mailer;
 using PhotoApp.Api.Tools.Tokens;
+using PhotoApp.Common.EnumShared;
 using PhotoApp.Common.ModelsShared;
 using System.ComponentModel;
 using System.Reactive.Disposables;
@@ -28,35 +29,24 @@ namespace PhotoApp.Api.Service
             return user;
         }
 
-        public async Task<User?> RegisterUserAsync(UserModelDto request)
+        public async Task<User?> RegisterUserAsync(RegisterModelDto request)
         {
             if (!Mailer.IsValidEmail(request.Email))
             {
                 throw new Exception("This value is not a proper email!");
             }
 
-            var existingUser = await _userRepository.GetUserByUsernameAsync(request.Username);
-
-            User user;
-            if (existingUser is not null)
+            if (await _userRepository.GetUserByUsernameAsync(request.Username) is not null)
             {
-                if (existingUser.IsActive) throw new Exception("Cannot register existing user");
-                user = existingUser;
-            }
-            else
-            {
-                user = await _userRepository.CreateUserAsync(request.Username, request.Email, request.Password);
+                throw new Exception("Username is already taken");
             }
 
-            var generatedCode = new CodeGenerator().Generate();
-            var mailer = new Mailer(_configuration);
-            mailer.SendLoginMail(request.Email, "Daryna", generatedCode);
-
-            if (user is not null)
+            if (await _userRepository.GetUserByEmailAsync(request.Email) is not null)
             {
-                return await _userRepository.UpdateUserEmailLoginCodeAsync(user.Username, generatedCode, DateTime.UtcNow.AddMinutes(10));
+                throw new Exception("Email is already taken");
             }
-            return null;
+
+            return await _userRepository.CreateUserAsync(request);
         }
 
         public async Task<User?> CheckEmailCodeAsync(UserModelDto request, string code)
@@ -112,7 +102,7 @@ namespace PhotoApp.Api.Service
             return await _refreshTokenRepository.CreateRefreshTokenAsync(username, refreshToken);
         }
 
-        public async Task<string?> GenerateNewAccessToken(string username)
+        public async Task<string?> GenerateNewAccessToken(string username, SystemRole role = SystemRole.Member)
         {
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user is null)
@@ -120,7 +110,7 @@ namespace PhotoApp.Api.Service
                 throw new Exception("Cannot generate access token for non existing user");
             }
             var tm = new TokenManager(_configuration);
-            var accessToken = tm.GenerateJWTAccessToken(user: user);
+            var accessToken = tm.GenerateJWTAccessToken(user: user, role: role);
             return accessToken;
         }
 
@@ -129,7 +119,14 @@ namespace PhotoApp.Api.Service
             return await _userRepository.ActivateUserByUsername(username);
         }
 
-        public async Task<User> SendNewNumberCodeEmail(User user)
+        public async Task<bool> CheckUserAccountActivityAsync(string username)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            if (user is null) throw new Exception("Cannot check account activity for non existing user");
+            return user.IsActive;
+        }
+
+        public async Task<User> SendNewNumberCodeEmailAsync(User user)
         {
             var generatedCode = new CodeGenerator().Generate();
             var mailer = new Mailer(_configuration);
@@ -141,6 +138,15 @@ namespace PhotoApp.Api.Service
             }
 
             throw new Exception("Cannot send email with new number code");
+        }
+
+        public async Task<string> SendNewAccessTokenEmailAsync(User user)
+        {
+            var accessToken = await GenerateNewAccessToken(user.Username, SystemRole.Guest);
+            var mailer = new Mailer(_configuration);
+            var url = accessToken; // TODO Url z krwi i kości
+            mailer.SendLoginMail(user.Email, user.Username, url);
+            return accessToken;
         }
     }
 }

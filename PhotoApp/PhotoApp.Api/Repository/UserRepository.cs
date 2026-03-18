@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Internal;
 using Microsoft.AspNetCore.Identity;
 using PhotoApp.Api.DbObjects;
+using PhotoApp.Common.ModelsShared;
 using System.Reflection.Metadata.Ecma335;
 
 namespace PhotoApp.Api.Repository
@@ -8,10 +9,10 @@ namespace PhotoApp.Api.Repository
     public class UserRepository(AppDbContext context)
     {
         //CREATE
-        public async Task<User> CreateUserAsync(string username, string email, string password)
+        public async Task<User> CreateUserAsync(RegisterModelDto request)
         {
-            var user = new User { Username = username, Email = email };
-            var passwordHash = new PasswordHasher<User>().HashPassword(user, password);
+            var user = new User { Username = request.Username, Email = request.Email };
+            var passwordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
             user.PasswordHash = passwordHash;
             context.Users.Add(user);
             await context.SaveChangesAsync();
@@ -27,6 +28,11 @@ namespace PhotoApp.Api.Repository
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return context.Users.SingleOrDefault(u => u.Id == id);
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return context.Users.SingleOrDefault(u => u.Email == email);
         }
 
         //UPDATE

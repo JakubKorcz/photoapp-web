@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal;
 using Amazon.S3.Model.Internal.MarshallTransformations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,9 @@ using PhotoApp.Api.Repository;
 using PhotoApp.Api.Service;
 using PhotoApp.Api.Tools.Mailer;
 using PhotoApp.Api.Tools.Tokens;
+using PhotoApp.Common.EnumShared;
 using PhotoApp.Common.ModelsShared;
+using System.Security.Claims;
 
 namespace PhotoApp.Api.Controllers
 {
@@ -17,15 +20,23 @@ namespace PhotoApp.Api.Controllers
     public class UsersAuthController(UserService userService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterRequest([FromBody] UserModelDto request)
+        public async Task<ActionResult<ServerAuthResponse?>> RegisterRequest([FromBody] RegisterModelDto request)
         {
             try
             {
-                if (await userService.RegisterUserAsync(request) is not null)
+                var user = await userService.RegisterUserAsync(request);
+                if (user is null)
                 {
-                    return Ok();
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Error during creating user.");
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error during creating user.");
+                var accessToken = await userService.SendNewAccessTokenEmailAsync(user);
+               
+                return Ok(new ServerAuthResponse()
+                {
+                    AccessToken = accessToken,
+                    Success = true,
+                    Username = request.Username,
+                });                
             }
             catch (Exception ex)
             {
@@ -33,28 +44,30 @@ namespace PhotoApp.Api.Controllers
             }
         }
 
-        [HttpPost("register/{code}")]
-        public async Task<IActionResult> RegisterVerify([FromBody] UserModelDto request, [FromRoute] string code)
+        [HttpPost("register/activity")]
+        [Authorize(Roles = nameof(SystemRole.Guest))]
+        public async Task<ActionResult<ServerAuthResponse>> RegisterCheckUserActivity()
         { 
             try
             {
-                var user = await userService.TryLoginAsync(request, false);
-                if (user is null)
-                {
-                    return BadRequest("Login or password is incorrect.");
-                }
+                var username = User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (user.HasValidLoginCode(code))
+                if (string.IsNullOrEmpty(username))
                 {
-                    var activatedUser = await userService.ActivateUserAsync(user.Username);
-                    var accessToken = await userService.GenerateNewAccessToken(user.Username);
+                    return Unauthorized("Invalid token");
+                }
+                var isActive = await userService.CheckUserAccountActivityAsync(username);
+
+                if (isActive)
+                {
+                    var accessToken = await userService.GenerateNewAccessToken(username);
 
                     if (string.IsNullOrEmpty(accessToken))
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate access token.");
                     }
 
-                    var refreshToken = await userService.GenerateNewRefreshToken(user.Username);
+                    var refreshToken = await userService.GenerateNewRefreshToken(username);
                     if (refreshToken is null)
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
@@ -63,33 +76,85 @@ namespace PhotoApp.Api.Controllers
 
                     var response = new ServerAuthResponse()
                     {
-                        Username = user.Username,
+                        Username = username,
                         AccessToken = accessToken,
                         Success = true
                     };
 
                     return Ok(response);
                 }
-                return Unauthorized();
-
+                return Forbid();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                return BadRequest(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+            }
+        }
+
+        [HttpPatch("register/activate")]
+        [Authorize(Roles = nameof(SystemRole.Guest))]
+        public async Task<IActionResult> RegisterActivateUser()
+        {
+            try
+            {
+                var username = User.FindFirst(ClaimTypes.Name)?.Value;
+                if (string.IsNullOrEmpty(username))
+                {
+                    return Unauthorized("Invalid token");
+                }
+                var user = await userService.ActivateUserAsync(username) ?? throw new Exception("Error during user activation");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+            }
+        }
+
+        [HttpPost("register/resend")]
+        public async Task<IActionResult> ResendActivationEmail([FromBody] UserModelDto request)
+        {
+            try
+            {
+                var user = await userService.TryLoginAsync(request);
+                if (user is null)
+                {
+                    return BadRequest("Login or password is incorrect.");
+                }
+                var accessToken = await userService.SendNewAccessTokenEmailAsync(user);
+
+                return Ok(new ServerAuthResponse()
+                {
+                    AccessToken = accessToken,
+                    Success = true,
+                    Username = request.Username,
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
             }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginRequest([FromBody] UserModelDto request)
         {
-            var user = await userService.TryLoginAsync(request);
-            if (user is null)
+            try
             {
-                return BadRequest("Login or password is incorrect.");
+                var user = await userService.TryLoginAsync(request);
+                if (user is null)
+                {
+                    return BadRequest("Login or password is incorrect.");
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+            }
         }
+
+
 
         [HttpPost("login/{code}")]
         public async Task<ActionResult<ServerAuthResponse>> LoginVerify([FromBody] UserModelDto request, [FromRoute] string code)
