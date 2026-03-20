@@ -33,5 +33,13 @@ namespace PhotoApp.Client.Connection
             var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);
             return response!; //TODO handle null properly
         }
+
+        public async Task<ServerAuthResponse> CheckActivity(UserModel user, string code)
+        {
+            var url = $"/auth/register/{code}";
+            var userDto = _mapper.Map<UserModelDto>(user);
+            var response = await SendPostRequestWithoutData<ServerAuthResponse>(url);
+            return response!; //TODO handle null properly
+        }
     }
 }

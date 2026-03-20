@@ -34,8 +34,7 @@ namespace PhotoApp.Api.Controllers
                 return Ok(new ServerAuthResponse()
                 {
                     AccessToken = accessToken,
-                    Success = true,
-                    Username = request.Username,
+                    Username = request.Username
                 });                
             }
             catch (Exception ex)
@@ -44,7 +43,7 @@ namespace PhotoApp.Api.Controllers
             }
         }
 
-        [HttpPost("register/activity")]
+        [HttpGet("register/activity")]
         [Authorize(Roles = nameof(SystemRole.Guest))]
         public async Task<ActionResult<ServerAuthResponse>> RegisterCheckUserActivity()
         { 
@@ -77,8 +76,7 @@ namespace PhotoApp.Api.Controllers
                     var response = new ServerAuthResponse()
                     {
                         Username = username,
-                        AccessToken = accessToken,
-                        Success = true
+                        AccessToken = accessToken
                     };
 
                     return Ok(response);
@@ -87,7 +85,7 @@ namespace PhotoApp.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -107,7 +105,7 @@ namespace PhotoApp.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -126,13 +124,12 @@ namespace PhotoApp.Api.Controllers
                 return Ok(new ServerAuthResponse()
                 {
                     AccessToken = accessToken,
-                    Success = true,
                     Username = request.Username,
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -150,7 +147,7 @@ namespace PhotoApp.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServerAuthResponse() { Success = false, ErrorMesage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -186,8 +183,7 @@ namespace PhotoApp.Api.Controllers
                     var response = new ServerAuthResponse()
                     {
                         Username = user.Username,
-                        AccessToken = accessToken,
-                        Success = true  
+                        AccessToken = accessToken
                     };
 
                     return Ok(response);
@@ -200,7 +196,7 @@ namespace PhotoApp.Api.Controllers
             }
         }
 
-        [HttpPost("refresh-token/{username}")]
+        [HttpGet("refresh/{username}")]
         public async Task<ActionResult<ServerAuthResponse>> RefreshToken([FromRoute] string username)
         {
             var refreshToken = Request.Cookies["refreshToken"];
@@ -225,12 +221,11 @@ namespace PhotoApp.Api.Controllers
             return Ok(new ServerAuthResponse
             {
                 Username = username,
-                AccessToken = newAccessToken,
-                Success = true
+                AccessToken = newAccessToken
             });
         }
 
-        [HttpPost("logout")]
+        [HttpDelete("logout")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("refreshToken");
@@ -244,7 +239,8 @@ namespace PhotoApp.Api.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = expires
+                Expires = expires,
+                Path = "/auth/refresh"
             };
 
             Response.Cookies.Append("refreshToken", token, cookieOptions);

@@ -10,9 +10,18 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped<ApiConnection>();
+builder.Services.AddTransient<AuthenticationHeaderHandler>();
 
+builder.Services.AddHttpClient("PhotoApp.Api", client =>
+{
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+})
+.AddHttpMessageHandler<AuthenticationHeaderHandler>();
+
+builder.Services.AddScoped(sp =>
+    sp.GetRequiredService<IHttpClientFactory>().CreateClient("PhotoApp.Api"));
+
+builder.Services.AddScoped<ApiConnection>();
 
 //AutoMapper
 var configuration = new MapperConfiguration(config =>

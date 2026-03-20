@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using static System.Net.WebRequestMethods;
@@ -25,29 +28,52 @@ namespace PhotoApp.Client.Connection
         }
         public void Dispose() { }
 
-        private async Task<T?> SendPostRequestWithoutData<T>(string url)
+        public async Task<TResponse?> SendRequest<TResponse, TRequest>(HttpMethod method, string url, TRequest? data)
         {
-            var response = await _httpClient.PostAsync(_httpClient.BaseAddress + url, null);
-            var json = await response.Content.ReadAsStringAsync();
+            var request = new HttpRequestMessage(method, url);
 
-            return JsonSerializer.Deserialize<T>(json, _options);
+            if (data != null && method != HttpMethod.Get)
+            {
+                var json = JsonSerializer.Serialize(data, _options);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            var response = await _httpClient.SendAsync(request);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                HandleErrors(response.StatusCode, responseContent);
+            }
+
+            return string.IsNullOrWhiteSpace(responseContent)
+                   ? default
+                   : JsonSerializer.Deserialize<TResponse>(responseContent, _options);
         }
 
-        public async Task<T?> SendGetRequestWithoutData<T>(string url)
+        private void HandleErrors(HttpStatusCode statusCode, string responseContent)
         {
-            var response = await _httpClient.GetAsync(_httpClient.BaseAddress + url);
-            var json = await response.Content.ReadAsStringAsync();
+            switch (statusCode)
+            {
+                case HttpStatusCode.BadRequest: 
+                    throw new Exception(responseContent);
 
-            return JsonSerializer.Deserialize<T>(json, _options);
-        }
+                case HttpStatusCode.Unauthorized: 
+                    throw new Exception("Twoja sesja wygasła. Zaloguj się ponownie.");
 
-        public async Task<TResponse?> SendPostRequest<TResponse, TRequest>(string url, TRequest data)
-        {
-            string jsonPayload = JsonSerializer.Serialize(data, _options);
-            using var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(url, content);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<TResponse>(jsonResponse, _options);
+                case HttpStatusCode.Forbidden: 
+                    throw new Exception("Nie masz uprawnień do tej akcji.");
+
+                case HttpStatusCode.NotFound: 
+                    throw new Exception("Nie znaleziono zasobu.");
+
+                case HttpStatusCode.InternalServerError:
+                    throw new Exception("Serwer napotkał problem. Spróbuj później.");
+
+                default:
+                    throw new Exception($"Wystąpił nieoczekiwany błąd (Status: {statusCode})");
+            }
         }
     }
 }
