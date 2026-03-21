@@ -1,0 +1,95 @@
+﻿@{
+    var activeItem = tabs.FirstOrDefault(t => t.Id == selectedTab);
+}
+<div class="both-sections">
+    <div class="details">
+        <ProjectDetailTabs SelectedTab="@selectedTab" SelectTab="@OnTabSelected" tabs="@tabs"/>
+
+        @if (activeItem != null)
+        {
+            switch (activeItem.Id)
+            {
+                case 0:
+                    <ProjectDetailWebDesignSettings/>
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                default:
+                    break;
+            }
+        }
+    </div>
+    <div class="right-section">
+        @if (activeItem != null)
+        {
+            switch (activeItem.Id)
+            {
+                case 0:
+                    <ProjectFolderStructureView Project="@currentPrj"/>
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                default:
+                    break;
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    ProjectDto currentPrj { get; set; } = null;
+
+    [Parameter]
+    public Guid ProjectId { get; set; }
+
+    public enum Tab
+    {
+        ProjectDescription,
+        Photos,
+        Album,
+        Settings,
+        Activity,
+        Import
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPrj = await conn.GetProject(username: "LALAL", ProjectId); //TODO uzupełnić poprawne parametry
+    }
+
+    List<MenuItem> tabs = new List<MenuItem>()
+    {
+        new MenuItem(){Description = "a", IconName = "menu", Id = (int)Tab.ProjectDescription},
+        new MenuItem(){Description = "b", IconName = "menu", Id = (int)Tab.Photos},
+        new MenuItem(){Description = "c", IconName = "menu", Id = (int)Tab.Album},
+        new MenuItem(){Description = "d", IconName = "menu", Id = (int)Tab.Settings},
+        new MenuItem(){Description = "e", IconName = "menu", Id = (int)Tab.Activity},
+        new MenuItem(){Description = "f", IconName = "menu", Id = (int)Tab.Import }
+    };
+
+    private int selectedTab = 0;
+
+    public void OnTabSelected(int tabIndex)
+    {
+        selectedTab = tabIndex;
+        StateHasChanged();
+    }
+}

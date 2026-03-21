@@ -1,6 +1,4 @@
-﻿using PhotoApp.Common.ModelsShared;
-
-namespace PhotoApp.Client.Models
+﻿namespace PhotoApp.Common.ModelsShared
 {
     public class ProjectDto  
     {

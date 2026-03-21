@@ -1,0 +1,12 @@
+﻿@page "/"
+@page "/{ProjectId:guid}"
+
+<div class="page-layout">
+    <MainNavMenu></MainNavMenu>
+    <ContentArea ProjectId="@ProjectId"></ContentArea>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? ProjectId { get; set; }
+}

@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["PhotoApp.Front.styles.css"]" />
+    <ImportMap />
+    <HeadOutlet />
+    <!--MudBlazor-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/AuthStyles.css" />
+    <link rel="stylesheet" href="css/colors.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+    <link rel="stylesheet" href="css/Animations.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+
+    <link href="PhotoApp.Client.styles.css" rel="stylesheet" />
+
+    <!--Czcionka Bebas-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!--Czcionka Arsenal-->
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!--Czcionka Monterrat-->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!--Czcionka Anton-->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!--Czcionka Inter-->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <!--Ikonki-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add_box,create_new_folder,credit_card,edit,feedback,folder,folder_open,help,ios_share,link,logout,mail,menu,notifications,search,settings,swap_vert" />
+</head>
+
+<body>
+    <Routes />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        console.log('Script loaded');
+        function scrollToElement(id) {
+        console.log('Script scrolled to elemnet');
+        var element = document.getElementById(id);
+        if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        }
+
+        window.addScrollListener = function (dotNetObjRef) {
+        document.body.addEventListener('scroll', () => {
+        console.log('Script scrolled');
+        let sections = document.querySelectorAll('section');
+        let scrollPos = document.body.scrollTop /*|| document.body.pageYOffset*/;
+        console.log("Scroll event fired, scrollPos:", document.body.scrollTop /*|| document.body.pageYOffset*/);
+
+        let currentSectionId = null;
+        sections.forEach(sec => {
+        let top = sec.offsetTop;
+        let height = sec.offsetHeight;
+        if (scrollPos >= top && scrollPos < top + height) {
+        currentSectionId = sec.id;
+        }
+        });
+        console.log("currentSectionId:", currentSectionId)
+        if (currentSectionId) {
+        dotNetObjRef.invokeMethodAsync('UpdateCurrentSection', currentSectionId);
+        }
+        });
+        };
+    </script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+</body>
+
+</html>

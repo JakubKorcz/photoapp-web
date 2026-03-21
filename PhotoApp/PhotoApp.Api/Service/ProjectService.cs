@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
-using PhotoApp.Client.Models;
 using PhotoApp.Common.ModelsShared;
 using System.Reflection.Metadata.Ecma335;
 

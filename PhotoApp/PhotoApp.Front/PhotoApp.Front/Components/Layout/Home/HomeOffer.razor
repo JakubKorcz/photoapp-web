@@ -1,0 +1,97 @@
+﻿<div class="submenu both-padding">
+    <ul class="menu">
+        <li class="@((currentSection == 1) ? "active" : "nonactive")" @onclick="() => ScrollToSection(1)">01</li>
+        <li class="@((currentSection == 2) ? "active" : "nonactive")" @onclick="() => ScrollToSection(2)">02</li>
+        <li class="@((currentSection == 3) ? "active" : "nonactive")" @onclick="() => ScrollToSection(3)">03</li>
+        <li class="@((currentSection == 4) ? "active" : "nonactive")" @onclick="() => ScrollToSection(4)">04</li>
+        <li class="@((currentSection == 5) ? "active" : "nonactive")" @onclick="() => ScrollToSection(5)">05</li>
+    </ul>
+    <h5 class="submenuname">NAZWA SEKCJI</h5>
+</div>
+
+@* <li class="@((currentSection == "home") ? "active" : "")">Home</li>
+<li class="@((currentSection == "about") ? "active" : "")">About</li> *@
+
+<section id="section1">
+    <div class="left both-padding">
+        <h2>Konfiguracja wyglądu galerii</h2>
+        <p>Możesz wybierać swój styl strony aby móc udostępnić klientom, tutaj masz ileś tam stylów, no i wysyłasz wow efekt klientom</p>
+        <button class="btn btn-light second-font">
+            Wypróbuj za darmo
+        </button>
+    </div>  
+    <div class="right">
+        <img src="jpg/password_grafika.png" alt="Skunks-login-image"/>
+    </div>
+</section>
+<section id="section2">
+    <div class="left">
+        <img src="jpg/password_grafika.png" alt="Skunks-login-image" />
+    </div>
+    <div class="right both-padding">
+        <h2>Możliwość selekcji zdjęć</h2>
+        <p>Klient może dać tobie znać jakie zdjęcia on wybiera, po prostu naciskająć ♡</p>
+        <button class="btn btn-light second-font">
+            Wypróbuj za darmo
+        </button>
+    </div>
+</section>
+<section id="section3" >
+    <div class="left both-padding">
+        <h2>Prywatność</h2>
+        <p>Tutaj będzie długi opis o biezpieczeństwu. Jesteśmy bardzo bezpieczną platformą, możesz w momencie udotępniania zrobić hasło lub pin aby nikt nie mógł wejść w stworziny projekt.</p>
+        <button class="btn btn-light second-font">
+            Wypróbuj za darmo
+        </button>
+    </div>
+    <div class="right">
+        <img src="jpg/password_grafika.png" alt="Skunks-login-image" />
+    </div>
+</section>
+<section id="section4" >
+    <SectionBoxes></SectionBoxes>
+</section>
+<section id="section5">
+    <div class="boxes both-padding">
+       @*  <div class="section-box"></div>
+        <div class="section-box"></div>
+        <div class="section-box"></div> *@
+    </div>
+</section>
+
+
+@code {
+    public int currentSection { get; set; }
+
+   
+
+    protected override void OnInitialized()
+    {
+        objRef = DotNetObjectReference.Create(this);
+    }
+
+    private async Task ScrollToSection(int sectionId)
+    {
+        await JS.InvokeVoidAsync("scrollToElement", $"section{sectionId}");
+    }
+
+    private DotNetObjectReference<HomeOffer>? objRef;
+
+    public DotNetObjectReference<HomeOffer> GetObjRef() => objRef!;
+
+    [JSInvokable]
+    public void UpdateCurrentSection(string sectionId)
+    {
+        char lastChar = sectionId[^1];
+        currentSection = int.Parse(lastChar.ToString());
+        StateHasChanged(); 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("addScrollListener", GetObjRef());
+        }
+    }
+}

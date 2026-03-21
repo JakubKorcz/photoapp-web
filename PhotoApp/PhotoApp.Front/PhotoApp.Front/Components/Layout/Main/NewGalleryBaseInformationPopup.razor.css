@@ -1,0 +1,26 @@
+﻿.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(222, 222, 222, 0.6); 
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup {
+    background: black;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 11;
+    min-width: 500px;
+    min-height: 400px;
+    color: white;
+}

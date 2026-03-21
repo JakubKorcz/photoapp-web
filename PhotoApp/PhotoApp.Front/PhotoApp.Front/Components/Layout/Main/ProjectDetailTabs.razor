@@ -1,0 +1,26 @@
+﻿<ul class="tabs">
+    @foreach (var tab in Tabs[..^1])
+    {
+        <li class="@(SelectedTab == tab.Id ? "active" : "")" @onclick="() => SelectTab.InvokeAsync(tab.Id)">
+            <span class="material-symbols-outlined" id="icon" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40 ;">
+                @tab.IconName
+            </span>
+            @tab.Description
+        </li>
+    }
+    <li class="@(SelectedTab == Tabs[^1].Id ? "active" : "")" @onclick="() => SelectTab.InvokeAsync(Tabs[^1].Id)">
+        <button class="import-btn">
+            <span class="material-symbols-outlined" id="icon" style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40 ;">
+                @Tabs[^1].IconName
+            </span>
+            @Tabs[^1].Description
+        </button>
+    </li>
+</ul>
+
+
+@code {
+    [Parameter] public int? SelectedTab { get; set; } = null;
+    [Parameter] public EventCallback<int> SelectTab { get; set; }
+    [Parameter] public List<MenuItem> Tabs { get; set; }
+}

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PhotoApp.Api.Service;
-using PhotoApp.Client.Models;
 using PhotoApp.Common.ModelsShared;
 
 namespace PhotoApp.Api.Controllers
