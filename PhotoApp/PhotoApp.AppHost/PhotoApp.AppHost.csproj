@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PhotoApp.Api\PhotoApp.Api.csproj" />
     <ProjectReference Include="..\PhotoApp.Front\PhotoApp.Front\PhotoApp.Front.csproj" />
   </ItemGroup>
 

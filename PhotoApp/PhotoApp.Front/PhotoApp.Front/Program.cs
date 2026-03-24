@@ -15,11 +15,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 
-//builder.Services.AddHttpClient("PhotoApp.Api", client =>
-//{
-//    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-//})
-//.AddHttpMessageHandler<AuthenticationHeaderHandler>();
+builder.Services.AddHttpClient("PhotoApp.Api", client =>
+{
+    var baseUrl = builder.Configuration["VITE_API_URL"] ?? "http://photoapp-api";
+    client.BaseAddress = new Uri(baseUrl);
+})
+.AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
 builder.Services.AddScoped(sp =>
     sp.GetRequiredService<IHttpClientFactory>().CreateClient("PhotoApp.Api"));

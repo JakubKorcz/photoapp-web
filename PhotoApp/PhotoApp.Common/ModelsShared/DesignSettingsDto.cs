@@ -1,5 +1,4 @@
-﻿using PhotoApp.Client.Models;
-using PhotoApp.Common.EnumShared;
+﻿using PhotoApp.Common.EnumShared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
