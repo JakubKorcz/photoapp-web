@@ -34,7 +34,7 @@
                     ? await conn.LoginVerify(User, code)
                     : await conn.RegisterVerify(User, code);
 
-                if (res.Success)
+                if (res is not null)
                 {
                     //LALAL
                     //Zapisz kod do cookies ???
