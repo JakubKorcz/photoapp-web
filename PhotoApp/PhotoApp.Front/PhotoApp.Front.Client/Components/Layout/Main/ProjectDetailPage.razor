@@ -55,7 +55,7 @@
 @code {
     [Inject]
     private ApiConnection conn { get; set; } = default!;
-    ProjectDto currentPrj { get; set; } = null;
+    ProjectDto? currentPrj { get; set; } = null;
 
     [Parameter]
     public Guid ProjectId { get; set; }
@@ -72,7 +72,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentPrj = await conn.GetProject(username: "LALAL", ProjectId); //TODO uzupełnić poprawne parametry
+        var result = await conn.GetProject(username: "LALAL", ProjectId); //TODO uzupełnić poprawne parametry
+        if (result.IsSuccess && result.Data != null)
+        {
+            currentPrj = result.Data;
+        }
+        else
+        {
+            Console.WriteLine($"Błąd pobierania projektu: {result.ErrorMessage}");
+            // TODO : Obsłużyć błąd w UI, np. wyświetlić komunikat użytkownikowi
+        }
     }
 
     List<MenuItem> tabs = new List<MenuItem>()

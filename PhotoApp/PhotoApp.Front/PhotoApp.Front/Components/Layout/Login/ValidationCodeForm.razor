@@ -16,7 +16,7 @@
     [Inject]
     private ApiConnection conn { get; set; } = default!;
     [Parameter] public bool IsLogin { get; set; }
-    [Parameter] public UserModel User { get; set; }
+    [Parameter] public UserModelDto User { get; set; }
 
     private ValidationCode validationCode = new();
     private string[] codeDigits = new string[6] { "", "", "", "", "", "" };

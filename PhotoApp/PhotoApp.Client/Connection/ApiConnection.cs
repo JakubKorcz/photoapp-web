@@ -1,79 +1,143 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using AutoMapper;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using static System.Net.WebRequestMethods;
 
-namespace PhotoApp.Client.Connection
+namespace PhotoApp.Client.Connection;
+
+public partial class ApiConnection : IDisposable
 {
-    public partial class ApiConnection : IDisposable
-    {
-        private readonly HttpClient _httpClient;
-        private JsonSerializerOptions _options;
-        private readonly IMapper _mapper;
-        public ApiConnection(HttpClient httpClient, IConfiguration configuration, IMapper mapper)
-        { 
-            _httpClient = httpClient;
-            var baseUrl = configuration["VITE_API_URL"] ?? "https://localhost:5001/api";
-            _httpClient.BaseAddress = new Uri(baseUrl);
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _options;
+    private readonly IMapper _mapper;
 
-            _options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            _mapper = mapper;
+    public ApiConnection(HttpClient httpClient, IConfiguration configuration, IMapper mapper)
+    { 
+        _httpClient = httpClient;
+        var baseUrl = configuration["VITE_API_URL"] ?? "https://localhost:5001";
+        if (!baseUrl.EndsWith("/api"))
+        {
+            baseUrl = $"{baseUrl.TrimEnd('/')}/api";
         }
-        public void Dispose() { }
+        _httpClient.BaseAddress = new Uri(baseUrl);
 
-        public async Task<TResponse?> SendRequest<TResponse, TRequest>(HttpMethod method, string url, TRequest? data)
+        _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        _mapper = mapper;
+    }
+
+    public void Dispose() { }
+
+    public async Task<ApiResult<TResponse>> SendPostRequest<TResponse, TRequest>(string url, TRequest data)
+    {
+        return await SendRequest<TResponse, TRequest>(HttpMethod.Post, url, data);
+    }
+
+    public async Task<ApiResult<TResponse>> SendPostRequestWithoutData<TResponse>(string url)
+    {
+        return await SendRequest<TResponse, object>(HttpMethod.Post, url, null);
+    }
+
+    public async Task<ApiResult<TResponse>> SendGetRequestWithoutData<TResponse>(string url)
+    {
+        return await SendRequest<TResponse, object>(HttpMethod.Get, url, null);
+    }
+
+    public async Task<ApiResult<TResponse>> SendRequest<TResponse, TRequest>(HttpMethod method, string url, TRequest? requestData)
+    {
+        try
         {
             var request = new HttpRequestMessage(method, url);
 
-            if (data != null && method != HttpMethod.Get)
+            if (requestData != null && method != HttpMethod.Get)
             {
-                var json = JsonSerializer.Serialize(data, _options);
+                var json = JsonSerializer.Serialize(requestData, _options);
                 request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             }
 
             var response = await _httpClient.SendAsync(request);
-
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
-                HandleErrors(response.StatusCode, responseContent);
+                var errorType = MapStatusCodeToErrorType(response.StatusCode);
+                var errorMessage = ParseErrorMessage(responseContent, response.StatusCode);
+                return ApiResult<TResponse>.Failure(errorMessage, errorType);
             }
 
-            return string.IsNullOrWhiteSpace(responseContent)
-                   ? default
-                   : JsonSerializer.Deserialize<TResponse>(responseContent, _options);
-        }
-
-        private void HandleErrors(HttpStatusCode statusCode, string responseContent)
-        {
-            switch (statusCode)
+            if (string.IsNullOrWhiteSpace(responseContent))
             {
-                case HttpStatusCode.BadRequest: 
-                    throw new Exception(responseContent);
+                return ApiResult<TResponse>.Success(default!);
+            }
 
-                case HttpStatusCode.Unauthorized: 
-                    throw new Exception("Twoja sesja wygasła. Zaloguj się ponownie.");
+            var result = JsonSerializer.Deserialize<TResponse>(responseContent, _options);
+            return ApiResult<TResponse>.Success(result!);
+        }
+        catch (HttpRequestException ex)
+        {
+            return ApiResult<TResponse>.Failure($"Błąd połączenia: {ex.Message}", ApiErrorType.NetworkError);
+        }
+        catch (TaskCanceledException)
+        {
+            return ApiResult<TResponse>.Failure("Upłynął limit czasu połączenia.", ApiErrorType.NetworkError);
+        }
+        catch (Exception ex)
+        {
+            return ApiResult<TResponse>.Failure($"Nieoczekiwany błąd: {ex.Message}", ApiErrorType.Unknown);
+        }
+    }
 
-                case HttpStatusCode.Forbidden: 
-                    throw new Exception("Nie masz uprawnień do tej akcji.");
+    private static ApiErrorType MapStatusCodeToErrorType(HttpStatusCode statusCode)
+    {
+        return statusCode switch
+        {
+            HttpStatusCode.BadRequest => ApiErrorType.BadRequest,
+            HttpStatusCode.Unauthorized => ApiErrorType.Unauthorized,
+            HttpStatusCode.Forbidden => ApiErrorType.Forbidden,
+            HttpStatusCode.NotFound => ApiErrorType.NotFound,
+            HttpStatusCode.InternalServerError => ApiErrorType.ServerError,
+            _ => ApiErrorType.Unknown
+        };
+    }
 
-                case HttpStatusCode.NotFound: 
-                    throw new Exception("Nie znaleziono zasobu.");
-
-                case HttpStatusCode.InternalServerError:
-                    throw new Exception("Serwer napotkał problem. Spróbuj później.");
-
-                default:
-                    throw new Exception($"Wystąpił nieoczekiwany błąd (Status: {statusCode})");
+    private static string ParseErrorMessage(string responseContent, HttpStatusCode statusCode)
+    {
+        if (!string.IsNullOrWhiteSpace(responseContent))
+        {
+            try
+            {
+                var json = JsonDocument.Parse(responseContent);
+                if (json.RootElement.TryGetProperty("message", out var message))
+                {
+                    return message.GetString() ?? GetDefaultMessage(statusCode);
+                }
+                if (json.RootElement.TryGetProperty("error", out var error))
+                {
+                    return error.GetString() ?? GetDefaultMessage(statusCode);
+                }
+                return responseContent;
+            }
+            catch
+            {
+                return responseContent;
             }
         }
+        return GetDefaultMessage(statusCode);
+    }
+
+    private static string GetDefaultMessage(HttpStatusCode statusCode)
+    {
+        return statusCode switch
+        {
+            HttpStatusCode.BadRequest => "Nieprawidłowe dane.",
+            HttpStatusCode.Unauthorized => "Twoja sesja wygasła. Zaloguj się ponownie.",
+            HttpStatusCode.Forbidden => "Nie masz uprawnień do tej akcji.",
+            HttpStatusCode.NotFound => "Nie znaleziono zasobu.",
+            HttpStatusCode.InternalServerError => "Serwer napotkał problem. Spróbuj później.",
+            _ => "Wystąpił nieoczekiwany błąd."
+        };
     }
 }

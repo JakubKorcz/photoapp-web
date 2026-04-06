@@ -1,4 +1,4 @@
-﻿namespace PhotoApp.Front.Models
+﻿namespace PhotoApp.Common.ModelsShared
 {
     public class ValidationCode
     {

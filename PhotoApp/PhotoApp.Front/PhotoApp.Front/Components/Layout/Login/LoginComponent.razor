@@ -35,7 +35,7 @@
     [Parameter] public bool Hidden { get; set; }
     [Parameter] public string? ErrorMessage { get; set; }
 
-    private UserModel userModel = new();
+    private UserModelDto userModel = new();
     private ValidationCode validationCode = new();
 
     private bool IsSixBoxesMode = false;

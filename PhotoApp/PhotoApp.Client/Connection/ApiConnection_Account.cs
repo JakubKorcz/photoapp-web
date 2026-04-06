@@ -1,14 +1,12 @@
-﻿using PhotoApp.Common.ModelsShared;
+using PhotoApp.Common.ModelsShared;
 
-namespace PhotoApp.Client.Connection
+namespace PhotoApp.Client.Connection;
+
+public partial class ApiConnection
 {
-    public partial class ApiConnection
+    public async Task<ApiResult<MemoryInfoResponse>> GetMemoryInfo()
     {
-        public async Task<MemoryInfoResponse> GetMemoryInfo()
-        {
-            var url = $"/account/memory";
-            var response = await SendGetRequestWithoutData<MemoryInfoResponse>(url);
-            return response!; //TODO handle null properly
-        }
+        var url = $"account/memory";
+        return await SendGetRequestWithoutData<MemoryInfoResponse>(url);
     }
 }

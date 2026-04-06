@@ -68,19 +68,29 @@
 
     [Inject]
     private ApiConnection conn { get; set; } = default!;
-    public List<ProjectBaseInformationDto> AllProjects { get; set; } = null;
-    public List<ProjectBaseInformationDto> ProjectsAfterStringFilter { get; set; } = null;
-    public Dictionary<string, List<ProjectBaseInformationDto>> ProjectsToDisplay { get; set; } = null;
+    public List<ProjectBaseInformationDto> AllProjects { get; set; } = new List<ProjectBaseInformationDto>();
+    public List<ProjectBaseInformationDto> ProjectsAfterStringFilter { get; set; } = new List<ProjectBaseInformationDto>();
+    public Dictionary<string, List<ProjectBaseInformationDto>> ProjectsToDisplay { get; set; } = new Dictionary<string, List<ProjectBaseInformationDto>>();
     private string searchTerm = "";
     private bool isSearchVisible = false;
     private SortPossibilities currentSortType = SortPossibilities.NoSort;
 
     protected override async Task OnInitializedAsync()
     {
-        IEnumerable<ProjectBaseInformationDto> enumerable = await conn.GetAllProjects(username: "LALAL");
-        AllProjects = enumerable.ToList();
-        Sort(SortPossibilities.NoSort, "");
-        StateHasChanged();
+        var result = await conn.GetAllProjects(username: "LALAL");
+        
+        if (result.IsSuccess && result.Data != null)
+        {
+            AllProjects = result.Data.ToList();
+        
+            Sort(SortPossibilities.NoSort, "");
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine($"Błąd pobierania projektów: {result.ErrorMessage}");
+            // TODO : Obsłużyć błąd w UI, np. wyświetlić komunikat użytkownikowi
+        }
     }
 
     private void Search()

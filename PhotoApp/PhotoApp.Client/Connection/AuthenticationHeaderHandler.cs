@@ -1,35 +1,11 @@
-﻿using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Net.Http.Headers;
 
+namespace PhotoApp.Client.Connection;
 
-namespace PhotoApp.Client.Connection
+public class AuthenticationHeaderHandler : DelegatingHandler
 {
-    public class AuthenticationHeaderHandler : DelegatingHandler
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        //private readonly ProtectedLocalStorage _protectedStorage;
-        //public AuthenticationHeaderHandler(ProtectedLocalStorage protectedStorage)
-        //{
-        //    _protectedStorage = protectedStorage;
-        //}
-
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                // Wyciągamy token z localStorage
-                var result = await _protectedStorage.GetAsync<string>("authToken");
-
-                if (result.Success && !string.IsNullOrEmpty(result.Value))
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.Value);
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-
-            return await base.SendAsync(request, cancellationToken);
-        }
+        return base.SendAsync(request, cancellationToken);
     }
 }

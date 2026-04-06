@@ -1,7 +1,7 @@
 ﻿using PhotoApp.Common.EnumShared;
 using System.ComponentModel.DataAnnotations;
 
-namespace PhotoApp.Front.Models
+namespace PhotoApp.Common.ModelsShared
 {
     public class ProjectFormModel
     {

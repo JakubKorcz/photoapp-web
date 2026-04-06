@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using PhotoApp.Common.ModelsShared;
-using PhotoApp.Front.Models;
 
 namespace PhotoApp.Front.Connection
 {
@@ -9,7 +8,6 @@ namespace PhotoApp.Front.Connection
         public MappingProfile()
         {
             CreateMap<ProjectFormModel, ProjectBaseInformationDto>();
-            CreateMap<UserModel, UserModelDto>();
         }
     }
 }

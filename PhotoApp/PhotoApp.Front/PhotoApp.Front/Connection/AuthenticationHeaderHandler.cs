@@ -1,16 +1,15 @@
-﻿using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Net.Http.Headers;
 
 namespace PhotoApp.Front.Connection
 {
     public class AuthenticationHeaderHandler : DelegatingHandler
     {
-        //private readonly ProtectedLocalStorage _protectedStorage;
-        //public AuthenticationHeaderHandler(ProtectedLocalStorage protectedStorage)
-        //{
-        //    _protectedStorage = protectedStorage;
-        //}
+        private readonly ProtectedLocalStorage _protectedStorage;
+        public AuthenticationHeaderHandler(ProtectedLocalStorage protectedStorage)
+        {
+            _protectedStorage = protectedStorage;
+        }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

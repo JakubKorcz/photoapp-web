@@ -1,5 +1,4 @@
 using PhotoApp.Common.ModelsShared;
-using PhotoApp.Front.Models;
 
 namespace PhotoApp.Front.Connection;
 

@@ -73,14 +73,14 @@ public partial class ApiConnection : IDisposable
                 return ApiResult<TResponse>.Success(default!);
             }
 
-            var data = JsonSerializer.Deserialize<TResponse>(responseContent, _options);
-            return ApiResult<TResponse>.Success(data!);
+            var result = JsonSerializer.Deserialize<TResponse>(responseContent, _options);
+            return ApiResult<TResponse>.Success(result!);
         }
         catch (HttpRequestException ex)
         {
             return ApiResult<TResponse>.Failure($"Błąd połączenia: {ex.Message}", ApiErrorType.NetworkError);
         }
-        catch (TaskCanceledException ex)
+        catch (TaskCanceledException)
         {
             return ApiResult<TResponse>.Failure("Upłynął limit czasu połączenia.", ApiErrorType.NetworkError);
         }
