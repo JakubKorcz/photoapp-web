@@ -1,0 +1,93 @@
+<EditForm Model="@validationCode" OnValidSubmit="HandleCodeWrite">
+    <div class="six-boxes mov_text">
+        @for (int i = 0; i < 6; i++)
+        {
+            var index = i;
+            <input type="text" maxlength="1" class="code-box" value="@codeDigits[index]" inputmode="numeric"
+                   @oninput="@(e => OnDigitInput(index, e))"
+                   @onkeydown="@(e => OnKeyDown(index, e))"
+                   @ref="@inputRefs[index]"/>
+        }
+    </div>
+    <button class="girisbtn auth_btn mov_text" tabindex="101">Submit Code</button>
+</EditForm>
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Parameter] public bool IsLogin { get; set; }
+    [Parameter] public UserModelDto User { get; set; }
+
+    private ValidationCode validationCode = new();
+    private string[] codeDigits = new string[6] { "", "", "", "", "", "" };
+    private ElementReference[] inputRefs = new ElementReference[6];
+    private string? lastKey;
+
+
+    private async void HandleCodeWrite()
+    {
+        var code = string.Join("", codeDigits);
+      
+            try
+            {
+                var res = IsLogin
+                    ? await conn.LoginVerify(User, code)
+                    : await conn.RegisterVerify(User, code);
+
+                if (res.IsSuccess && res.Data is not null)
+                {
+                    await JS.InvokeVoidAsync("sessionStorage.setItem", "authToken", res.Data.AccessToken);
+                    await JS.InvokeVoidAsync("sessionStorage.setItem", "username", res.Data.Username);
+                    NavManager.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    string errorCode = "ERR001";
+                    NavManager.NavigateTo($"/login?errorCode={errorCode}", forceLoad: true);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.ToString());
+            }
+        
+    }
+
+    private async void OnDigitInput(int index, ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            var input = value.Substring(0, 1);
+
+            input = new string(input.Where(char.IsDigit).ToArray());
+
+            codeDigits[index] = input;
+
+            if (index < inputRefs.Length - 1)
+            {
+                await inputRefs[index + 1].FocusAsync();
+            }
+
+            StateHasChanged();
+        }
+
+        if (lastKey == "Backspace" && index > 0)
+        {
+            await inputRefs[index - 1].FocusAsync();
+        }
+    }
+
+    private void OnKeyDown(int index, KeyboardEventArgs e)
+    {
+        lastKey = e.Key;   
+        if (!string.IsNullOrEmpty(codeDigits[index])
+            && e.Key.Length == 1 
+            && !e.CtrlKey && !e.AltKey && !e.MetaKey)
+        {
+            codeDigits[index] = "";
+        }
+    }
+}

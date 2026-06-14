@@ -1,0 +1,15 @@
+.upper-menu {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+    padding: 8px;
+    padding-right: 70px;
+    justify-content: flex-end;
+    gap: 40px;
+    align-items : center;
+}
+
+.upper-icon {
+    font-size: 36px;
+    cursor: pointer;
+}

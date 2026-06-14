@@ -1,0 +1,41 @@
+#section4 .boxes {
+    background-color: #201f1f;
+    color: white;
+    display: flex;
+    width: 100%;
+    gap: 4%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    justify-content: space-between;
+}
+
+.section-box {
+    width: 100%;
+    height: auto;
+    display: flex;
+}
+
+.plus-icon {
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+}
+
+    .plus-icon:hover {
+        transform: scale(1.2);
+        transition: transform 0.2s ease;
+    }
+
+.rotate-45 {
+    transform: rotate(585deg);
+    transition: transform 0.2s ease;
+}
+
+.plus-icon.rotate-45:hover {
+    transform: scale(1.2) rotate(585deg);
+    transition: transform 0.2s ease;
+}
+
+.text{
+    margin-top : 10px;
+}

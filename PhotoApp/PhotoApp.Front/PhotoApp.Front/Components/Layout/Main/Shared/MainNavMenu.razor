@@ -1,0 +1,87 @@
+<nav class="main-nav-menu">
+    <div class="elements up">
+        <h2>LOGO</h2>
+        <ul>
+            @foreach (var mainItem in upMainMenuItems)
+            {
+                <li @onclick="() => ToggleSubMenu(Enum.Parse<MenuOptions>(mainItem.Description))">
+                    <MainNavMenuElement MenuItem="@mainItem" />
+                    @if (visibleSubMenu == Enum.Parse<MenuOptions>(mainItem.Description))
+                    {
+                        <ul class="submenu">                      
+                            @foreach (var option in GetMenuSubOptions(Enum.Parse<MenuOptions>(mainItem.Description)))
+                            {
+                                <MainNavSubMenuElement MenuItem ="@option"/>
+                            }                         
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="elements down">
+        <ul>
+            @foreach (var mainItem in downMainMenuItems)
+            {
+                <li><MainNavMenuElement MenuItem="@mainItem" /></li>
+            }
+        </ul>
+    </div>
+</nav>
+@if (visibleSubMenu == MenuOptions.Projekty )
+{
+    <MainNavSubMenuFolders/>
+}
+
+@code {
+    enum MenuOptions
+    {
+        Projekty, Akcje, Opinie, Ustawienia, Więcej
+    }
+
+    private MenuOptions? visibleSubMenu = null;
+
+    private List<MenuItem> upMainMenuItems = new()
+    {
+        new MenuItem { Description = MenuOptions.Projekty.ToString(), IconName="folder_open", OnHoverText = ""  },
+        new MenuItem { Description = MenuOptions.Akcje.ToString(), IconName="notifications", OnHoverText = "" },
+        new MenuItem { Description = MenuOptions.Opinie.ToString(), IconName="feedback", OnHoverText = "Opinie"  },
+        new MenuItem { Description = MenuOptions.Ustawienia.ToString(), IconName="settings", OnHoverText = "Ustawienia"  },
+        new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = ""  }
+    };
+
+    private List<MenuItem> downMainMenuItems = new()
+    {
+        new MenuItem { Description = "", IconName = "help", OnHoverText = "Pomoc i pytania" },
+        new MenuItem { Description = "", IconName = "credit_card", OnHoverText = "Płatność, pakiety"  },
+        new MenuItem { Description = "", IconName = "account_circle", OnHoverText = "Konto"  }
+    };
+
+    void ToggleSubMenu(MenuOptions description)
+    {
+        if (visibleSubMenu == description)
+            visibleSubMenu = null;  
+        else
+            visibleSubMenu = description;
+    }
+
+    private List<MenuItem> GetMenuSubOptions(MenuOptions selected) =>
+    selected switch
+    {
+        MenuOptions.Więcej => new List<MenuItem>
+        {
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" }
+        },
+        MenuOptions.Akcje => new List<MenuItem>
+        {
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" },
+            new MenuItem { Description = MenuOptions.Więcej.ToString(), IconName="menu", OnHoverText = "" }
+        },
+        _ => new List<MenuItem>(),
+    };
+}

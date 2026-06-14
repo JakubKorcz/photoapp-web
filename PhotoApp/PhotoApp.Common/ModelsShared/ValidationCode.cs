@@ -2,6 +2,6 @@
 {
     public class ValidationCode
     {
-        private int Code { get; set; }
+        public int Code { get; set; }
     }
 }

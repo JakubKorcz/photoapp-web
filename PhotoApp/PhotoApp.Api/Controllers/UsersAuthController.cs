@@ -72,6 +72,7 @@ namespace PhotoApp.Api.Controllers
                         return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
                     }
                     SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
+                    SetUsernameCookie(username, refreshToken.Expires);
 
                     var response = new ServerAuthResponse()
                     {
@@ -179,6 +180,7 @@ namespace PhotoApp.Api.Controllers
                         return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
                     }
                     SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
+                    SetUsernameCookie(user.Username, refreshToken.Expires);
 
                     var response = new ServerAuthResponse()
                     {
@@ -196,12 +198,13 @@ namespace PhotoApp.Api.Controllers
             }
         }
 
-        [HttpGet("refresh/{username}")]
-        public async Task<ActionResult<ServerAuthResponse>> RefreshToken([FromRoute] string username)
+        [HttpGet("refresh")]
+        public async Task<ActionResult<ServerAuthResponse>> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
+            var username = Request.Cookies["username"];
 
-            if (string.IsNullOrEmpty(refreshToken))
+            if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(username))
             {
                 return Unauthorized("No refresh token provided.");
             }
@@ -209,6 +212,7 @@ namespace PhotoApp.Api.Controllers
             if (!await userService.ValidateRefreshTokenforUser(username, refreshToken))
             {
                 Response.Cookies.Delete("refreshToken");
+                Response.Cookies.Delete("username");
                 return Unauthorized("Invalid refresh token.");
             }
 
@@ -229,6 +233,7 @@ namespace PhotoApp.Api.Controllers
         public IActionResult Logout()
         {
             Response.Cookies.Delete("refreshToken");
+            Response.Cookies.Delete("username");
             return Ok();
         }
 
@@ -244,6 +249,20 @@ namespace PhotoApp.Api.Controllers
             };
 
             Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
+        private void SetUsernameCookie(string username, DateTime expires)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = expires,
+                Path = "/"
+            };
+
+            Response.Cookies.Append("username", username, cookieOptions);
         }
     }
 }

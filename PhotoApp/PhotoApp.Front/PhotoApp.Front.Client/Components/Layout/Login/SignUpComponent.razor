@@ -1,0 +1,56 @@
+@if (!Hidden)
+{
+    <div id="ic">
+        <h2 class="header_signup mov_text">@("Sign Up")</h2>
+        <p class="text_signup mov_text">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+        <EditForm Model="@userModel" OnValidSubmit="HandleSignUp">
+            <DataAnnotationsValidator />
+            <div class="form-group mov_text">
+                <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
+            </div>
+             <div class="form-group mov_text">
+                <InputText id="signup_username" class="bp-suggestions form-control" placeholder="Username" @bind-Value="userModel.Username" />
+            </div>
+            <div class="form-group mov_text">
+                <InputText type="password" id="signup_password" class="bp-suggestions form-control" placeholder="Password" @bind-Value="userModel.Password" />
+            </div>
+            <button type="submit" class="girisbtn auth_btn mov_text">Sign Up</button>
+            <ValidationSummary class="text-danger list-unstyled" />
+        </EditForm>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="error-message">@ErrorMessage</p>
+        }
+        <button id="moveright" class="mov_btn" @onclick="SwitchToLogin">Login</button>
+    </div>
+}
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Parameter] public string? ErrorMessage { get; set; }
+    [Parameter] public EventCallback OnSwitchToLogin { get; set; }
+    [Parameter] public bool Hidden { get; set; }
+
+    private UserModelDto userModel = new();
+
+    private void HandleSignUp()
+    {
+        try
+        {
+            conn.Register(userModel);
+        }
+        catch(Exception ex)
+        {
+            ErrorMessage = ex.Message;    
+        }
+    }
+
+    private async Task SwitchToLogin()
+    {
+        if (OnSwitchToLogin.HasDelegate)
+        {
+            await OnSwitchToLogin.InvokeAsync(null);
+        }
+    }
+}

@@ -1,0 +1,17 @@
+.main-container {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.main-container h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+}
+
+.main-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

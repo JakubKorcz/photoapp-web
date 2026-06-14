@@ -1,0 +1,92 @@
+<div class="overlay">
+    <div class="popup">
+        <h3>Nowy Projekt</h3>
+
+        <EditForm Model="@projectFormModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label>Nazwa projektu:</label>
+                <InputText @bind-Value="projectFormModel.ProjectName"/>
+            </div>
+
+            <div>
+                <label>Data sesji zdjęciowej:</label>
+                <MudDatePicker @bind-Value="projectFormModel.PhotoShootDate" ShowToolbar="false"></MudDatePicker>
+            </div>
+
+            <div>
+                <label>Czas przechowywania</label>
+                <InputRadioGroup @bind-Value="projectFormModel.IsPernament">
+                    <label>
+                        <InputRadio Value="false" /> Określony czas
+                    </label>
+
+                    <label>
+                        <InputRadio Value="true" /> Na zawsze
+                    </label>
+                </InputRadioGroup>
+
+                @if (!projectFormModel.IsPernament){
+                    <InputSelect @bind-Value="projectFormModel.SelectedExpiryDate">
+                        <option value=@ExpiryDateSelectOption.TwoWeeks>Dwa tygodnie</option>
+                        <option value=@ExpiryDateSelectOption.OneMonth>Miesiąc</option>
+                        <option value=@ExpiryDateSelectOption.TwoMonths>Dwa miesiące</option>
+                        <option value=@ExpiryDateSelectOption.Custom>Wybierz dowolną datę...</option>
+                    </InputSelect>
+
+                    <MudDatePicker Label=""
+                                   Value="projectFormModel.ExpiryDate"
+                                   ValueChanged="@((DateTime? date) => OnDateChanged(date))"
+                                   ShowToolbar="false" />
+                    <p>@projectFormModel.ExpiryDate</p>
+                }
+                
+            </div>
+
+            <div>
+                <label>Język projektu:</label>
+                <InputSelect @bind-Value="projectFormModel.Language">
+                    <option value="@Language.PL">Polski</option>
+                    <option value="@Language.EN">English</option>
+                    <option value="@Language.UA">Ukraiński</option>
+                </InputSelect>
+            </div>
+
+            <div>
+                <label>Stworzyć hasło</label>
+                <InputText @bind-Value="projectFormModel.Password" type="password"/>
+            </div>
+
+            <div>
+                <button type="button" @onclick="OnCancelClicked">
+                    Anuluj
+                </button>
+
+                <button type="submit">
+                    Utwórz
+                </button>
+            </div>
+       </EditForm>
+    </div>
+</div>
+
+@code{
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Parameter] public EventCallback OnOkClicked { get; set; }
+    [Parameter] public EventCallback OnCancelClicked { get; set; }
+
+    private ProjectFormModel projectFormModel = new ProjectFormModel();
+
+    private async Task HandleValidSubmit()
+    {
+        await OnOkClicked.InvokeAsync();
+    }
+
+    private void OnDateChanged(DateTime? newDate)
+    {
+        projectFormModel.ExpiryDate = newDate;
+    }
+}

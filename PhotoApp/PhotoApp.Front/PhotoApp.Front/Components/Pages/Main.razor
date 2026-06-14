@@ -1,0 +1,64 @@
+@page "/"
+@page "/{ProjectId:guid}"
+@rendermode InteractiveServer
+@inject Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage ProtectedSessionStorage
+
+@if (!isAuthenticated)
+{
+    <div class="page-layout">
+        <p style="margin: auto;">Ładowanie...</p>
+    </div>
+}
+else
+{
+    <div class="page-layout">
+        <MainNavMenu></MainNavMenu>
+        <ContentArea ProjectId="@ProjectId"></ContentArea>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid? ProjectId { get; set; }
+
+    private bool isAuthenticated = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var tokenResult = await ProtectedSessionStorage.GetAsync<string>("authToken");
+
+            if (tokenResult.Success && !string.IsNullOrEmpty(tokenResult.Value))
+            {
+                isAuthenticated = true;
+                StateHasChanged();
+                return;
+            }
+
+            try
+            {
+                var token = await JS.InvokeAsync<string>("sessionStorage.getItem", "authToken");
+                var username = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await ProtectedSessionStorage.SetAsync("authToken", token);
+                    await ProtectedSessionStorage.SetAsync("username", username);
+
+                    await JS.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
+                    await JS.InvokeVoidAsync("sessionStorage.removeItem", "username");
+
+                    isAuthenticated = true;
+                    StateHasChanged();
+                    return;
+                }
+            }
+            catch
+            {
+            }
+
+            NavManager.NavigateTo("/login", forceLoad: true);
+        }
+    }
+}

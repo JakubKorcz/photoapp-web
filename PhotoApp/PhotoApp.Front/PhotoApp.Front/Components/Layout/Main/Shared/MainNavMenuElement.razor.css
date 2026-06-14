@@ -1,0 +1,54 @@
+.menu-element {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    margin: 5px 14px;
+    width: 82px;
+    cursor: pointer;
+}
+
+    .menu-element p {
+        margin: 0;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .menu-element:hover p, .menu-element:hover span {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+
+    #icon {
+        font-size:36px;
+    }
+
+.menu-element:hover p, .menu-element:hover span {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.menu-element:hover .hint {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hint {
+    position: absolute;
+    left: 100%;
+    background-color: white;
+    border-radius: 4%;
+    display: block;
+    padding: 4px 25px;
+    margin: 10px;
+    font-size : 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.hint li {
+    list-style: none;
+}

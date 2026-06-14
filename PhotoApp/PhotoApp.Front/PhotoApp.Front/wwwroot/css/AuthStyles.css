@@ -1,0 +1,425 @@
+﻿/* Kontener główny z flexboxem */
+.toplam {
+    display: flex;
+    width: 100vw;
+    height: 100vh; /* Pełna wysokość ekranu */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Każda z połówek zajmuje 50% szerokości */
+.left, .right {
+    width: 50%;
+    display: flex;
+    justify-content: center; /* Wycentrowanie poziome zawartości */
+    align-items: center; /* Wycentrowanie pionowe zawartości */
+    padding: 30px 40px;
+    box-sizing: border-box;
+}
+
+/* Lewa strona - logowanie - kontrastująca */
+.left {
+    background-color: #e4e3e5;
+}
+
+/* Prawa strona - rejestracja - jasnoniebieskie tło */
+.right {
+    background-color: #e4e3e5;
+}
+
+/* Wnętrze kontenera formularza */
+#ic {
+    width: 100%;
+    max-width: 500px;
+}
+
+    /* Nagłówki i paragrafy */
+    #ic h2 {
+        font-size: 3rem;
+        margin-bottom: 0.6rem;
+        font-weight: 700;
+    }
+
+    #ic p {
+        font-size: 0.9rem;
+        margin-bottom: 0.6rem;
+        line-height: 1.4;
+    }
+
+/* Grupowanie pól formularza */
+.form-group {
+    margin-bottom: 0.6rem;
+}
+
+/* Style InputText */
+.bp-suggestions.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border-radius: 4%;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    font-weight: 500;
+    margin: 0;
+}
+
+    .bp-suggestions.form-control:focus {
+        outline: none;
+        border-color: black;
+        box-shadow: 0 0 8px black;
+    }
+
+/* Przycisk przesyłania */
+.girisbtn {
+    width: 100%;
+    padding: 12px 0; 
+    border: none;
+    border-radius: 4%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.girisbtn.auth_btn {
+    color: white;
+    background-color: #2e2e2e;
+}
+
+    .girisbtn.auth_btn:hover {
+        background-color: #524f4d;
+    }
+
+/* Przycisk dodatkowy (przełącznik formularza) */
+#moveright, #moveleft {
+    margin-top: 0.6rem;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
+}
+
+#moveright {
+    color: black;
+}
+
+#moveleft{
+    color: black;
+}
+
+#moveright:hover, #moveleft:hover {
+    text-decoration: underline;
+}
+
+.red-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #2e2e2e;
+    z-index: 20;
+    transition: transform 1s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.code-box {
+    width: 70px;
+    height: 80px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    /*border: 2px solid #333;*/
+    border-radius: 4%;
+    background-color: white;
+    color: black;
+    outline: none;
+    /*transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;*/
+    caret-color: black;
+    border: 0;
+}
+
+    .code-box:focus {
+        /*border-color: #1e1e1e;*/
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+        /* background-color: rgb(200,200,200);*/
+    }
+
+.six-boxes {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.6rem;
+}
+
+.error-message {
+    color: #cc0033; 
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+/* ANIMACJE */
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes disappear {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.image {
+    width: 500px;
+    height: 500px;
+    opacity: 0;
+    display : none;
+}
+
+    .image.appear {
+        animation: appear 1s ease forwards;
+        opacity:1;
+    }
+
+    .image.disappear {
+        animation: disappear 1s ease forwards;
+        opacity: 0;
+    }
+
+    .image.hidden {
+        display: none;
+    }
+
+    .image.show {
+        display: block;
+
+    }
+
+.red-overlay.move-right {
+    transform: translateX(100%);
+}
+
+.red-overlay.move-left {
+    transform: translateX(0%);
+}
+
+/*@keyframes slideFromLeftToLeftHalf {
+    from {
+        transform: translateX(-300%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes loginbtn_slideFromLeftToLeftHalf {
+    from {
+        transform: translateX(-1000%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFromRightToRightHalf {
+    from {
+        transform: translateX(300%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes loginbtn_slideFromRightToRightHalf {
+    from {
+        transform: translateX(1000%);
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+@keyframes slideFromLeftHalfToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-300%);
+        opacity: 0;
+    }
+}
+
+@keyframes loginbtn_slideFromLeftHalfToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-2500%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideFromRightHalfToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(300%);
+        opacity: 0;
+    }
+}
+
+@keyframes loginbtn_slideFromRightHalfToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(2500%);
+        opacity: 0;
+    }
+}
+
+.mov_text.move-right {
+    animation: slideFromLeftToLeftHalf 1s ease forwards;
+}
+
+.mov_text.move-left {
+    animation: slideFromRightToRightHalf 1s ease forwards;
+}
+
+.mov_text.move-out-right {
+    animation: slideFromRightHalfToRight 1s ease forwards;
+}
+
+.mov_text.move-out-left {
+    animation: slideFromLeftHalfToLeft 1s ease forwards;
+}
+
+.mov_btn.move-right {
+    animation: loginbtn_slideFromLeftToLeftHalf 1s ease forwards;
+}
+
+.mov_btn.move-left {
+    animation: loginbtn_slideFromRightToRightHalf 1s ease forwards;
+}
+
+.mov_btn.move-out-right {
+    animation: loginbtn_slideFromRightHalfToRight 1s ease forwards;
+}
+
+.mov_btn.move-out-left {
+    animation: loginbtn_slideFromLeftHalfToLeft 1s ease forwards;
+}*/
+
+/*.move-right.delay1 {
+    opacity: 0;
+}
+
+.move-right.delay-2 {
+    opacity: 0;
+    animation-delay: 0.05s;
+}
+
+.move-right.delay-3 {
+    opacity: 0;
+    animation-delay: 0.1s;
+}
+
+.move-right.delay-4 {
+    opacity: 0;
+    animation-delay: 0.15s;
+}
+
+.move-right.delay-5 {
+    opacity: 0;
+    animation-delay: 0.32s;
+}
+
+.move-left.delay1 {
+    opacity: 0;
+}
+
+.move-left.delay-2 {
+    opacity: 0;
+    animation-delay: 0.05s;
+}
+
+.move-left.delay-3 {
+    opacity: 0;
+    animation-delay: 0.1s;
+}
+
+.move-left.delay-4 {
+    opacity: 0;
+    animation-delay: 0.15s;
+}
+
+.move-left.delay-5 {
+    opacity: 0;
+    animation-delay: 0.32s;
+}*/
+
+@media (max-width: 1200px) {
+    .red-overlay {
+        display: none !important;
+    }
+
+    .left {
+        display: none !important;
+    }
+
+    .right {
+        width:100%;
+    }
+}
+
+/*@media (max-width: 1200px) {
+    .red-overlay {
+        display: none !important;
+    }
+
+    .right {
+        display: none !important;
+    }
+
+    .left {
+        width: 100%;
+    }
+}*/
+    

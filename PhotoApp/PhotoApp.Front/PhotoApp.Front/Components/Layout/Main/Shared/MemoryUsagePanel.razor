@@ -1,0 +1,42 @@
+<div class="memory-panel">
+    @if (infoResponse == null)
+    {
+        <p>Ładowanie danych pamięci...</p>
+    }
+    else
+    {
+        <div class="text">
+            <h5>Pamięć wykorzystana</h5> <p>@infoResponse.UsedMemoryInBytes GB z @infoResponse.TotalMemoryInBytes GB</p>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+            <div class="progress-bar-used" style="width: @GetUsedMemoryPercentage()%;"></div>
+        </div>
+    }
+</div>
+
+@code {
+    public MemoryInfoResponse? infoResponse = null;
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(3000);
+        infoResponse = new MemoryInfoResponse()
+        {
+            TotalMemoryInBytes = 50,
+            UsedMemoryInBytes = 27,
+            FreeMemoryInBytes = 30
+        };
+    }
+   
+
+    public int GetUsedMemoryPercentage()
+    {
+        if (infoResponse == null || infoResponse.TotalMemoryInBytes == 0)
+            return 0; 
+
+        double ratio = (double)infoResponse.UsedMemoryInBytes / infoResponse.TotalMemoryInBytes;
+        int percent = (int)Math.Round(ratio * 100);
+
+        return Math.Min(percent, 100);
+    }
+}

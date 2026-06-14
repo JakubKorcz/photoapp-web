@@ -1,0 +1,124 @@
+@page "/signup"
+@page "/login"
+@rendermode InteractiveWebAssembly
+
+<div class="toplam">
+    <div class="red-overlay @(isGoingRight ? "move-right" : "") @(isGoingLeft ? "move-left" : "") @(startPosition == 1 ? "move-right" : "")">
+        <img class="image @(isImageLoginDisappearing ? "disappear" : "appear") @(isImageLoginVisible ? "show" : "hidden")" src="jpg/skunks.jpg" alt="Skunks-login-image" />
+        <img class="image @(isImageSignUpDisappearing ? "disappear" : "appear") @(isImageSignUpVisible ? "show" : "hidden")" src="jpg/swinia.jpg" alt="swinia-signup-image" />
+    </div>
+
+    <div class="left">
+        @if (currentView == View.SignUp)
+        {
+            <SignUpComponent OnSwitchToLogin="MoveLeft" ErrorMessage=@ErrorMessage />
+        }
+        else
+        {
+            <SignUpComponent Hidden="true" />
+        }   
+    </div>
+
+    <div class="right">
+        @if (currentView == View.Login)
+        {
+            <LoginComponent OnSwitchToSignUp="MoveRight" ErrorMessage=@ErrorMessage />
+        }
+        else
+        {
+            <LoginComponent Hidden="true" />
+        }
+    </div>
+</div>
+
+@code {
+    private enum View { None, SignUp, Login }
+
+    private View currentView;
+    private bool isGoingRight;
+    private bool isGoingLeft;
+    private int startPosition;
+
+    private bool isImageLoginVisible;
+    private bool isImageLoginDisappearing;
+    private bool isImageSignUpVisible;
+    private bool isImageSignUpDisappearing;
+
+    private string? ErrorMessage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavManager.Uri);
+
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        var errorCode = queryParams["errorCode"];
+        if (!string.IsNullOrEmpty(errorCode))
+        {
+            ErrorMessage = ErrorDictionary.GetMessage(errorCode);
+        }
+        if (uri.AbsolutePath.Contains("login"))
+        {
+            currentView = View.Login;
+            startPosition = 2;
+            isImageLoginVisible = true;
+            isImageSignUpVisible = false;
+            isImageLoginDisappearing = false;
+            isImageSignUpDisappearing = true;
+        }
+        else
+        {
+            currentView = View.SignUp;
+            startPosition = 1;
+            isImageLoginVisible = false;
+            isImageSignUpVisible = true;
+            isImageSignUpDisappearing = false;
+            isImageLoginDisappearing = true;
+        }
+    }
+
+    private async Task MoveLeft()
+    {
+        startPosition = 0;
+        isImageSignUpDisappearing = true;
+        isGoingRight = false;
+        isGoingLeft = false;
+        StateHasChanged();
+        await Task.Delay(50);
+        isGoingLeft = true;
+        StateHasChanged();
+        await Task.Delay(500);
+        isImageSignUpVisible = false;
+        isImageLoginDisappearing = false;
+        currentView = View.Login;
+        isImageLoginVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task MoveRight()
+    {
+        startPosition = 0;
+        isImageLoginDisappearing = true;
+        isGoingRight = false;
+        isGoingLeft = false;
+        StateHasChanged();
+        await Task.Delay(50);
+        isGoingRight = true;
+        StateHasChanged();
+        await Task.Delay(500);
+        isImageLoginVisible = false;
+        isImageSignUpDisappearing = false;
+        currentView = View.SignUp;
+        isImageSignUpVisible = true;
+        StateHasChanged();
+    }
+
+    private void NavigateToLogin()
+    {
+        NavManager.NavigateTo("/login");
+    }
+
+    private void NavigateToSignUp()
+    {
+        NavManager.NavigateTo("/signup");
+    }
+}

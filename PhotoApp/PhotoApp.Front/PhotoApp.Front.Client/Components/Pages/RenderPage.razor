@@ -1,0 +1,23 @@
+@page "/gallery/{Id:guid}"
+@rendermode InteractiveWebAssembly
+
+<h1>
+    @model.ProjectBaseInformationDto.Username
+</h1>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    ProjectDto model;
+
+    public RenderPage()
+    {
+        this.model = new ProjectDto();
+    }
+
+    protected override async Task OnInitializedAsync()
+    { 
+        model = new ProjectDto();
+    }
+}

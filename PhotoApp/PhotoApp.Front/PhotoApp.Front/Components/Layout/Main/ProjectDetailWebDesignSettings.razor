@@ -1,0 +1,72 @@
+<div class="webDesignContent">
+    <EditForm Model="@Project">
+        <div class="setting">
+            <h5>Okładka 5 </h5>
+            <InputRadioGroup @bind-Value="Project.MobileDesignSettings.FontLayout">
+                @foreach (var layoutVal in Enum.GetValues<Layout>())
+                {
+                    <label class="tile-option">
+                        <InputRadio value="@layoutVal" style="display:none;" />
+                        <span class="tile-content">
+                            @layoutVal
+                        </span>
+                    </label>
+                }
+            </InputRadioGroup>
+        </div>
+        <div class="setting">
+            <h5>Czcionka</h5>
+            <InputRadioGroup @bind-Value="Project.MobileDesignSettings.FontWeight">
+                @foreach (var layoutVal in Enum.GetValues<FontWeight>())
+                {
+                    <label class="tile-option">
+                        <InputRadio value="@layoutVal" style="display:none;" />
+                        <span class="tile-content">
+                            @layoutVal
+                        </span>
+                    </label>
+                }
+            </InputRadioGroup>
+        </div>
+        <div class="setting">
+            <h5>Okładka 1 </h5>
+            <input type="date" />
+        </div>
+        <div class="setting">
+            <h5>Okładka2 </h5>
+            <input type="email" />
+        </div>
+        <div class="setting">
+            <h5>Okładka 3 </h5>
+            <input type="search" />
+        </div>
+        <div class="setting">
+            <h5>Okładka 4 </h5>
+            <input type="color" />
+        </div>
+        <div class="setting">
+            <h5>Lista kolorów</h5>
+            <ul class="list">
+                <li>
+                    <div class="circle first-color"></div>
+                </li>
+                <li>
+                    <div class="circle second-color"></div>
+                </li>
+                <li>
+                    <div class="circle third-color"></div>
+                </li>
+                <li>
+                    <div class="circle gradient-color"></div>
+                </li>
+                <li>
+                    <input class="circle gradient-color" type="color" />
+                </li>
+            </ul>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    ProjectDto Project { get; set; } = new ProjectDto();
+}
