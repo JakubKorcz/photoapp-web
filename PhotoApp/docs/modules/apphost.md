@@ -172,7 +172,7 @@ info: Aspire.Hosting.Program[0]
 
 ## Important Notes
 
-- **Requires Aspire SDK**: `Aspire.AppHost.Sdk/13.1.0`
+- **Requires Aspire SDK**: `Aspire.AppHost.Sdk/13.4.5`
 - AppHost automatically handles:
   - Container lifecycle
   - Environment variables

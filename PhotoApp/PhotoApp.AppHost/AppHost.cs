@@ -1,6 +1,9 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var postgres = builder.AddPostgres("postgres")
+var pgPassword = builder.AddParameter("postgres-password", "postgres", secret: true);
+
+var postgres = builder.AddPostgres("postgres", password: pgPassword)
+    .WithHostPort(5432)
     .WithPgAdmin()
     .AddDatabase("photoapp");
 

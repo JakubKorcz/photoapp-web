@@ -328,7 +328,7 @@ Mapuje endpointy health check (tylko w Development):
 
 **Ścieżka:** `PhotoApp.AppHost/`
 **Typ:** .NET Aspire App Host
-**SDK:** Aspire.AppHost.Sdk 13.1.0
+**SDK:** Aspire.AppHost.Sdk 13.4.5
 
 Orkiestrator deweloperski - uruchamia wszystkie serwisy jednym `dotnet run`.
 
