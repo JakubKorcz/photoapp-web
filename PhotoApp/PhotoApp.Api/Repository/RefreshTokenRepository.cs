@@ -43,7 +43,17 @@ namespace PhotoApp.Api.Repository
             return true;
         }  
 
-        public async Task<bool> SetAllTokensForUserAsRevokedAsync(string username)
+        public async Task RevokeRefreshTokenAsync(string token)
+    {
+        var rt = await GetRefreshTokenByTokenAsync(token);
+        if (rt is not null)
+        {
+            rt.IsRevoked = true;
+            await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<bool> SetAllTokensForUserAsRevokedAsync(string username)
         {
             try
             {

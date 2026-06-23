@@ -43,7 +43,7 @@ services:
       - AppSettings__Audience=PhotoApp.Client
       - AppSettings__Email=${EMAIL_ADDRESS}
       - AppSettings__EmailPassword=${EMAIL_PASSWORD}
-      - ConnectionStrings__DefaultConnection=Host=photo-app-postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - ConnectionStrings__photoapp=Host=photo-app-postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - MinioSettings__Endpoint=photo-app-minio:9000
       - MinioSettings__AccessKey=${MINIO_ROOT_USER}
       - MinioSettings__SecretKey=${MINIO_ROOT_PASSWORD}

@@ -17,6 +17,11 @@ namespace PhotoApp.Api.DbObjects
         public List<RefreshToken> RefreshTokens { get; set; } = new();
         //Flaga oznaczająca, czy konto po rejestracji zostało aktywowane przez użytkownika (np. poprzez kliknięcie linku w emailu)
         public bool IsActive { get; set; }
+        public int FailedLoginCodeAttempts { get; set; }
+        public DateTime? LoginCodeLockoutUntil { get; set; }
+
+        public bool IsLoginCodeLockedOut => LoginCodeLockoutUntil.HasValue
+            && DateTime.UtcNow < LoginCodeLockoutUntil.Value;
 
         public bool HasValidLoginCode(string code)
         {

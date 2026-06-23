@@ -25,17 +25,9 @@ public partial class ApiConnection
         return await SendPostRequest<ServerAuthResponse, UserModelDto>(url, userDto);
     }
 
-    public async Task<ApiResult<ServerAuthResponse>> RegisterVerify(UserModelDto user, string code)
+    public async Task<ApiResult<object>> Logout()
     {
-        var url = $"auth/register/{code}";
-        var userDto = _mapper.Map<UserModelDto>(user);
-        return await SendPostRequest<ServerAuthResponse, UserModelDto>(url, userDto);
-    }
-
-    public async Task<ApiResult<ServerAuthResponse>> CheckActivity(UserModelDto user, string code)
-    {
-        var url = $"auth/register/activity";
-        var userDto = _mapper.Map<UserModelDto>(user);
-        return await SendPostRequest<ServerAuthResponse, UserModelDto>(url, userDto);
+        var url = $"auth/logout";
+        return await SendRequest<object, object>(HttpMethod.Delete, url, null);
     }
 }

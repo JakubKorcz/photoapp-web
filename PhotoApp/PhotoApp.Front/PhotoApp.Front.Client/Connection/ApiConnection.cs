@@ -116,6 +116,36 @@ public partial class ApiConnection : IDisposable
                 {
                     return error.GetString() ?? GetDefaultMessage(statusCode);
                 }
+                if (json.RootElement.TryGetProperty("detail", out var detail))
+                {
+                    // ProblemDetails: RFC7807 "detail" zawiera czytelny opis błędu
+                    var detailStr = detail.GetString();
+                    if (!string.IsNullOrWhiteSpace(detailStr))
+                        return detailStr!;
+                }
+                if (json.RootElement.TryGetProperty("title", out var title))
+                {
+                    // ProblemDetails: "title" (np. "Bad Request", "One or more validation errors occurred")
+                    // + ewentualne "errors" z walidacji [ApiController]
+                    if (json.RootElement.TryGetProperty("errors", out var errors) && errors.ValueKind == JsonValueKind.Object)
+                    {
+                        var parts = new List<string>();
+                        foreach (var prop in errors.EnumerateObject())
+                        {
+                            if (prop.Value.ValueKind == JsonValueKind.Array)
+                            {
+                                foreach (var item in prop.Value.EnumerateArray())
+                                {
+                                    var s = item.GetString();
+                                    if (!string.IsNullOrWhiteSpace(s)) parts.Add(s!);
+                                }
+                            }
+                        }
+                        if (parts.Count > 0)
+                            return string.Join(" ", parts);
+                    }
+                    return title.GetString() ?? GetDefaultMessage(statusCode);
+                }
                 return responseContent;
             }
             catch

@@ -1,3 +1,6 @@
+@inject Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage ProtectedSessionStorage
+@inject ApiConnection conn
+
 <nav class="upper-menu">
     <span class="material-symbols-outlined upper-icon">
         mail
@@ -6,12 +9,24 @@
         swap_vert
     </span>
     <MemoryUsagePanel/>
-    <span class="material-symbols-outlined upper-icon">
+    <span class="material-symbols-outlined upper-icon logout-icon" @onclick="HandleLogout">
         logout
     </span>
 </nav>
 
 
 @code {
-
+    private async Task HandleLogout()
+    {
+        try
+        {
+            await conn.Logout();
+        }
+        catch
+        {
+        }
+        try { await ProtectedSessionStorage.DeleteAsync("authToken"); } catch { }
+        try { await ProtectedSessionStorage.DeleteAsync("username"); } catch { }
+        NavManager.NavigateTo("/login", forceLoad: true);
+    }
 }

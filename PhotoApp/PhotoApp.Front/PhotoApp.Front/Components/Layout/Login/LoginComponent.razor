@@ -1,0 +1,91 @@
+@if (!Hidden)
+{
+    <div id="ic">
+        <h2 class="header_login mov_text">Login</h2>
+        <p class="text_login mov_text">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+        @if (!IsSixBoxesMode)
+        {
+            <EditForm Model="@userModel" OnValidSubmit="HandleLogin" OnInvalidSubmit="HandleInvalidSubmit">
+                <DataAnnotationsValidator />
+                @if (!string.IsNullOrEmpty(localErrorMessage))
+                {
+                    <p class="error-message">@localErrorMessage</p>
+                }
+                <div class="form-group mov_text">
+                    <InputText id="login_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
+                </div>
+                <div class="form-group mov_text">
+                    <InputText type="password" id="password" class="bp-suggestions form-control" placeholder="Password" @bind-Value="userModel.Password" />
+                </div>
+                <ValidationSummary class="text-danger list-unstyled" />
+                <button type="submit" class="girisbtn auth_btn mov_text" tabindex="100" disabled="@IsSubmitting">
+                    @(IsSubmitting ? "Wysyłanie..." : "Login")
+                </button>
+            </EditForm>
+        }
+        else
+        {
+            <ValidationCodeForm User=userModel></ValidationCodeForm>
+        }
+        <button id="moveleft" class="mov_btn" @onclick="SwitchToSignUp">Sign Up</button>
+
+    </div>
+}
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Parameter] public EventCallback OnSwitchToSignUp { get; set; }
+    [Parameter] public bool Hidden { get; set; }
+    [Parameter] public string? ErrorMessage { get; set; }
+
+    private UserModelDto userModel = new();
+
+    private bool IsSixBoxesMode = false;
+    private string? localErrorMessage;
+    private bool IsSubmitting = false;
+
+    private void HandleInvalidSubmit()
+    {
+        localErrorMessage = "Formularz zawiera błędy. Uzupełnij Email i Hasło (min. 4 znaki).";
+    }
+
+    private async Task HandleLogin()
+    {
+        localErrorMessage = null;
+        IsSubmitting = true;
+        StateHasChanged();
+
+        try
+        {
+            var response = await conn.Login(userModel);
+            if (response.IsSuccess)
+            {
+                IsSixBoxesMode = true;
+            }
+            else
+            {
+                localErrorMessage = response.ErrorMessage ?? "Logowanie nie powiodło się.";
+                IsSixBoxesMode = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            localErrorMessage = $"Błąd logowania: {ex.Message}";
+            Console.WriteLine($"LoginComponent.HandleLogin exception: {ex}");
+        }
+        finally
+        {
+            IsSubmitting = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SwitchToSignUp()
+    {
+        if (OnSwitchToSignUp.HasDelegate)
+        {
+            await OnSwitchToSignUp.InvokeAsync(null);
+        }
+    }
+}

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PhotoApp.Api.DbObjects;
 using PhotoApp.Api.Repository;
 using PhotoApp.Api.Service;
@@ -17,9 +18,10 @@ namespace PhotoApp.Api.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class UsersAuthController(UserService userService) : ControllerBase
+    public class UsersAuthController(UserService userService, ILogger<UsersAuthController> logger) : ControllerBase
     {
         [HttpPost("register")]
+        [EnableRateLimiting("auth-strict")]
         public async Task<ActionResult<ServerAuthResponse?>> RegisterRequest([FromBody] RegisterModelDto request)
         {
             try
@@ -29,13 +31,14 @@ namespace PhotoApp.Api.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, "Error during creating user.");
                 }
-                var accessToken = await userService.SendNewAccessTokenEmailAsync(user);
-               
+
+                await userService.SendNewNumberCodeEmailAsync(user);
+
                 return Ok(new ServerAuthResponse()
                 {
-                    AccessToken = accessToken,
+                    AccessToken = null,
                     Username = request.Username
-                });                
+                });
             }
             catch (Exception ex)
             {
@@ -72,7 +75,6 @@ namespace PhotoApp.Api.Controllers
                         return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
                     }
                     SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
-                    SetUsernameCookie(username, refreshToken.Expires);
 
                     var response = new ServerAuthResponse()
                     {
@@ -111,6 +113,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("register/resend")]
+        [EnableRateLimiting("auth-resend")]
         public async Task<IActionResult> ResendActivationEmail([FromBody] UserModelDto request)
         {
             try
@@ -135,6 +138,7 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("auth-strict")]
         public async Task<IActionResult> LoginRequest([FromBody] UserModelDto request)
         {
             try
@@ -155,6 +159,7 @@ namespace PhotoApp.Api.Controllers
 
 
         [HttpPost("login/{code}")]
+        [EnableRateLimiting("auth-code")]
         public async Task<ActionResult<ServerAuthResponse>> LoginVerify([FromBody] UserModelDto request, [FromRoute] string code)
         {
             try
@@ -165,62 +170,75 @@ namespace PhotoApp.Api.Controllers
                     return BadRequest("Login or password is incorrect.");
                 }
 
-                if (user.HasValidLoginCode(code))
+                if (user.IsLoginCodeLockedOut)
                 {
-                    var accessToken = await userService.GenerateNewAccessToken(user.Username);
-
-                    if (string.IsNullOrEmpty(accessToken))
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate access token.");
-                    }
-
-                    var refreshToken = await userService.GenerateNewRefreshToken(user.Username);
-                    if (refreshToken is null)
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
-                    }
-                    SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
-                    SetUsernameCookie(user.Username, refreshToken.Expires);
-
-                    var response = new ServerAuthResponse()
-                    {
-                        Username = user.Username,
-                        AccessToken = accessToken
-                    };
-
-                    return Ok(response);
+                    var remaining = user.LoginCodeLockoutUntil!.Value - DateTime.UtcNow;
+                    var minutes = Math.Max(1, (int)Math.Ceiling(remaining.TotalMinutes));
+                    return StatusCode(StatusCodes.Status429TooManyRequests, $"Przekroczono limit prób. Spróbuj ponownie za {minutes} min.");
                 }
-                return Unauthorized(); 
+
+                if (!user.HasValidLoginCode(code))
+                {
+                    await userService.RegisterFailedLoginCodeAttemptAsync(user.Username);
+                    return Unauthorized("Nieprawidłowy kod.");
+                }
+
+                await userService.ResetLoginCodeAttemptsAsync(user.Username);
+
+                if (!user.IsActive)
+                {
+                    await userService.ActivateUserAsync(user.Username);
+                }
+
+                var accessToken = await userService.GenerateNewAccessToken(user.Username);
+
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate access token.");
+                }
+
+                var refreshToken = await userService.GenerateNewRefreshToken(user.Username);
+                if (refreshToken is null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate refresh token.");
+                }
+                SetRefreshTokenCookie(refreshToken.Token, refreshToken.Expires);
+
+                var response = new ServerAuthResponse()
+                {
+                    Username = user.Username,
+                    AccessToken = accessToken
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                logger.LogError(ex, "LoginVerify failed for username={Username}", request?.Username);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("refresh")]
+        [EnableRateLimiting("refresh")]
         public async Task<ActionResult<ServerAuthResponse>> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var username = Request.Cookies["username"];
 
-            if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized("No refresh token provided.");
             }
 
-            if (!await userService.ValidateRefreshTokenforUser(username, refreshToken))
+            var (newAccessToken, newRefreshToken, username) = await userService.RotateRefreshTokenAsync(refreshToken);
+
+            if (newAccessToken is null || newRefreshToken is null || username is null)
             {
                 Response.Cookies.Delete("refreshToken");
-                Response.Cookies.Delete("username");
                 return Unauthorized("Invalid refresh token.");
             }
 
-            var newAccessToken = await userService.GenerateNewAccessToken(username);
-            if (newAccessToken is null)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to generate access token.");
-            }
+            SetRefreshTokenCookie(newRefreshToken.Token, newRefreshToken.Expires);
 
             return Ok(new ServerAuthResponse
             {
@@ -230,10 +248,13 @@ namespace PhotoApp.Api.Controllers
         }
 
         [HttpDelete("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken) && !string.IsNullOrEmpty(refreshToken))
+            {
+                await userService.RevokeRefreshTokenAsync(refreshToken);
+            }
             Response.Cookies.Delete("refreshToken");
-            Response.Cookies.Delete("username");
             return Ok();
         }
 
@@ -249,20 +270,6 @@ namespace PhotoApp.Api.Controllers
             };
 
             Response.Cookies.Append("refreshToken", token, cookieOptions);
-        }
-
-        private void SetUsernameCookie(string username, DateTime expires)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = false,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = expires,
-                Path = "/"
-            };
-
-            Response.Cookies.Append("username", username, cookieOptions);
         }
     }
 }

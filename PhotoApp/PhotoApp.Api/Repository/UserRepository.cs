@@ -8,6 +8,7 @@ namespace PhotoApp.Api.Repository
 {
     public class UserRepository(AppDbContext context)
     {
+        private readonly AppDbContext context = context;
         //CREATE
         public async Task<User> CreateUserAsync(RegisterModelDto request)
         {
@@ -69,6 +70,34 @@ namespace PhotoApp.Api.Repository
             await context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<User?> RegisterFailedLoginCodeAttemptAsync(string username)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            if (user is null) return null;
+            user.FailedLoginCodeAttempts++;
+            if (user.FailedLoginCodeAttempts >= MaxFailedLoginCodeAttempts)
+            {
+                user.LoginCodeLockoutUntil = DateTime.UtcNow.AddMinutes(LoginCodeLockoutMinutes);
+            }
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User?> ResetLoginCodeAttemptsAsync(string username)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            if (user is null) return null;
+            user.FailedLoginCodeAttempts = 0;
+            user.LoginCodeLockoutUntil = null;
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        public const int MaxFailedLoginCodeAttempts = 15;
+        public const int LoginCodeLockoutMinutes = 15;
 
         //DELETE
         public async Task DeleteUserByUsernameAsync(string username) { 

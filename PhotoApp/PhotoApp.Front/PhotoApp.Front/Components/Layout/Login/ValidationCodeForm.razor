@@ -1,0 +1,128 @@
+<EditForm Model="@validationCode" OnValidSubmit="HandleCodeWrite">
+    <div class="six-boxes mov_text">
+        @for (int i = 0; i < 6; i++)
+        {
+            var index = i;
+            <input type="text" maxlength="1" class="code-box" value="@codeDigits[index]" inputmode="numeric"
+                   @oninput="@(e => OnDigitInput(index, e))"
+                   @onkeydown="@(e => OnKeyDown(index, e))"
+                   @ref="@inputRefs[index]"/>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p class="error-message">@ErrorMessage</p>
+    }
+    <button type="button" class="girisbtn auth_btn mov_text" tabindex="101" @onclick="HandleCodeWrite">Submit Code</button>
+</EditForm>
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Inject]
+    private Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage ProtectedSessionStorage { get; set; } = default!;
+
+    [Parameter] public UserModelDto User { get; set; }
+
+    private ValidationCode validationCode = new();
+    private string[] codeDigits = new string[6] { "", "", "", "", "", "" };
+    private ElementReference[] inputRefs = new ElementReference[6];
+    private string? lastKey;
+    private string? ErrorMessage;
+
+
+    private async Task HandleCodeWrite()
+    {
+        var code = string.Join("", codeDigits);
+        if (code.Any(c => !char.IsDigit(c)) || code.Length != 6)
+            return;
+        ErrorMessage = null;
+
+        try
+        {
+            var res = await conn.LoginVerify(User, code);
+
+            if (res.IsSuccess && res.Data is not null)
+            {
+                await ProtectedSessionStorage.SetAsync("authToken", res.Data.AccessToken);
+                await ProtectedSessionStorage.SetAsync("username", res.Data.Username);
+                NavManager.NavigateTo("/", forceLoad: false);
+                return;
+            }
+
+            ErrorMessage = res.ErrorMessage ?? "Nieprawidłowy kod.";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Wystąpił błąd. Spróbuj ponownie.";
+            Console.WriteLine(ex.ToString());
+        }
+
+        ClearCodeDigits();
+        StateHasChanged();
+    }
+
+    private void ClearCodeDigits()
+    {
+        for (int i = 0; i < codeDigits.Length; i++) codeDigits[i] = "";
+        _ = FocusFirstBoxAsync();
+    }
+
+    private async Task FocusFirstBoxAsync()
+    {
+        try
+        {
+            if (inputRefs[0].Context is not null)
+            {
+                await inputRefs[0].FocusAsync();
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    private async void OnDigitInput(int index, ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            var input = value.Substring(0, 1);
+
+            input = new string(input.Where(char.IsDigit).ToArray());
+
+            codeDigits[index] = input;
+
+            if (!codeDigits.Any(string.IsNullOrEmpty))
+            {
+                StateHasChanged();
+                await HandleCodeWrite();
+                return;
+            }
+
+            if (index < inputRefs.Length - 1)
+            {
+                await inputRefs[index + 1].FocusAsync();
+            }
+
+            StateHasChanged();
+        }
+
+        if (lastKey == "Backspace" && index > 0)
+        {
+            await inputRefs[index - 1].FocusAsync();
+        }
+    }
+
+    private void OnKeyDown(int index, KeyboardEventArgs e)
+    {
+        lastKey = e.Key;
+        if (!string.IsNullOrEmpty(codeDigits[index])
+            && e.Key.Length == 1
+            && !e.CtrlKey && !e.AltKey && !e.MetaKey)
+        {
+            codeDigits[index] = "";
+        }
+    }
+}

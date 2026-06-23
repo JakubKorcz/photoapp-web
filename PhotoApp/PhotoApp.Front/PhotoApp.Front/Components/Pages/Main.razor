@@ -36,28 +36,6 @@ else
                 return;
             }
 
-            try
-            {
-                var token = await JS.InvokeAsync<string>("sessionStorage.getItem", "authToken");
-                var username = await JS.InvokeAsync<string>("sessionStorage.getItem", "username");
-
-                if (!string.IsNullOrEmpty(token))
-                {
-                    await ProtectedSessionStorage.SetAsync("authToken", token);
-                    await ProtectedSessionStorage.SetAsync("username", username);
-
-                    await JS.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
-                    await JS.InvokeVoidAsync("sessionStorage.removeItem", "username");
-
-                    isAuthenticated = true;
-                    StateHasChanged();
-                    return;
-                }
-            }
-            catch
-            {
-            }
-
             NavManager.NavigateTo("/login", forceLoad: true);
         }
     }

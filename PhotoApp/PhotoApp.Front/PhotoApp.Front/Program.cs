@@ -4,6 +4,7 @@ using MudBlazor.Services;
 using PhotoApp.Front.Client.Connection;
 using PhotoApp.Front.Components;
 using PhotoApp.Front.Connection;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddSingleton<CookieContainer>();
+
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 
-builder.Services.AddHttpClient("PhotoApp.Api", client =>
+builder.Services.AddHttpClient("PhotoApp.Api", (sp, client) =>
 {
     var baseUrl = builder.Configuration["VITE_API_URL"] ?? "http://photoapp-api";
     if (!baseUrl.EndsWith("/api"))
@@ -23,6 +26,11 @@ builder.Services.AddHttpClient("PhotoApp.Api", client =>
         baseUrl = $"{baseUrl.TrimEnd('/')}/api";
     }
     client.BaseAddress = new Uri(baseUrl);
+})
+.ConfigurePrimaryHttpMessageHandler(sp => new HttpClientHandler
+{
+    CookieContainer = sp.GetRequiredService<CookieContainer>(),
+    UseCookies = true
 })
 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
 

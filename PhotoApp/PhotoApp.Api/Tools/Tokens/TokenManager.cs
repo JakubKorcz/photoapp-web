@@ -23,7 +23,7 @@ namespace PhotoApp.Api.Tools.Tokens
              ?? throw new InvalidOperationException("JWT Key is missing from configuration!");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: configuration.GetValue<string>("AppSettings:Issuer"),

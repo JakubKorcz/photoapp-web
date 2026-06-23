@@ -1,0 +1,103 @@
+@if (!Hidden)
+{
+    <div id="ic">
+        <h2 class="header_signup mov_text">@("Sign Up")</h2>
+        <p class="text_signup mov_text">Synth polaroid bitters chillwave pickled. Vegan disrupt tousled.</p>
+        @if (!IsSixBoxesMode)
+        {
+            <EditForm Model="@userModel" OnValidSubmit="HandleSignUp" OnInvalidSubmit="HandleInvalidSubmit">
+                <DataAnnotationsValidator />
+                @if (!string.IsNullOrEmpty(localErrorMessage))
+                {
+                    <p class="error-message">@localErrorMessage</p>
+                }
+                <ValidationSummary class="text-danger list-unstyled" />
+                <div class="form-group mov_text">
+                    <InputText id="signup_email" class="bp-suggestions form-control" placeholder="Email" @bind-Value="userModel.Email" />
+                </div>
+                 <div class="form-group mov_text">
+                    <InputText id="signup_username" class="bp-suggestions form-control" placeholder="Username" @bind-Value="userModel.Username" />
+                </div>
+                <div class="form-group mov_text">
+                    <InputText type="password" id="signup_password" class="bp-suggestions form-control" placeholder="Password" @bind-Value="userModel.Password" />
+                    @if (string.IsNullOrWhiteSpace(userModel.Username))
+                    {
+                        <small class="form-text text-muted">Nazwa użytkownika jest wymagana do rejestracji.</small>
+                    }
+                </div>
+                <button type="submit" class="girisbtn auth_btn mov_text" disabled="@IsSubmitting">
+                    @(IsSubmitting ? "Wysyłanie..." : "Sign Up")
+                </button>
+            </EditForm>
+        }
+        else
+        {
+            <ValidationCodeForm User=userModel></ValidationCodeForm>
+        }
+        <button id="moveright" class="mov_btn" @onclick="SwitchToLogin">Login</button>
+    </div>
+}
+
+@code {
+    [Inject]
+    private ApiConnection conn { get; set; } = default!;
+    [Parameter] public string? ErrorMessage { get; set; }
+    [Parameter] public EventCallback OnSwitchToLogin { get; set; }
+    [Parameter] public bool Hidden { get; set; }
+
+    private UserModelDto userModel = new();
+    private bool IsSixBoxesMode = false;
+    private string? localErrorMessage;
+    private bool IsSubmitting = false;
+
+    private void HandleInvalidSubmit()
+    {
+        localErrorMessage = "Formularz zawiera błędy. Uzupełnij wszystkie wymagane pola (Email, Username, Hasło min. 4 znaki).";
+    }
+
+    private async Task HandleSignUp()
+    {
+        if (string.IsNullOrWhiteSpace(userModel.Username))
+        {
+            localErrorMessage = "Nazwa użytkownika jest wymagana do rejestracji.";
+            StateHasChanged();
+            return;
+        }
+
+        localErrorMessage = null;
+        IsSubmitting = true;
+        StateHasChanged();
+
+        try
+        {
+            var response = await conn.Register(userModel);
+            if (response.IsSuccess)
+            {
+                IsSixBoxesMode = true;
+            }
+            else
+            {
+                localErrorMessage = response.ErrorMessage ?? "Rejestracja nie powiodła się.";
+                IsSixBoxesMode = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            localErrorMessage = $"Błąd rejestracji: {ex.Message}";
+            Console.WriteLine($"SignUpComponent.HandleSignUp exception: {ex}");
+        }
+        finally
+        {
+            IsSubmitting = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SwitchToLogin()
+    {
+        if (OnSwitchToLogin.HasDelegate)
+        {
+            await OnSwitchToLogin.InvokeAsync(null);
+        }
+    }
+}

@@ -16,6 +16,10 @@ namespace PhotoApp.Api.Service
         public async Task<User?> TryLoginAsync(UserModelDto request, bool isNewEmailCodeGenerating = true)
         {
             var user = await _userRepository.GetUserByUsernameAsync(request.Username);
+            if (user is null && !string.IsNullOrEmpty(request.Email))
+            {
+                user = await _userRepository.GetUserByEmailAsync(request.Email);
+            }
             if (user is null)
             {
                 return null;
@@ -24,6 +28,11 @@ namespace PhotoApp.Api.Service
             if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password) == PasswordVerificationResult.Failed)
             {
                 return null;
+            }
+
+            if (isNewEmailCodeGenerating)
+            {
+                await SendNewNumberCodeEmailAsync(user);
             }
 
             return user;
@@ -85,7 +94,7 @@ namespace PhotoApp.Api.Service
             return await _userRepository.GetUserByUsernameAsync(refreshToken.Username);
         }
 
-        public async Task<RefreshToken?> GenerateNewRefreshToken(string username)
+        public async Task<RefreshToken?> GenerateNewRefreshToken(string username, bool revokeOthers = true)
         {
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user is null)
@@ -94,12 +103,47 @@ namespace PhotoApp.Api.Service
             }
             var tm = new TokenManager(_configuration);
             var refreshToken = tm.GenerateRefreshToken();
-            var result = await _refreshTokenRepository.SetAllTokensForUserAsRevokedAsync(username);
-            if (!result)
+            if (revokeOthers)
             {
-                return null;
+                var result = await _refreshTokenRepository.SetAllTokensForUserAsRevokedAsync(username);
+                if (!result)
+                {
+                    return null;
+                }
             }
             return await _refreshTokenRepository.CreateRefreshTokenAsync(username, refreshToken);
+        }
+
+        public async Task<(string? accessToken, RefreshToken? newRefresh, string? username)> RotateRefreshTokenAsync(string oldRefreshToken)
+        {
+            var tokenFromDb = await _refreshTokenRepository.GetRefreshTokenByTokenAsync(oldRefreshToken);
+            if (tokenFromDb is null || !tokenFromDb.IsActive)
+            {
+                return (null, null, null);
+            }
+
+            var username = tokenFromDb.Username;
+
+            await _refreshTokenRepository.RevokeRefreshTokenAsync(oldRefreshToken);
+
+            var newRefresh = await GenerateNewRefreshToken(username, revokeOthers: false);
+            if (newRefresh is null)
+            {
+                return (null, null, null);
+            }
+
+            var access = await GenerateNewAccessToken(username);
+            if (string.IsNullOrEmpty(access))
+            {
+                return (null, null, null);
+            }
+
+            return (access, newRefresh, username);
+        }
+
+        public async Task RevokeRefreshTokenAsync(string token)
+        {
+            await _refreshTokenRepository.RevokeRefreshTokenAsync(token);
         }
 
         public async Task<string?> GenerateNewAccessToken(string username, SystemRole role = SystemRole.Member)
@@ -123,6 +167,16 @@ namespace PhotoApp.Api.Service
         {
             var user = await _userRepository.GetUserByUsernameAsync(username) ?? throw new Exception("Cannot check account activity for non existing user");
             return user.IsActive;
+        }
+
+        public async Task RegisterFailedLoginCodeAttemptAsync(string username)
+        {
+            await _userRepository.RegisterFailedLoginCodeAttemptAsync(username);
+        }
+
+        public async Task ResetLoginCodeAttemptsAsync(string username)
+        {
+            await _userRepository.ResetLoginCodeAttemptsAsync(username);
         }
 
         public async Task<User> SendNewNumberCodeEmailAsync(User user)
